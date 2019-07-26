@@ -1,0 +1,33 @@
+input
+    {
+    dmrg = no
+    calcT = no
+    calcCor = no
+    cwd = /Users/nsherman/Documents/Research/Joel/itensor_spectral/
+    model = Heisenberg
+    lattice = chain
+    N=64
+    reortho = yes
+
+    nsweeps = 5
+    nLanczos = 40
+    wi = 0
+    wf = 4.0
+    nw = 201
+    eta = 0.1
+    qfactor = 1.0
+    maxDim = 200
+
+    sweeps
+        {
+        maxdim  mindim  cutoff  niter  noise
+        40      20      1E-6    4      1E-7
+        80      20      1E-8    3      1E-8
+        100     10      1E-10   2      1E-10
+        200     10      1E-12   2      0
+        200     10      1E-12   2      0
+        }
+
+    quiet = no
+
+    }
