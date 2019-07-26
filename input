@@ -3,14 +3,14 @@ input
     dmrg = no
     calcT = no
     calcCor = no
-    cwd = /Users/nsherman/Documents/Research/Joel/itensor_spectral/
+    cwd = /Users/nsherman/Documents/Research/Joel/spectral/
     model = Heisenberg
     lattice = chain
-    N=64
+    N=24
     reortho = yes
 
     nsweeps = 5
-    nLanczos = 40
+    nLanczos = 20
     wi = 0
     wf = 4.0
     nw = 201

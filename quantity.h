@@ -22,6 +22,7 @@ class Quantity
 	MPS psi0; // Ground state.
 	Real E0;
 	CMatrix T;
+    CMatrix TR;
 	vector<MPS> V;
 	int N;
 	int c;
@@ -46,7 +47,6 @@ class Quantity
    CMatrix S;
    CVector Norm;
 
-   Matrix trashT;
    int path; 
 
 	public:
@@ -67,17 +67,32 @@ class Quantity
         if(pathExists(dataDir+"T"+tag) & !input.getYesNo("calcT",0)) // Already have T
         {
             read();
+            calcResult();
         }
         else // Need to calculate T
         {
-            calcT();
-            tag="";
-            write();
-            tag="_R";
-            if(r) reorthogonalize();
-            write();
+            if(pathExists(dataDir+"T") & !input.getYesNo("calcT",0))
+                read();
+            else
+            {
+                tag="";
+                calcT();
+                write();
+                calcResult();
+            }
+            if(r) 
+            {
+                tag="_R";
+                reorthogonalize();
+                write();
+                calcResult();
+            }
         }
-        cout << "T calculated. " << endl;
+    }
+
+    void
+    calcResult()
+    {
         auto omegas = getOmegas();
         auto ieta = input.getReal("eta",0.1);
         eta = Cplx(0.0,ieta);
@@ -143,8 +158,6 @@ class Quantity
         Norm  = CVector(nMax);
         for (auto &el : Norm) el = Cplx(NAN,NAN);
 
-        trashT = Matrix(nMax,nMax);
-        for (auto &el : trashT) el = 0;
 
         cout << "Creating W and HP." << endl;
         for(auto i : range(nMax))
@@ -182,7 +195,6 @@ class Quantity
         Cplx val = Cplx(0,0);
         val = getST(i,j)*getN(j);
         S(i,j) = val;
-        trashT(i,j) = path;
         path++;
         return val;
     }
