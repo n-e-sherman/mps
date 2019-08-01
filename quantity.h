@@ -27,7 +27,6 @@ class Quantity
 	int N;
 	int c;
 	int nMax;
-    Cplx eta;
 	Args args;
 	SpinHalf sites; // May want to generalize this?
 	IndexSet is;
@@ -39,6 +38,9 @@ class Quantity
     Real psiiNorm;
     Real spectralNorm;
     string tag;
+    vector<string> setas;
+    vector<Cplx> etas;
+    vector<Real> omegas;
 
    CMatrix HP; 
    CMatrix W; 
@@ -71,15 +73,10 @@ class Quantity
         }
         else // Need to calculate T
         {
-            if(pathExists(dataDir+"T") & !input.getYesNo("calcT",0))
-                read();
-            else
-            {
-                tag="";
-                calcT();
-                write();
-                calcResult();
-            }
+            tag="";
+            calcT();
+            write();
+            calcResult();
             if(r) 
             {
                 tag="_R";
@@ -93,18 +90,46 @@ class Quantity
     void
     calcResult()
     {
-        auto omegas = getOmegas();
-        auto ieta = input.getReal("eta",0.1);
-        eta = Cplx(0.0,ieta);
+
         auto qfactor = input.getReal("qfactor",1); // q = qfactor * pi * N/(N+1)
-        vector<Real> res;
-        for(auto w : omegas)
+        auto S = calcSpectral();
+        // for(auto w : omegas)
+        // {
+        //     for()
+        //     auto S = calcSpectral(w);
+        //     res.push_back(S);
+        //     cout << w << "," << res.back() << endl;
+        // }
+        writeResult(S);
+    }
+
+    vector<vector<Real>>
+    calcSpectral() 
+    {
+        // output will be S[eta][omega]
+        Vector d;
+        CMatrix U;
+        auto Tref = subMatrix(T,0,nMax,0,nMax);
+        diagHermitian(Tref,U,d);
+        vector<vector<Real>> result;
+        for(auto eta : etas)
         {
-            auto S = calcSpectral(w);
-            res.push_back(S);
-            cout << w << "," << res.back() << endl;
+            vector<Real> temp;
+            for(auto omega : omegas)
+            {
+                auto z = omega + E0 + eta;
+                auto delta = CVector(nMax);
+                for(int i = 0; i < nMax; i++) delta(i) = 1.0/(z-d(i));
+                auto D = CMatrix(nMax,nMax);
+                diagonal(D) &= delta;
+                auto R = U*D*conj(transpose(U)); // 1/(z-M)
+                auto res = R(0,0).imag();
+                res = -1*(1.0/M_PI)*psiiNorm*psiiNorm*res;
+                temp.push_back(res);
+            }
+            result.push_back(temp);
         }
-        writeResult(omegas,res);
+        return result;
     }
 
 	void
@@ -240,23 +265,6 @@ class Quantity
         return val;
     }
 
-    Real
-    calcSpectral(Real omega)
-    {
-        auto z = omega + E0 + eta;
-        Vector d;
-        auto D = CMatrix(nMax,nMax);
-        CMatrix U;
-        auto Tref = subMatrix(T,0,nMax,0,nMax);
-        diagHermitian(Tref,U,d);
-        auto delta = CVector(nMax);
-        for(int i = 0; i < nMax; i++) delta(i) = 1.0/(z-d(i));
-        diagonal(D) &= delta;
-        auto R = U*D*conj(transpose(U)); // 1/(z-M)
-        auto res = R(0,0).imag();
-        res = -1*(1.0/M_PI)*psiiNorm*psiiNorm*res;
-        return res;
-    }
 
     void
     prepare(MPS &a, MPS &b)
@@ -296,6 +304,11 @@ class Quantity
         dataDir = M->getDataDir();
         cout << dataDir << endl;
         resDir = M->getResDir();
+        auto temp = input.getString("etas","");
+        setas = splitString(temp);
+        auto retas = stringToVector(temp);
+        for(auto x : retas) etas.push_back(Cplx(0,x));
+        omegas = getOmegas();
     }
 
     void
@@ -321,7 +334,6 @@ class Quantity
 	read()
 	{
         T = readFromFile<CMatrix>(dataDir+"T"+tag);
-        V = readFromFile< vector<MPS> >(dataDir+"V");
         nMax = readFromFile<int>(dataDir+"nMax");
         psiiNorm = readFromFile<Real>(dataDir+"psiiNorm");
 	}
@@ -330,25 +342,27 @@ class Quantity
 	write()
 	{
 		writeToFile(dataDir+"T"+tag,T);
-        writeToFile(dataDir+"V",V);
         writeToFile(dataDir+"nMax",nMax);
         writeToFile(dataDir+"psiiNorm",psiiNorm);
 	}
 
     void
-    writeResult(vector<Real> &omegas, vector<Real> &res)
+    writeResult(vector<vector<Real>> &res)
     {
         auto wi = omegas.front();
         auto wf = omegas.back();
         auto n = omegas.size();
-        auto resPath = resDir + "S"+tag;
         ofstream f;
-        f.open(resPath);
-        for(auto i : range(omegas.size()))
-        {
-            f << omegas[i] << "," << res[i] << endl;
+        for(auto i : range(setas.size()))
+            {
+            auto resPath = resDir + setas[i] + "/" + "S" + tag;
+            f.open(resPath);
+            for(auto j : range(omegas.size()))
+            {
+                f << omegas[j] << "," << res[i][j] << endl;
+            }
+            f.close();
         }
-        f.close();
     }
 
     void
@@ -359,13 +373,12 @@ class Quantity
         dataDir += "/" + input.getString("nLanczos","");
         mkdtemp(stoc(dataDir));
         dataDir += "/";
-
-
-        resDir += "/" + input.getString("qfactor","");
-        mkdtemp(stoc(resDir));
-        resDir += "/" + input.getString("eta","");
-        mkdtemp(stoc(resDir));
-        resDir += "/";
+        resDir += "/" + input.getString("qfactor","") + "/";
+        for(auto x : setas)
+        {
+            auto temp = resDir + x;
+            mkdtemp(stoc(temp));
+        }
     }
 
     bool

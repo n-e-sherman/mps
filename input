@@ -1,7 +1,7 @@
 input
     {
     dmrg = no
-    calcT = no
+    calcT = yes
     calcCor = no
     cwd = /Users/nsherman/Documents/Research/Joel/spectral/
     model = Heisenberg
@@ -14,8 +14,8 @@ input
     wi = 0
     wf = 4.0
     nw = 201
-    eta = 0.1
-    qfactor = 1.0
+    etas = 0.1,0.2
+    qfactor = 0.5
     maxDim = 200
 
     sweeps
