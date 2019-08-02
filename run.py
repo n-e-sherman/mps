@@ -68,7 +68,7 @@ for N, nL, c in zip(Ns, nLs, cores):
     writeInput(inputs, cwd + '/inputs/' + label, table)
     baseSlurm += runFirst + c + runSecond + cwd + '/inputs/' + label + ' &\n'
 baseSlurm += 'wait'
-f = open('run.sh', 'w+')
+f = open('submit.sh', 'w+')
 f.write(baseSlurm)
 f.close()
 
