@@ -51,6 +51,7 @@ baseSlurm = '''#!/bin/bash -l
 #SBATCH --time=48:00
 #SBATCH --licenses=cscratch1
 #SBATCH --constraint=haswell
+#SBATCH --mail-type=begin,end,fail
 #SBATCH --mail-user=n.e.sherman@berkeley.edu
 
 '''
