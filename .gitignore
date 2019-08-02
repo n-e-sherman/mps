@@ -11,3 +11,4 @@ main-g
 plot.py
 *.sh
 input
+/inputs
