@@ -45,7 +45,8 @@ Ns = ['20', '40', '60', '80', '90', '100']
 nLs = ['40', '60', '80', '100', '100', '100']
 cores = [' 2 ', ' 4 ', ' 4 ', ' 8 ', ' 8 ', ' 8 ']
 
-baseSlurm = '''#SBATCH --qos=debug
+baseSlurm = '''#!/bin/bash -l
+#SBATCH --qos=debug
 #SBATCH --nodes=8
 #SBATCH --time=30:00
 #SBATCH --licenses=cscratch1
@@ -64,7 +65,8 @@ for N, nL, c in zip(Ns, nLs, cores):
     inputs['nLanczos'] = nL
     inputs['etas'] = '0.1' + ',' + str(W / float(N))
     writeInput(inputs, cwd + '/inputs/' + label, table)
-    baseSlurm += runFirst + c + runSecond + cwd + '/inputs/' + label + '\n'
+    baseSlurm += runFirst + c + runSecond + cwd + '/inputs/' + label + ' &\n'
+baseSlurm += 'wait'
 f = open('run.sh', 'w+')
 f.write(baseSlurm)
 f.close()
