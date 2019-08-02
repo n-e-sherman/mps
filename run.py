@@ -43,14 +43,30 @@ sweeps
 W = 4.0  # roughly width of spectrum
 Ns = ['20', '40', '60', '80', '90', '100']
 nLs = ['40', '60', '80', '100', '100', '100']
-cores = ['4', '4', '4', '8', '8', '8']
+cores = [' 2 ', ' 4 ', ' 4 ', ' 8 ', ' 8 ', ' 8 ']
+
+baseSlurm = '''#SBATCH --qos=debug
+#SBATCH --nodes=8
+#SBATCH --time=30:00
+#SBATCH --licenses=cscratch1
+#SBATCH --constraint=haswell
+
+'''
+runFirst = 'srun -N'
+runSecond = '-n 1 -c 2 --cpu_bind=cores ./main'
+trash = baseSlurm + runFirst + ' 2 ' + runSecond
+print (trash)
 if not os.path.exists(cwd + '/inputs/'):
     os.mkdir('inputs/')
-for N, nL in zip(Ns, nLs):
+for N, nL, c in zip(Ns, nLs, cores):
     label = N + nL
     inputs['N'] = N
     inputs['nLanczos'] = nL
     inputs['etas'] = '0.1' + ',' + str(W / float(N))
     writeInput(inputs, cwd + '/inputs/' + label, table)
+    baseSlurm += runFirst + c + runSecond + cwd + '/inputs/' + label + '\n'
+f = open('run.sh', 'w+')
+f.write(baseSlurm)
+f.close()
 
-    # write and run sbatch script here.
+# write and run sbatch script here.
