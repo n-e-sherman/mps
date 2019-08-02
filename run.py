@@ -47,10 +47,11 @@ cores = [' 2 ', ' 4 ', ' 4 ', ' 8 ', ' 8 ', ' 8 ']
 
 baseSlurm = '''#!/bin/bash -l
 #SBATCH --qos=debug
-#SBATCH --nodes=8
-#SBATCH --time=30:00
+#SBATCH --nodes=6
+#SBATCH --time=48:00
 #SBATCH --licenses=cscratch1
 #SBATCH --constraint=haswell
+#SBATCH --mail-user=n.e.sherman@berkeley.edu
 
 '''
 runFirst = 'srun -N'
