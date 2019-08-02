@@ -46,7 +46,7 @@ nLs = ['40', '60', '80', '100', '100', '100']
 cores = [' 2 ', ' 4 ', ' 4 ', ' 8 ', ' 8 ', ' 8 ']
 
 baseSlurm = '''#!/bin/bash -l
-#SBATCH --qos=low
+#SBATCH --qos=regular
 #SBATCH --nodes=6
 #SBATCH --time=48:00
 #SBATCH --licenses=cscratch1
@@ -56,7 +56,7 @@ baseSlurm = '''#!/bin/bash -l
 
 '''
 runFirst = 'srun -N'
-runSecond = '-n 1 -c 2 --cpu_bind=cores ./main'
+runSecond = '-n 1 -c 2 --cpu_bind=cores ./main '
 trash = baseSlurm + runFirst + ' 2 ' + runSecond
 print (trash)
 if not os.path.exists(cwd + '/inputs/'):
