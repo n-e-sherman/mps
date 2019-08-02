@@ -1,20 +1,21 @@
-dmrg = no
-calcT = no
-calcCor = no
-model = Heisenberg
-lattice = chain
-N = 60
-nsweeps = 5
-nLanczos = 80
-wi = 0
-wf = 4.0
-nw = 201
-etas = 0.1,0.06666666666666667
-qfactor = 1.0
-maxDim = 500
-quiet = no
-reortho = yes
-cwd = /Users/nsherman/Documents/Research/Joel/spectral/
+input{
+	dmrg = no
+	calcT = no
+	calcCor = no
+	model = Heisenberg
+	lattice = chain
+	N = 60
+	nsweeps = 5
+	nLanczos = 80
+	wi = 0
+	wf = 4.0
+	nw = 201
+	etas = 0.1,0.06666666666666667
+	qfactor = 1.0
+	maxDim = 500
+	quiet = no
+	reortho = yes
+	cwd = /Users/nsherman/Documents/Research/Joel/spectral/
 
 sweeps
     {
@@ -25,3 +26,5 @@ sweeps
     250     10      1E-12   2      0
     400     10      1E-12   2      0
     }
+
+}

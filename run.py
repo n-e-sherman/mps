@@ -3,9 +3,11 @@ import os
 
 def writeInput(inputs, fname, table=""):
     f = open(fname, 'w+')
+    f.write('input{\n')
     for k, v in inputs.items():
-        f.write(str(k) + " = " + str(v) + '\n')
+        f.write('\t' + str(k) + " = " + str(v) + '\n')
     f.write(table)
+    f.write('\n}')
 
 
 inputs = {

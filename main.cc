@@ -12,7 +12,7 @@ int
 main(int argc, char* argv[])
 {
     auto name = "input";
-    if(argc > 2)
+    if(argc >= 2)
         name = argv[1];
     auto input = InputGroup(name,"input");
     Engine eng(input);
