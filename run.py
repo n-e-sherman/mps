@@ -46,7 +46,7 @@ nLs = ['40', '60', '80', '100', '100', '100']
 cores = [' 2 ', ' 4 ', ' 4 ', ' 8 ', ' 8 ', ' 8 ']
 
 baseSlurm = '''#!/bin/bash -l
-#SBATCH --qos=debug
+#SBATCH --qos=low
 #SBATCH --nodes=6
 #SBATCH --time=48:00
 #SBATCH --licenses=cscratch1
