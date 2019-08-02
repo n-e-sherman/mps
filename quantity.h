@@ -93,13 +93,6 @@ class Quantity
 
         auto qfactor = input.getReal("qfactor",1); // q = qfactor * pi * N/(N+1)
         auto S = calcSpectral();
-        // for(auto w : omegas)
-        // {
-        //     for()
-        //     auto S = calcSpectral(w);
-        //     res.push_back(S);
-        //     cout << w << "," << res.back() << endl;
-        // }
         writeResult(S);
     }
 
