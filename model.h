@@ -204,9 +204,8 @@ class Model
 	    lattice = input.getString("lattice","chain"); // additional option is bondList
 	    cwd = input.getString("cwd","");
 		N = input.getInt("N",N);
-
-	    mkdtemp(stoc(cwd + "/data"));
-	    mkdtemp(stoc(cwd + "/results"));
+	    mkdtemp(stoc(cwd + "data"));
+	    mkdtemp(stoc(cwd + "results"));
 	    dataDir = cwd+"data/"+model+"_"+lattice+"_"+std::to_string(N);
 	    mkdtemp(stoc(dataDir));
 	    dataDir += "/"+input.getString("maxDim","");

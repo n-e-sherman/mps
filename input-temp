@@ -1,7 +1,7 @@
 input
     {
     dmrg = no
-    calcT = yes
+    calcT = no
     calcCor = no
     cwd = /Users/nsherman/Documents/Research/Joel/spectral/
     model = Heisenberg

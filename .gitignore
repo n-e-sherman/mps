@@ -7,8 +7,10 @@ trash
 /.debug_objs
 main
 main-g
+main.o
 .DS_Store
 plot.py
 *.sh
 input
 /inputs
+input-temp

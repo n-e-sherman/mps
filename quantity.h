@@ -295,7 +295,6 @@ class Quantity
         E0 = M->getE0();
         c = int(N/2);
         dataDir = M->getDataDir();
-        cout << dataDir << endl;
         resDir = M->getResDir();
         auto temp = input.getString("etas","");
         setas = splitString(temp);
@@ -361,12 +360,14 @@ class Quantity
     void
     makeDirs()
     {
-        dataDir += "/" + input.getString("qfactor","");
+        dataDir += input.getString("qfactor","");
         mkdtemp(stoc(dataDir));
         dataDir += "/" + input.getString("nLanczos","");
         mkdtemp(stoc(dataDir));
         dataDir += "/";
-        resDir += "/" + input.getString("qfactor","") + "/";
+        resDir += input.getString("qfactor","");
+        mkdtemp(stoc(resDir));
+        resDir += "/";
         for(auto x : setas)
         {
             auto temp = resDir + x;
