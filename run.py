@@ -42,11 +42,6 @@ sweeps
     }
 '''
 
-W = 4.0  # roughly width of spectrum
-Ns = ['20', '40', '60', '80', '90', '100']
-nLs = ['40', '60', '80', '100', '100', '100']
-cores = [' 2 ', ' 4 ', ' 4 ', ' 8 ', ' 8 ', ' 8 ']
-
 baseSlurm = '''#!/bin/bash -l
 #SBATCH --qos=regular
 #SBATCH --nodes=6
@@ -59,8 +54,11 @@ baseSlurm = '''#!/bin/bash -l
 '''
 runFirst = 'srun -N'
 runSecond = '-n 1 -c 2 --cpu_bind=cores ./main '
-trash = baseSlurm + runFirst + ' 2 ' + runSecond
-print (trash)
+
+W = 4.0  # roughly width of spectrum
+Ns = ['20', '40', '60', '80', '90', '100']
+nLs = ['40', '60', '80', '100', '100', '100']
+cores = [' 2 ', ' 4 ', ' 4 ', ' 8 ', ' 8 ', ' 8 ']
 os.makedirs('inputs/',exist_ok=True)
 for N, nL, c in zip(Ns, nLs, cores):
     label = N + nL

@@ -6,7 +6,7 @@ input{
 	lattice = chain
 	N = 20
 	nsweeps = 5
-	nLanczos = 40
+	nLanczos = 5
 	wi = 0
 	wf = 4.0
 	nw = 201
