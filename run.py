@@ -76,6 +76,6 @@ baseSlurm += 'wait'
 f = open('submit.sh', 'w+')
 f.write(baseSlurm)
 f.close()
-
+print(os.system("sbatch submit.sh"))
 
 # write and run sbatch script here.
