@@ -365,7 +365,10 @@ class Quantity
         dataDir += "/" + input.getString("nLanczos","");
         mkdtemp(stoc(dataDir));
         dataDir += "/";
+        
         resDir += input.getString("qfactor","");
+        mkdtemp(stoc(resDir));
+        resDir += "/" + input.getString("nLanczos","");
         mkdtemp(stoc(resDir));
         resDir += "/";
         for(auto x : setas)

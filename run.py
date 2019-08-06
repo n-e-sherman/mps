@@ -61,8 +61,7 @@ runFirst = 'srun -N'
 runSecond = '-n 1 -c 2 --cpu_bind=cores ./main '
 trash = baseSlurm + runFirst + ' 2 ' + runSecond
 print (trash)
-if not os.path.exists(cwd + '/inputs/'):
-    os.mkdir('inputs/')
+os.makedirs('inputs/',exist_ok=True)
 for N, nL, c in zip(Ns, nLs, cores):
     label = N + nL
     inputs['N'] = N
@@ -70,9 +69,15 @@ for N, nL, c in zip(Ns, nLs, cores):
     inputs['etas'] = '0.1' + ',' + str(W / float(N))
     writeInput(inputs, cwd + '/inputs/' + label, table)
     baseSlurm += runFirst + c + runSecond + cwd + '/inputs/' + label + ' &\n'
+    os.makedirs(cwd + '/data/'+inputs['model']+"_"+inputs['lattice']+'_'+inputs['N']+'/'+inputs['maxDim']+'/'+inputs['qfactor']+'/'+inputs['nLanczos'],exist_ok=True)
+    etas = inputs['etas'].split(',')
+    for e in etas:
+        os.makedirs(cwd + '/results/'+inputs['model']+"_"+inputs['lattice']+'_'+inputs['N']+'/'+inputs['maxDim']+'/'+inputs['qfactor']+'/'+inputs['nLanczos']+'/'+e,exist_ok=True)
+
 baseSlurm += 'wait'
 f = open('submit.sh', 'w+')
 f.write(baseSlurm)
 f.close()
+
 
 # write and run sbatch script here.
