@@ -19,6 +19,7 @@ HEADERS=engine.h model.h quantity.h util.h
 #    add their full filenames here.
 CCFILES=$(APP).cc
 
+CCCOMCRAY=CC -std=c++17 -fPIC
 #################################################################
 #################################################################
 #################################################################
@@ -48,10 +49,10 @@ build: $(APP)
 debug: $(APP)-g
 
 $(APP): $(OBJECTS) $(ITENSOR_LIBS)
-	$(CCCOM) $(CCFLAGS) $(OBJECTS) -o $(APP) $(LIBFLAGS)
+	$(CCCOMCRAY) $(CCFLAGS) $(OBJECTS) -o $(APP) $(LIBFLAGS)
 
 $(APP)-g: mkdebugdir $(GOBJECTS) $(ITENSOR_GLIBS)
-	$(CCCOM) $(CCGFLAGS) $(GOBJECTS) -o $(APP)-g $(LIBGFLAGS)
+	$(CCCOMCRAY) $(CCGFLAGS) $(GOBJECTS) -o $(APP)-g $(LIBGFLAGS)
 
 clean:
 	rm -fr .debug_objs *.o $(APP) $(APP)-g

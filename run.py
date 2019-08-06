@@ -50,6 +50,7 @@ baseSlurm = '''#!/bin/bash -l
 #SBATCH --constraint=haswell
 #SBATCH --mail-type=begin,end,fail
 #SBATCH --mail-user=n.e.sherman@berkeley.edu
+#SBATCH --account=m3341
 
 '''
 runFirst = 'srun -N'
