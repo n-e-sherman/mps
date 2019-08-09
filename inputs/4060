@@ -15,7 +15,7 @@ input{
 	maxDim = 500
 	quiet = no
 	reortho = yes
-	cwd = /Users/nsherman/Documents/Research/Joel/spectral/
+	cwd = /global/u2/n/nsherman/spectral/
 
 sweeps
     {

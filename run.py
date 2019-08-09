@@ -50,10 +50,10 @@ baseSlurm = '''#!/bin/bash -l
 #SBATCH --constraint=haswell
 #SBATCH --mail-type=begin,end,fail
 #SBATCH --mail-user=n.e.sherman@berkeley.edu
+#SBATCH --account=m3341
 
 '''
-runFirst = 'srun -N'
-runSecond = '-n 1 -c 2 --cpu_bind=cores ./main '
+runBase = 'srun -n 1 -c 2 --cpu_bind=cores ./main '
 
 W = 4.0  # roughly width of spectrum
 Ns = ['20', '40', '60', '80', '90', '100']
@@ -66,7 +66,7 @@ for N, nL, c in zip(Ns, nLs, cores):
     inputs['nLanczos'] = nL
     inputs['etas'] = '0.1' + ',' + str(W / float(N))
     writeInput(inputs, cwd + '/inputs/' + label, table)
-    baseSlurm += runFirst + c + runSecond + cwd + '/inputs/' + label + ' &\n'
+    baseSlurm += runBase + cwd + '/inputs/' + label + ' &\n'
     os.makedirs(cwd + '/data/'+inputs['model']+"_"+inputs['lattice']+'_'+inputs['N']+'/'+inputs['maxDim']+'/'+inputs['qfactor']+'/'+inputs['nLanczos'],exist_ok=True)
     etas = inputs['etas'].split(',')
     for e in etas:

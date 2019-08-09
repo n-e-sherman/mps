@@ -1,0 +1,713 @@
+srun: Warning: can't run 1 processes on 4 nodes, setting nnodes to 1
+srun: Warning: can't run 1 processes on 8 nodes, setting nnodes to 1
+srun: Warning: can't run 1 processes on 8 nodes, setting nnodes to 1
+srun: Warning: can't run 1 processes on 4 nodes, setting nnodes to 1
+srun: Warning: can't run 1 processes on 8 nodes, setting nnodes to 1
+srun: Warning: can't run 1 processes on 2 nodes, setting nnodes to 1
+Got input.model = Heisenberg
+Got input.lattice = chain
+Got input.cwd = /global/u2/n/nsherman/spectral/
+Got input.N = 40
+dataDirs: /global/u2/n/nsherman/spectral/data
+dataDirs: /global/u2/n/nsherman/spectral/results
+Got input.maxDim = 500
+Got input.maxDim = 500
+Got input.dmrg = no
+Got input.nsweeps = 5
+
+    vN Entropy at center bond b=20 = 0.537214533458
+    Eigs at center bond b=20: 0.8300 0.1477 0.0163 0.0054 
+    Largest link dim during sweep 1/5 was 32
+    Largest truncation error: 3.19953e-07
+    Energy after sweep 1/5 is -17.521306921420
+    Sweep 1/5 CPU time = 0.168s (Wall time = 0.771s)
+
+    vN Entropy at center bond b=20 = 0.745800866138
+    Eigs at center bond b=20: 0.7960 0.0754 0.0667 0.0590 0.0010 
+    Largest link dim during sweep 2/5 was 34
+    Largest truncation error: 8.26833e-09
+    Energy after sweep 2/5 is -17.541445731273
+    Sweep 2/5 CPU time = 0.228s (Wall time = 0.232s)
+
+    vN Entropy at center bond b=20 = 0.761643088801
+    Eigs at center bond b=20: 0.7911 0.0686 0.0685 0.0683 
+    Largest link dim during sweep 3/5 was 57
+    Largest truncation error: 8.16984e-11
+    Energy after sweep 3/5 is -17.541473257877
+    Sweep 3/5 CPU time = 0.255s (Wall time = 0.283s)
+
+    vN Entropy at center bond b=20 = 0.761854411951
+    Eigs at center bond b=20: 0.7910 0.0685 0.0685 0.0685 
+    Largest link dim during sweep 4/5 was 89
+    Largest truncation error: 8.13237e-13
+    Energy after sweep 4/5 is -17.541473299580
+    Sweep 4/5 CPU time = 0.306s (Wall time = 0.318s)
+
+    vN Entropy at center bond b=20 = 0.761855835973
+    Eigs at center bond b=20: 0.7910 0.0685 0.0685 0.0685 
+    Largest link dim during sweep 5/5 was 86
+    Largest truncation error: 7.80387e-13
+    Energy after sweep 5/5 is -17.541473299604
+    Sweep 5/5 CPU time = 0.326s (Wall time = 0.327s)
+Engine built.
+Got input.nLanczos = 60
+Got input.maxDim = 500
+Got input.etas = 0.1,0.1
+Got input.wi = 0
+Got input.wf = 4
+Got input.nw = 201
+Got input.qfactor = 1.0
+Got input.nLanczos = 60
+Got input.qfactor = 1.0
+Got input.nLanczos = 60
+Got input.qfactor = 1
+Got input.reortho = yes
+Got input.calcT = no
+Got input.nLanczos = 60
+1
+Got input.model = Heisenberg
+Got input.lattice = chain
+Got input.cwd = /global/u2/n/nsherman/spectral/
+Got input.N = 20
+dataDirs: /global/u2/n/nsherman/spectral/data
+dataDirs: /global/u2/n/nsherman/spectral/results
+Got input.maxDim = 500
+Got input.maxDim = 500
+Got input.dmrg = no
+Engine built.
+Got input.nLanczos = 40
+Got input.maxDim = 500
+Got input.etas = 0.1,0.2
+Got input.wi = 0
+Got input.wf = 4
+Got input.nw = 201
+Got input.qfactor = 1.0
+Got input.nLanczos = 40
+Got input.qfactor = 1.0
+Got input.nLanczos = 40
+Got input.qfactor = 1
+Got input.reortho = yes
+Got input.calcT = no
+Got input.qfactor = 1
+2
+Got input.model = Heisenberg
+Got input.lattice = chain
+Got input.cwd = /global/u2/n/nsherman/spectral/
+Got input.N = 100
+dataDirs: /global/u2/n/nsherman/spectral/data
+dataDirs: /global/u2/n/nsherman/spectral/results
+Got input.maxDim = 500
+Got input.maxDim = 500
+Got input.dmrg = no
+Got input.nsweeps = 5
+
+    vN Entropy at center bond b=50 = 0.548535024930
+    Eigs at center bond b=50: 0.8168 0.1649 0.0135 0.0041 
+    Largest link dim during sweep 1/5 was 32
+    Largest truncation error: 3.35595e-07
+    Energy after sweep 1/5 is -44.084115274610
+    Sweep 1/5 CPU time = 0.435s (Wall time = 0.510s)
+
+    vN Entropy at center bond b=50 = 0.791827704009
+    Eigs at center bond b=50: 0.7598 0.1513 0.0553 0.0277 0.0035 0.0011 
+3
+    Largest link dim during sweep 2/5 was 38
+    Largest truncation error: 8.33955e-09
+    Energy after sweep 2/5 is -44.125073444605
+    Sweep 2/5 CPU time = 0.650s (Wall time = 0.656s)
+
+    vN Entropy at center bond b=50 = 0.902091817044
+    Eigs at center bond b=50: 0.7404 0.0937 0.0829 0.0737 0.0029 0.0024 0.0020 0.0013 
+    Largest link dim during sweep 3/5 was 88
+    Largest truncation error: 7.99403e-11
+    Energy after sweep 3/5 is -44.127692780824
+    Sweep 3/5 CPU time = 0.871s (Wall time = 0.882s)
+
+    vN Entropy at center bond b=50 = 0.921312340612
+    Eigs at center bond b=50: 0.7345 0.0856 0.0850 0.0843 0.0028 0.0028 0.0027 0.0015 
+    Largest link dim during sweep 4/5 was 157
+    Largest truncation error: 8.31995e-13
+    Energy after sweep 4/5 is -44.127739455918
+    Sweep 4/5 CPU time = 1.543s (Wall time = 1.550s)
+
+    vN Entropy at center bond b=50 = 0.922828095168
+    Eigs at center bond b=50: 0.7341 0.0851 0.0851 0.0850 0.0028 0.0028 0.0028 0.0015 
+Got input.model = Heisenberg
+Got input.lattice = chain
+Got input.cwd = /global/u2/n/nsherman/spectral/
+Got input.N = 60
+dataDirs: /global/u2/n/nsherman/spectral/data
+dataDirs: /global/u2/n/nsherman/spectral/results
+Got input.maxDim = 500
+Got input.maxDim = 500
+Got input.dmrg = no
+Got input.nsweeps = 5
+
+    vN Entropy at center bond b=30 = 0.560591091410
+    Eigs at center bond b=30: 0.8123 0.1680 0.0145 0.0045 
+Got input.model = Heisenberg
+Got input.lattice = chain
+Got input.cwd = /global/u2/n/nsherman/spectral/
+Got input.N = 90
+dataDirs: /global/u2/n/nsherman/spectral/data
+dataDirs: /global/u2/n/nsherman/spectral/results
+Got input.maxDim = 500
+Got input.maxDim = 500
+Got input.dmrg = no
+    Largest link dim during sweep 1/5 was 32
+    Largest truncation error: 3.55507e-07
+    Energy after sweep 1/5 is -26.373348639392
+    Sweep 1/5 CPU time = 0.262s (Wall time = 0.359s)
+Got input.nsweeps = 5
+    Largest link dim during sweep 5/5 was 173
+    Largest truncation error: 8.24937e-13
+    Energy after sweep 5/5 is -44.127739890279
+    Sweep 5/5 CPU time = 2.205s (Wall time = 2.212s)
+
+    vN Entropy at center bond b=30 = 0.787454772488
+    Eigs at center bond b=30: 0.7778 0.1020 0.0677 0.0479 0.0020 0.0011 
+    Largest link dim during sweep 2/5 was 41
+    Largest truncation error: 8.07143e-09
+    Energy after sweep 2/5 is -26.402646904958
+    Sweep 2/5 CPU time = 0.373s (Wall time = 0.375s)
+
+    vN Entropy at center bond b=45 = 0.545085149539
+    Eigs at center bond b=45: 0.8195 0.1619 0.0139 0.0042 
+    Largest link dim during sweep 1/5 was 32
+    Largest truncation error: 3.9658e-07
+    Energy after sweep 1/5 is -39.655504601916
+    Sweep 1/5 CPU time = 0.390s (Wall time = 0.508s)
+Engine built.
+Got input.nLanczos = 100
+Got input.maxDim = 500
+Got input.etas = 0.1,0.04
+Got input.wi = 0
+Got input.wf = 4
+Got input.nw = 201
+Got input.qfactor = 1.0
+Got input.nLanczos = 100
+Got input.qfactor = 1.0
+Got input.nLanczos = 100
+Got input.qfactor = 1
+
+    vN Entropy at center bond b=30 = 0.831378506786
+    Eigs at center bond b=30: 0.7662 0.0770 0.0760 0.0749 0.0017 0.0016 0.0015 
+    Largest link dim during sweep 3/5 was 72
+    Largest truncation error: 8.17182e-11
+    Energy after sweep 3/5 is -26.403013985840
+    Sweep 3/5 CPU time = 0.450s (Wall time = 0.458s)
+
+    vN Entropy at center bond b=45 = 0.843100517242
+    Eigs at center bond b=45: 0.6450 0.3095 0.0260 0.0088 0.0069 0.0020 
+    Largest link dim during sweep 2/5 was 37
+    Largest truncation error: 8.2385e-09
+    Energy after sweep 2/5 is -39.694385875065
+    Sweep 2/5 CPU time = 0.575s (Wall time = 0.583s)
+
+    vN Entropy at center bond b=30 = 0.833892749028
+    Eigs at center bond b=30: 0.7655 0.0762 0.0761 0.0761 0.0016 0.0016 0.0016 
+    Largest link dim during sweep 4/5 was 118
+    Largest truncation error: 8.20552e-13
+    Energy after sweep 4/5 is -26.403015144011
+    Sweep 4/5 CPU time = 0.667s (Wall time = 0.675s)
+
+    vN Entropy at center bond b=45 = 0.957919093680
+    Eigs at center bond b=45: 0.4888 0.4538 0.0228 0.0203 0.0038 0.0035 0.0031 0.0028 
+    Largest link dim during sweep 3/5 was 83
+    Largest truncation error: 7.97824e-11
+    Energy after sweep 3/5 is -39.696441099923
+    Sweep 3/5 CPU time = 0.769s (Wall time = 0.788s)
+
+    vN Entropy at center bond b=30 = 0.833934742403
+    Eigs at center bond b=30: 0.7655 0.0761 0.0761 0.0761 0.0016 0.0016 0.0016 
+    Largest link dim during sweep 5/5 was 123
+    Largest truncation error: 7.88832e-13
+    Energy after sweep 5/5 is -26.403015146991
+    Sweep 5/5 CPU time = 0.787s (Wall time = 0.788s)
+Got input.reortho = yes
+Got input.calcT = no
+Got input.nLanczos = 100
+
+    vN Entropy at center bond b=45 = 0.969089161639
+    Eigs at center bond b=45: 0.4712 0.4688 0.0225 0.0223 0.0035 0.0035 0.0035 0.0034 
+    Largest link dim during sweep 4/5 was 157
+    Largest truncation error: 7.95622e-13
+    Energy after sweep 4/5 is -39.696464463875
+    Sweep 4/5 CPU time = 1.263s (Wall time = 1.271s)
+Engine built.
+Got input.nLanczos = 80
+Got input.maxDim = 500
+Got input.etas = 0.1,0.06666666666666667
+Got input.wi = 0
+Got input.wf = 4
+Got input.nw = 201
+Got input.qfactor = 1.0
+Got input.nLanczos = 80
+Got input.qfactor = 1.0
+Got input.nLanczos = 80
+Got input.qfactor = 1
+Got input.reortho = yes
+Got input.calcT = no
+Got input.nLanczos = 80
+Got input.model = Heisenberg
+Got input.lattice = chain
+Got input.cwd = /global/u2/n/nsherman/spectral/
+Got input.N = 80
+dataDirs: /global/u2/n/nsherman/spectral/data
+dataDirs: /global/u2/n/nsherman/spectral/results
+Got input.maxDim = 500
+Got input.maxDim = 500
+Got input.dmrg = no
+Got input.nsweeps = 5
+
+    vN Entropy at center bond b=45 = 0.969902001062
+    Eigs at center bond b=45: 0.4700 0.4698 0.0225 0.0225 0.0035 0.0035 0.0035 0.0035 
+
+    vN Entropy at center bond b=40 = 0.549921881404
+    Eigs at center bond b=40: 0.8194 0.1602 0.0151 0.0046 
+    Largest link dim during sweep 1/5 was 32
+    Largest truncation error: 1.96933e-07
+    Energy after sweep 1/5 is -35.229997385771
+    Sweep 1/5 CPU time = 0.354s (Wall time = 0.536s)
+    Largest link dim during sweep 5/5 was 160
+    Largest truncation error: 7.92322e-13
+    Energy after sweep 5/5 is -39.696464754167
+    Sweep 5/5 CPU time = 1.722s (Wall time = 1.730s)
+Engine built.
+Got input.nLanczos = 100
+Got input.maxDim = 500
+Got input.etas = 0.1,0.044444444444444446
+Got input.wi = 0
+Got input.wf = 4
+Got input.nw = 201
+Got input.qfactor = 1.0
+Got input.nLanczos = 100
+Got input.qfactor = 1.0
+Got input.nLanczos = 100
+Got input.qfactor = 1
+
+    vN Entropy at center bond b=40 = 0.788175850093
+    Eigs at center bond b=40: 0.7695 0.1294 0.0610 0.0348 0.0028 0.0011 
+1
+    Largest link dim during sweep 2/5 was 38
+    Largest truncation error: 8.43871e-09
+    Energy after sweep 2/5 is -35.263938249069
+    Sweep 2/5 CPU time = 0.507s (Wall time = 0.519s)
+
+    vN Entropy at center bond b=40 = 0.875191927708
+    Eigs at center bond b=40: 0.7505 0.0845 0.0805 0.0766 0.0023 0.0021 0.0019 0.0011 
+    Largest link dim during sweep 3/5 was 79
+    Largest truncation error: 7.79019e-11
+    Energy after sweep 3/5 is -35.265227517623
+    Sweep 3/5 CPU time = 0.652s (Wall time = 0.661s)
+Got input.reortho = yes
+1
+
+    vN Entropy at center bond b=40 = 0.883851740697
+    Eigs at center bond b=40: 0.7478 0.0815 0.0812 0.0810 0.0022 0.0022 0.0022 0.0012 
+Got input.calcT = no
+Got input.nLanczos = 100
+    Largest link dim during sweep 4/5 was 135
+    Largest truncation error: 8.11681e-13
+    Energy after sweep 4/5 is -35.265236993281
+    Sweep 4/5 CPU time = 1.044s (Wall time = 1.057s)
+
+    vN Entropy at center bond b=40 = 0.884234065714
+    Eigs at center bond b=40: 0.7477 0.0813 0.0813 0.0813 0.0022 0.0022 0.0022 0.0012 
+    Largest link dim during sweep 5/5 was 154
+    Largest truncation error: 7.80528e-13
+    Energy after sweep 5/5 is -35.265237054082
+    Sweep 5/5 CPU time = 1.391s (Wall time = 1.394s)
+4
+Engine built.
+Got input.nLanczos = 100
+Got input.maxDim = 500
+Got input.etas = 0.1,0.05
+Got input.wi = 0
+Got input.wf = 4
+Got input.nw = 201
+Got input.qfactor = 1.0
+Got input.nLanczos = 100
+Got input.qfactor = 1.0
+Got input.nLanczos = 100
+Got input.qfactor = 1
+1
+Got input.reortho = yes
+Got input.calcT = no
+Got input.nLanczos = 100
+2
+1
+5
+2
+2
+2
+3
+6
+7
+4
+3
+8
+3
+3
+9
+5
+10
+4
+11
+4
+6
+12
+4
+5
+13
+7
+14
+5
+15
+8
+6
+5
+16
+17
+9
+6
+18
+7
+19
+10
+6
+20
+7
+21
+11
+8
+22
+23
+12
+7
+24
+9
+8
+25
+13
+26
+27
+10
+8
+14
+9
+28
+29
+15
+11
+30
+9
+10
+31
+16
+32
+12
+33
+17
+34
+11
+10
+35
+18
+13
+36
+37
+19
+12
+38
+11
+14
+39
+20
+40
+41
+13
+21
+15
+42
+12
+43
+22
+44
+14
+16
+45
+23
+46
+13
+47
+24
+15
+17
+48
+49
+25
+14
+50
+18
+51
+16
+26
+52
+53
+15
+27
+54
+19
+17
+55
+28
+56
+57
+20
+16
+29
+58
+18
+59
+30
+Got input.qfactor = 1
+Reorthogonalizing T.
+Creating W and HP.
+0
+21
+1
+2
+17
+31
+19
+3
+22
+32
+4
+20
+18
+33
+23
+5
+34
+6
+21
+24
+19
+7
+35
+8
+36
+25
+22
+20
+9
+37
+26
+10
+38
+23
+11
+21
+39
+27
+12
+24
+40
+13
+28
+22
+41
+14
+25
+29
+42
+15
+23
+43
+16
+26
+30
+44
+17
+24
+31
+45
+18
+27
+46
+19
+32
+25
+28
+20
+47
+33
+21
+48
+26
+29
+22
+49
+34
+23
+50
+27
+30
+24
+35
+51
+25
+52
+36
+28
+31
+26
+53
+27
+37
+32
+54
+29
+28
+38
+55
+29
+33
+56
+30
+30
+39
+57
+31
+34
+40
+31
+32
+58
+33
+59
+35
+41
+34
+32
+60
+42
+35
+36
+61
+36
+33
+62
+43
+37
+37
+63
+38
+44
+34
+64
+39
+38
+45
+65
+40
+35
+66
+39
+41
+46
+67
+42
+36
+47
+68
+40
+43
+69
+44
+48
+37
+41
+45
+70
+49
+46
+71
+38
+42
+47
+72
+50
+48
+73
+43
+39
+51
+49
+74
+50
+52
+75
+44
+40
+51
+76
+52
+53
+45
+77
+41
+53
+54
+78
+54
+46
+79
+55
+42
+55
+56
+Got input.qfactor = 1
+Reorthogonalizing T.
+Creating W and HP.
+0
+47
+56
+57
+1
+43
+58
+48
+57
+2
+59
+44
+58
+built S
+N = 40
+reortho done.
+Got input.qfactor = 1
+49
+3
+45
+59
+50
+60
+46
+4
+slurmstepd: error: *** STEP 23575660.4 ON nid12952 CANCELLED AT 2019-08-06T02:15:16 DUE TO TIME LIMIT ***
+slurmstepd: error: *** STEP 23575660.5 ON nid12953 CANCELLED AT 2019-08-06T02:15:16 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd: error: *** STEP 23575660.3 ON nid12951 CANCELLED AT 2019-08-06T02:15:16 DUE TO TIME LIMIT ***
+slurmstepd: error: *** STEP 23575660.2 ON nid12950 CANCELLED AT 2019-08-06T02:15:16 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: got SIGCONT
+srun: got SIGCONT
+srun: got SIGCONT
+srun: got SIGCONT
+srun: forcing job termination
+srun: forcing job termination
+srun: forcing job termination
+srun: forcing job termination

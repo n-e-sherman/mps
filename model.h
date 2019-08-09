@@ -201,7 +201,9 @@ class Model
 	    cwd = input.getString("cwd","");
 		N = input.getInt("N",N);
 	    mkdtemp(stoc(cwd + "data"));
+	    cout << "dataDirs: " << cwd + "data" << endl;
 	    mkdtemp(stoc(cwd + "results"));
+	    cout << "dataDirs: " << cwd + "results" << endl;
 	    dataDir = cwd+"data/"+model+"_"+lattice+"_"+std::to_string(N);
 	    mkdtemp(stoc(dataDir));
 	    dataDir += "/"+input.getString("maxDim","");

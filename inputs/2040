@@ -6,7 +6,7 @@ input{
 	lattice = chain
 	N = 20
 	nsweeps = 5
-	nLanczos = 5
+	nLanczos = 40
 	wi = 0
 	wf = 4.0
 	nw = 201
@@ -15,7 +15,7 @@ input{
 	maxDim = 500
 	quiet = no
 	reortho = yes
-	cwd = /Users/nsherman/Documents/Research/Joel/spectral/
+	cwd = /global/u2/n/nsherman/spectral/
 
 sweeps
     {
