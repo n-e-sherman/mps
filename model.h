@@ -180,8 +180,6 @@ class Model
         H = readFromFile<MPO>(dataDir+"H");
         psi0 = readFromFile<MPS>(dataDir+"psi0");
         E0 = readFromFile<Real>(dataDir+"E0");
-        dataDir = readFromFile<string>(dataDir+"dataDir");
-        resDir = readFromFile<string>(dataDir+"resDir");
         sites = readFromFile<SpinHalf>(dataDir+"sites");
         N = psi0.length();
 	}
@@ -192,8 +190,6 @@ class Model
 		writeToFile(dataDir+"psi0",psi0);
         writeToFile(dataDir+"H",H);
         writeToFile(dataDir+"E0",E0);
-        writeToFile(dataDir+"dataDir",dataDir);
-        writeToFile(dataDir+"resDir",resDir);
         writeToFile(dataDir+"sites",sites);
 	}
 
