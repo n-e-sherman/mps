@@ -45,7 +45,7 @@ sweeps
 baseSlurm = '''#!/bin/bash -l
 #SBATCH --qos=regular
 #SBATCH --nodes=6
-#SBATCH --time=48:00
+#SBATCH --time=48:00:00
 #SBATCH --licenses=cscratch1
 #SBATCH --constraint=haswell
 #SBATCH --mail-type=begin,end,fail
