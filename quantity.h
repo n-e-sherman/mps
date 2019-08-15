@@ -17,23 +17,27 @@ using namespace std;
 // "modelname_lattice_systemsize_eta_qfactor_w_quantity"
 class Quantity
 {
+protected:
 	Model *M;
 	MPO H;
 	MPS psi0; // Ground state.
 	Real E0;
+	int N;
+	string dataDir;
+	string resDir;
+	SiteSet sites; // May want to generalize this?
+	IndexSet is;
+    InputGroup input;
+
+	/////////// IN SUBCLASS ////////////
+
 	CMatrix T;
     CMatrix TR;
 	vector<MPS> V;
-	int N;
 	int c;
 	int nMax;
 	Args args;
-	SpinHalf sites; // May want to generalize this?
-	IndexSet is;
-    InputGroup input;
     MPS correction;
-	string dataDir;
-	string resDir;
 	MPS psii; // psii = S^z_c|psi0>
     Real psiiNorm;
     Real spectralNorm;
@@ -41,17 +45,15 @@ class Quantity
     vector<string> setas;
     vector<Cplx> etas;
     vector<Real> omegas;
+	CMatrix HP; 
+	CMatrix W; 
+	CMatrix K; 
+	CMatrix ST;
+	CMatrix S;
+	CVector Norm;
+	int path; 
 
-   CMatrix HP; 
-   CMatrix W; 
-   CMatrix K; 
-   CMatrix ST;
-   CMatrix S;
-   CVector Norm;
-
-   int path; 
-
-	public:
+public:
 
 	Quantity() {}
 	Quantity(Model* m,InputGroup i) : input(i) {M = m;}

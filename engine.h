@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include "itensor/all.h"
+#include "Heisenberg.h"
 #include "model.h"
 #include "quantity.h"
 // #include "krylov.h"
@@ -23,10 +24,6 @@ class Engine
     Model* M;
     Quantity* Q;
     InputGroup input;
-    MPS correction;
-    Real energy;
-    CMatrix T;
-    Args args;
 
     public:
     
@@ -39,17 +36,41 @@ class Engine
     build()
     {
         // auto temp = InputGroup(input);
-        M = new Model(input);
-        if(!M->build()) return false;
-        cout << "Engine built." << endl;
+        getLattice();
+        getModel();
+        M->build();
+        M->setPsii();
+        M->setPsi0();
         return true;
     }
 
     void
     compute()
     {
-        Q = new Quantity(M,input);
+        getQuantity();
         Q->calculate();
+    }
+
+    void
+    getLattice()
+    {
+    	auto i = 0;
+    }
+
+    void
+    getModel()
+    {
+        auto modelName = input.getString("Model","Heisenberg");
+        if(modelName == "Heisenberg")
+        {
+            M = new Heisenberg(input);
+        }
+    }
+
+    void
+    getQuantity()
+    {
+        Q = new Quantity(M,input);
     }
 
 };
