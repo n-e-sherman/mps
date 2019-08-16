@@ -1,11 +1,12 @@
-old_code.cc
 /data
 /results
 /old
 /old-2
+/.debug_objs
+/inputs
+old_code.cc
 TODO
 trash
-/.debug_objs
 main
 main-g
 main.o
@@ -13,6 +14,5 @@ main.o
 plot.py
 *.sh
 input
-/inputs
 input-temp
 Makefile

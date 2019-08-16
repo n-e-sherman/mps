@@ -10,8 +10,8 @@
 #include "Heisenberg.h"
 #include "model.h"
 #include "quantity.h"
-// #include "krylov.h"
-// #include "krylovfull.h"
+#include "structurefactor.h"
+#include "spectralweights.h"
 #include <cmath>
 
 using namespace itensor;
@@ -32,7 +32,7 @@ class Engine
     Engine(){}
     Engine(InputGroup i) : input(i) {}
 
-    bool
+    void
     build()
     {
         // auto temp = InputGroup(input);
@@ -41,7 +41,6 @@ class Engine
         M->build();
         M->setPsii();
         M->setPsi0();
-        return true;
     }
 
     void
@@ -60,7 +59,7 @@ class Engine
     void
     getModel()
     {
-        auto modelName = input.getString("Model","Heisenberg");
+        auto modelName = input.getString("model","Heisenberg");
         if(modelName == "Heisenberg")
         {
             M = new Heisenberg(input);
@@ -70,7 +69,11 @@ class Engine
     void
     getQuantity()
     {
-        Q = new Quantity(M,input);
+    	auto quantityName = input.getString("quantity","weights");
+    	if(quantityName == "weights")
+	        Q = new SpectralWeights(M,input);
+	    else
+	    	Q = new StructureFactor(M,input);
     }
 
 };

@@ -16,7 +16,7 @@ main(int argc, char* argv[])
         name = argv[1];
     auto input = InputGroup(name,"input");
     Engine eng(input);
-    if(!eng.build()) return EXIT_FAILURE;
+    eng.build();
     eng.compute();
     return 0;
 }

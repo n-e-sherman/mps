@@ -24,9 +24,10 @@ inputs = {
     "nw": "201",
     "etas": "0.1,0.2",
     "qfactor": "1.0",
-    "maxDim": "400",
+    "maxDim": "512",
     "quiet": "no",
-    "reortho": "yes"
+    "reortho": "yes",
+    "quantity": "weights"
 }
 cwd = os.getcwd()
 inputs["cwd"] = cwd + "/"
@@ -56,8 +57,10 @@ baseSlurm = '''#!/bin/bash -l
 runBase = 'srun -n 1 -c 2 --cpu_bind=cores ./main '
 
 W = 4.0  # roughly width of spectrum
-Ns = [str(x) for x in range(2, 11)]
-nLs = ['40' if i > 5 else str(2**i) for i in range(2, 11)]
+# Ns = [str(x) for x in range(2, 11)]
+# nLs = ['40' if i > 5 else str(2**i) for i in range(2, 11)]
+Ns = ['32']
+nLs=['80']
 os.makedirs('inputs/', exist_ok=True)
 for N, nL in zip(Ns, nLs):
     label = N + nL
