@@ -117,8 +117,8 @@ public:
         }
         nMax=i;
         // write();
-        auto SF = StructureFactor(M,input);
-        SF.calculate();
+        // auto SF = StructureFactor(M,input);
+        // SF.calculate();
 
     }
 
