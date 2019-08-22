@@ -10,6 +10,7 @@
 #include "Heisenberg.h"
 #include "model.h"
 #include "quantity.h"
+#include "lattice.h"
 #include "structurefactor.h"
 #include "spectralweights.h"
 #include <cmath>
@@ -24,6 +25,7 @@ class Engine
     Model* M;
     Quantity* Q;
     InputGroup input;
+    Lattice lattice;
 
     public:
     

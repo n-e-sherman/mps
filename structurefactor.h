@@ -39,6 +39,8 @@ protected:
 	CMatrix ST;
 	CMatrix S;
 	CVector Norm;
+    bool readT  = false;
+    bool readTR = false;
 
 public:
 
@@ -51,47 +53,27 @@ public:
     {
         set();
         makeDirs();
-        setPsii();
-        auto r = input.getYesNo("reortho",0);
-        tag = "";
-        if(r) tag = "_R"; 
-        if(pathExists(dataDir+"T"+tag) & !input.getYesNo("calcT",0)) // Already have T
-        {
-            read();
-            calcResult();
-        }
-        else // Need to calculate T
-        {
-            tag="";
-            calcT();
-            write();
-            calcResult();
-            if(r) 
-            {
-                tag="_R";
-                reorthogonalize();
-                write();
-                calcResult();
-            }
-        }
+        read();
+        calcT();
+        reorthognalize();
     }
 
     void
-    calcResult()
+    calcResult(CMatrix &M)
     {
 
         auto qfactor = input.getReal("qfactor",1); // q = qfactor * pi * N/(N+1)
-        auto S = calcSpectral();
+        auto S = calcSpectral(M);
         writeResult(S);
     }
 
     vector<vector<Real>>
-    calcSpectral() 
+    calcSpectral(CMatrix &M) 
     {
         // output will be S[eta][omega]
         Vector d;
         CMatrix U;
-        auto Tref = subMatrix(T,0,nMax,0,nMax);
+        auto Tref = subMatrix(M,0,nMax,0,nMax);
         diagHermitian(Tref,U,d);
         Print(d);
         vector<vector<Real>> result;
@@ -147,11 +129,15 @@ public:
             i+=1;
         }
         nMax = i;
+        write();
+        calcResult(T);
     }
 
     void
     reorthogonalize()
     {
+        auto r = input.getYesNo("reortho",0);
+        if(!r) return;
         cout << "Reorthogonalizing T." << endl;
         HP = CMatrix(nMax,nMax);
         for (auto &el : HP) el = Cplx(NAN,NAN);
@@ -163,6 +149,8 @@ public:
         for (auto &el : ST) el = Cplx(NAN,NAN);
         S  = CMatrix(nMax,nMax);
         for (auto &el : S) el = Cplx(NAN,NAN);
+        TR = CMatrix(nMax,nMax);
+        for (auto &el : TR) el = Cplx(0,0);
         Norm  = CVector(nMax);
         for (auto &el : Norm) el = Cplx(NAN,NAN);
 
@@ -179,22 +167,20 @@ public:
         }
         S(0,0) = 1;
         Norm(0) = sqrt(W(0,0));
-        // getS(nMax-1,nMax-1);
-        for(auto n : range(nMax))
-        for(auto i : range(n+1)) {cout << "Getting S : " << i << "," << n << endl; getS(i,n);}
-        // for(auto i =nMax-1; i >= nMax/2; i--) getS(i,nMax-1);
+        for(auto i : range(nMax)) getS(i,nMax-1);
         cout << "built S" << endl;
-        Print(N);
 
-        for(auto &el : T) el = Cplx(0,0);
+        for(auto &el : TR) el = Cplx(0,0);
 
         for(auto n : range(nMax))
         for(auto m : range(nMax))
         for(auto i: range(n+1))
         for(auto j: range(m+1))
-            T(n,m) += conj(S(i,n))*S(j,m)*HP(i,j);
+            TR(n,m) += conj(S(i,n))*S(j,m)*HP(i,j);
 
         cout << "reortho done." << endl;
+        write();
+        calcResult(TR);
     }
 
     Cplx
@@ -203,7 +189,7 @@ public:
         if(!isnan(S(i,j).real())) return S(i,j);
 
         Cplx val = Cplx(0,0);
-        val = getST(i,j)/getN(j); // WAS THIS A BUG!?!?!?
+        val = getST(i,j)/getN(j);
         S(i,j) = val;
         return val;
     }
@@ -325,6 +311,7 @@ public:
         auto retas = stringToVector(temp);
         for(auto x : retas) etas.push_back(Cplx(0,x));
         omegas = getOmegas();
+        setPsii;
     }
 
     void
@@ -349,9 +336,20 @@ public:
     void
 	read()
 	{
-        T = readFromFile<CMatrix>(dataDir+"T"+tag);
-        nMax = readFromFile<int>(dataDir+"nMax");
-        psiiNorm = readFromFile<Real>(dataDir+"psiiNorm");
+        if(pathExists(dataDir + "T"))
+        {
+            readT = true;
+            T = readFromFile<CMatrix>(dataDir+"T");
+            nMax = readFromFile<int>(dataDir+"nMax");
+            psiiNorm = readFromFile<Real>(dataDir+"psiiNorm");
+        }
+        if(pathExists(dataDir + "T_R"))
+        {
+            readTR = true;
+            TR = readFromFile<CMatrix>(dataDir+"T_R");
+            nMax = readFromFile<int>(dataDir+"nMax");
+            psiiNorm = readFromFile<Real>(dataDir+"psiiNorm");
+        }
 	}
 
 	void

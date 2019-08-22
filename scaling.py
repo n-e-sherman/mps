@@ -60,7 +60,9 @@ for i, os, ws, rs in zip(iterations, omegas, weights, residuals):
     ys = np.array(os)
     zs = np.array(ws)
     inds = np.where(zs > 1e-2)
+    # inds = np.array([i for i in range(len(os))])
     plt.scatter(xs[inds], ys[inds], c=zs[inds], s=5, cmap=cm.YlOrRd)
+    # plt.scatter(xs[inds], ys[inds], c=zs[inds], s=5, cmap=cm.cool)
     # for o, w, r in zip(os, ws, rs):
     #     plt.scatter(i, o, s=1)
 plt.colorbar()
