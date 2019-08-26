@@ -100,6 +100,7 @@ public:
 	void
 	calcT()
     {
+        if(readT) return;
     	auto maxIter = input.getInt("nLanczos",50);
         psii.position(c);
         H.position(c);
@@ -138,6 +139,7 @@ public:
     {
         auto r = input.getYesNo("reortho",0);
         if(!r) return;
+        if(readTR) return;
         cout << "Reorthogonalizing T." << endl;
         HP = CMatrix(nMax,nMax);
         for (auto &el : HP) el = Cplx(NAN,NAN);

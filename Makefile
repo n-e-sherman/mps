@@ -13,7 +13,7 @@ APP=test
 
 # 4. Add any headers your program depends on here. The make program
 #    will auto-detect if these headers have changed and recompile your app.
-HEADERS=engine.h model.h quantity.h util.h heisenberg.h structurefactor.h spectralweights.h
+HEADERS=engine.h model.h quantity.h util.h heisenberg.h structurefactor.h spectralweights.h service.h read.h lattice.h chain.h thermalchain.h
 
 # 5. For any additional .cc (source) files making up your project,
 #    add their full filenames here.
