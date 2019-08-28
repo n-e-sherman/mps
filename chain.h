@@ -15,7 +15,7 @@ protected:
 
 
 public:
-	Chain(int N){ for(auto i : range(N-1)) bonds.push_back(bond(i,i+1,physical)); }
+	Chain(int N){ for(auto i : range1(N-1)) bonds.push_back(bond(i,i+1,physical)); }
 };
 
 #endif

@@ -1,7 +1,5 @@
 #include "itensor/all.h"
-#include "engine.h"
-#include "model.h"
-#include "quantity.h"
+#include "factory.h"
 #include <iostream>
 #include <cstdlib>
 
@@ -15,9 +13,8 @@ main(int argc, char* argv[])
     if(argc >= 2)
         name = argv[1];
     auto input = InputGroup(name,"input");
-    Engine eng(input);
-    eng.build();
-    eng.compute();
+    Factory factory(&input);
+    factory.run();
     return 0;
 }
 

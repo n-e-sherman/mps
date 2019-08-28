@@ -7,7 +7,7 @@
 using namespace std;
 using namespace itensor;
 
-class Lattice : public Service
+class Lattice
 {
 public:
 	enum bondType
@@ -18,21 +18,19 @@ public:
 protected:
 	struct bond
 	{
-		bond(int x1, int x2, bondType s) {s1=x1; s2=x2; t=s;}
 		int s1 = 0;
 		int s2 = 0;
 		bondType t = physical;
+		bond(int x1, int x2, bondType s) {s1=x1; s2=x2; t=s;}
 	};
 	vector<bond> bonds;
 
 public:
 
-	Lattice() {};
-	Lattice(int N) {};
-	Lattice(Args a) : Service(a) {};
-	void calc() {};
-
-	vector<bond>::iterator begin(){return bonds.begin();};
+	Lattice() {}
+	Lattice(int N) {}
+	~Lattice(){}
+	vector<bond>::iterator begin(){return bonds.begin();}
 	vector<bond>::iterator end() { return bonds.end(); }
 
 

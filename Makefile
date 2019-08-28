@@ -9,12 +9,11 @@ LIBRARY_DIR=$(HOME)/itensor
 #    set APP to 'myappname'. Running 'make' will compile the app.
 #    Running 'make debug' will make a program called 'myappname-g'
 #    which includes debugging symbols and can be used in gdb (Gnu debugger);
-APP=test
+APP=main
 
 # 4. Add any headers your program depends on here. The make program
 #    will auto-detect if these headers have changed and recompile your app.
-HEADERS=engine.h model.h quantity.h util.h heisenberg.h structurefactor.h spectralweights.h service.h read.h lattice.h chain.h thermalchain.h
-
+HEADERS= builder.h calculator.h chain.h factory.h groundstatecalculator.h heisenberg.h lattice.h latticebuilder.h model.h modelbuilder.h service.h sitebuilder.h thermalchain.h validator.h
 # 5. For any additional .cc (source) files making up your project,
 #    add their full filenames here.
 CCFILES=$(APP).cc
