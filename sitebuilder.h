@@ -5,7 +5,8 @@
 #include "builder.h"
 #include "thermalchain.h"
 #include "chain.h"
-/* Add lattice types in include. */
+
+/* TODO: MAKE A REAL CACHE, THIS IS SUPER JANKY.*/
 SiteSet Cache;
 bool readIn = false;
 
@@ -17,7 +18,6 @@ public:
 	~SiteBuilder(){}
 	SiteSet build(InputGroup* input)
 	{
-		cout << "hi" << endl;
 		if(readIn) {cout << "reading cache. " << endl; return Cache; }
 		SiteSet sites;
 		auto sType = input->getString("siteType","spinHalf");

@@ -7,6 +7,8 @@
 #include "sitebuilder.h"
 #include "groundstatecalculator.h"
 
+/* Memory manage the new pointers. */
+
 class Factory
 {
 
@@ -17,10 +19,13 @@ private:
 	SiteBuilder*    siteFactory()    {return new SiteBuilder(); }
 
 	GroundStateCalculator* groundStateFactory() {return new GroundStateCalculator(modelFactory(), siteFactory()); }
+
+	
 public:
 
 	Factory(){}
 	Factory(InputGroup* i) {input = i;}
+	~Factory(){}
 	void run()
 	{
 		/* TODO: This needs to be general, just for testing.*/
