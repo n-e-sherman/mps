@@ -1,5 +1,5 @@
 #include "itensor/all.h"
-#include "factory.h"
+#include "infrastructure/factory.h"
 #include <iostream>
 #include <cstdlib>
 

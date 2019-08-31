@@ -1,0 +1,288 @@
+srun: Warning: can't run 1 processes on 8 nodes, setting nnodes to 1
+srun: Warning: can't run 1 processes on 2 nodes, setting nnodes to 1
+srun: Warning: can't run 1 processes on 4 nodes, setting nnodes to 1
+srun: Warning: can't run 1 processes on 8 nodes, setting nnodes to 1
+srun: Warning: can't run 1 processes on 4 nodes, setting nnodes to 1
+srun: Warning: can't run 1 processes on 8 nodes, setting nnodes to 1
+Got input.model = Heisenberg
+Got input.lattice = chain
+Got input.cwd = /global/u2/n/nsherman/spectral/
+Got input.N = 20
+Got input.maxDim = 500
+Got input.maxDim = 500
+Got input.dmrg = no
+Got input.nsweeps = 5
+
+    vN Entropy at center bond b=10 = 0.533869412831
+    Eigs at center bond b=10: 0.8546 0.1009 0.0306 0.0135 
+    Largest link dim during sweep 1/5 was 32
+    Largest truncation error: 6.0785e-07
+    Energy after sweep 1/5 is -8.679845634770
+    Sweep 1/5 CPU time = 0.0988s (Wall time = 0.237s)
+
+    vN Entropy at center bond b=10 = 0.634245796356
+    Eigs at center bond b=10: 0.8355 0.0547 0.0545 0.0543 
+    Largest link dim during sweep 2/5 was 22
+    Largest truncation error: 7.92458e-09
+    Energy after sweep 2/5 is -8.682472722181
+    Sweep 2/5 CPU time = 0.134s (Wall time = 0.102s)
+
+    vN Entropy at center bond b=10 = 0.634567381354
+    Eigs at center bond b=10: 0.8354 0.0545 0.0545 0.0545 
+    Largest link dim during sweep 3/5 was 36
+    Largest truncation error: 6.98383e-11
+    Energy after sweep 3/5 is -8.682473318702
+    Sweep 3/5 CPU time = 0.114s (Wall time = 0.0900s)
+
+    vN Entropy at center bond b=10 = 0.634572735473
+    Eigs at center bond b=10: 0.8354 0.0545 0.0545 0.0545 
+    Largest link dim during sweep 4/5 was 45
+    Largest truncation error: 7.56412e-13
+    Energy after sweep 4/5 is -8.682473334272
+    Sweep 4/5 CPU time = 0.115s (Wall time = 0.0950s)
+
+    vN Entropy at center bond b=10 = 0.634573042503
+    Eigs at center bond b=10: 0.8354 0.0545 0.0545 0.0545 
+    Largest link dim during sweep 5/5 was 45
+    Largest truncation error: 7.72594e-13
+    Energy after sweep 5/5 is -8.682473334291
+    Sweep 5/5 CPU time = 0.131s (Wall time = 0.0993s)
+terminate called after throwing an instance of 'itensor::ITError'
+  what():  Couldn't open file "/global/u2/n/nsherman/spectral/data/Heisenberg_chain_20/500/psi0" for writing
+srun: error: nid00971: task 0: Aborted
+srun: Terminating job step 23489839.0
+Got input.model = Heisenberg
+Got input.lattice = chain
+Got input.cwd = /global/u2/n/nsherman/spectral/
+Got input.N = 90
+Got input.maxDim = 500
+Got input.maxDim = 500
+Got input.dmrg = no
+Got input.nsweeps = 5
+
+    vN Entropy at center bond b=45 = 0.550562319624
+    Eigs at center bond b=45: 0.8148 0.1673 0.0132 0.0040 
+    Largest link dim during sweep 1/5 was 21
+    Largest truncation error: 3.02064e-07
+    Energy after sweep 1/5 is -39.656029030134
+    Sweep 1/5 CPU time = 0.545s (Wall time = 0.512s)
+Got input.model = Heisenberg
+Got input.lattice = chain
+Got input.cwd = /global/u2/n/nsherman/spectral/
+Got input.N = 60
+Got input.maxDim = 500
+Got input.maxDim = 500
+Got input.dmrg = no
+Got input.model = Heisenberg
+Got input.lattice = chain
+Got input.cwd = /global/u2/n/nsherman/spectral/
+Got input.N = 40
+Got input.maxDim = 500
+Got input.maxDim = 500
+Got input.dmrg = no
+Got input.nsweeps = 5
+Got input.nsweeps = 5
+
+    vN Entropy at center bond b=45 = 0.847572991269
+    Eigs at center bond b=45: 0.6401 0.3143 0.0257 0.0092 0.0068 0.0021 
+    Largest link dim during sweep 2/5 was 39
+    Largest truncation error: 8.01195e-09
+    Energy after sweep 2/5 is -39.694549600784
+    Sweep 2/5 CPU time = 0.837s (Wall time = 0.636s)
+
+    vN Entropy at center bond b=20 = 0.541208563907
+    Eigs at center bond b=20: 0.8281 0.1494 0.0164 0.0054 
+
+    vN Entropy at center bond b=30 = 0.547698611988
+    Eigs at center bond b=30: 0.8207 0.1590 0.0149 0.0047 
+    Largest link dim during sweep 1/5 was 20
+    Largest truncation error: 2.28278e-07
+    Energy after sweep 1/5 is -17.522057710153
+    Sweep 1/5 CPU time = 0.229s (Wall time = 0.306s)
+    Largest link dim during sweep 1/5 was 32
+    Largest truncation error: 4.05756e-07
+    Energy after sweep 1/5 is -26.373285217891
+    Sweep 1/5 CPU time = 0.372s (Wall time = 0.441s)
+
+    vN Entropy at center bond b=20 = 0.744779698695
+    Eigs at center bond b=20: 0.7964 0.0754 0.0665 0.0587 0.0010 
+    Largest link dim during sweep 2/5 was 35
+    Largest truncation error: 8.03622e-09
+    Energy after sweep 2/5 is -17.541441163994
+    Sweep 2/5 CPU time = 0.320s (Wall time = 0.250s)
+
+    vN Entropy at center bond b=30 = 0.782009013554
+    Eigs at center bond b=30: 0.7793 0.1028 0.0671 0.0466 0.0019 0.0011 
+
+    vN Entropy at center bond b=20 = 0.761614074529
+    Eigs at center bond b=20: 0.7911 0.0686 0.0685 0.0683 
+    Largest link dim during sweep 2/5 was 38
+    Largest truncation error: 7.94804e-09
+    Energy after sweep 2/5 is -26.402635324158
+    Sweep 2/5 CPU time = 0.548s (Wall time = 0.406s)
+
+    vN Entropy at center bond b=45 = 0.956502249976
+    Eigs at center bond b=45: 0.4886 0.4543 0.0228 0.0202 0.0038 0.0034 0.0031 0.0028 
+    Largest link dim during sweep 3/5 was 57
+    Largest truncation error: 8.19674e-11
+    Energy after sweep 3/5 is -17.541473261383
+    Sweep 3/5 CPU time = 0.382s (Wall time = 0.277s)
+    Largest link dim during sweep 3/5 was 83
+    Largest truncation error: 7.989e-11
+    Energy after sweep 3/5 is -39.696434749099
+    Sweep 3/5 CPU time = 1.103s (Wall time = 0.835s)
+
+    vN Entropy at center bond b=20 = 0.761854013033
+    Eigs at center bond b=20: 0.7910 0.0685 0.0685 0.0685 
+    Largest link dim during sweep 4/5 was 90
+    Largest truncation error: 8.17361e-13
+    Energy after sweep 4/5 is -17.541473299569
+    Sweep 4/5 CPU time = 0.438s (Wall time = 0.334s)
+
+    vN Entropy at center bond b=30 = 0.831587400179
+    Eigs at center bond b=30: 0.7662 0.0772 0.0760 0.0747 0.0017 0.0016 0.0015 
+    Largest link dim during sweep 3/5 was 69
+    Largest truncation error: 7.87391e-11
+    Energy after sweep 3/5 is -26.403014101248
+    Sweep 3/5 CPU time = 0.637s (Wall time = 0.500s)
+
+    vN Entropy at center bond b=20 = 0.761855827458
+    Eigs at center bond b=20: 0.7910 0.0685 0.0685 0.0685 
+    Largest link dim during sweep 5/5 was 89
+    Largest truncation error: 7.80232e-13
+    Energy after sweep 5/5 is -17.541473299599
+    Sweep 5/5 CPU time = 0.458s (Wall time = 0.350s)
+terminate called after throwing an instance of 'itensor::ITError'
+  what():  Couldn't open file "/global/u2/n/nsherman/spectral/data/Heisenberg_chain_40/500/psi0" for writing
+srun: error: nid00986: task 0: Aborted
+srun: Terminating job step 23489839.3
+
+    vN Entropy at center bond b=30 = 0.833899962074
+    Eigs at center bond b=30: 0.7655 0.0762 0.0761 0.0761 0.0016 0.0016 0.0016 
+    Largest link dim during sweep 4/5 was 117
+    Largest truncation error: 8.34204e-13
+    Energy after sweep 4/5 is -26.403015145019
+    Sweep 4/5 CPU time = 0.964s (Wall time = 0.744s)
+
+    vN Entropy at center bond b=45 = 0.969052220055
+    Eigs at center bond b=45: 0.4711 0.4689 0.0225 0.0223 0.0035 0.0035 0.0035 0.0034 
+Got input.model = Heisenberg
+Got input.lattice = chain
+Got input.cwd = /global/u2/n/nsherman/spectral/
+Got input.N = 100
+Got input.maxDim = 500
+Got input.maxDim = 500
+Got input.dmrg = no
+Got input.nsweeps = 5
+    Largest link dim during sweep 4/5 was 147
+    Largest truncation error: 8.2084e-13
+    Energy after sweep 4/5 is -39.696464527678
+    Sweep 4/5 CPU time = 1.720s (Wall time = 1.401s)
+Got input.model = Heisenberg
+
+    vN Entropy at center bond b=30 = 0.833934878755
+    Eigs at center bond b=30: 0.7655 0.0761 0.0761 0.0761 0.0016 0.0016 0.0016 
+Got input.lattice = chain
+Got input.cwd = /global/u2/n/nsherman/spectral/
+Got input.N = 80
+Got input.maxDim = 500
+Got input.maxDim = 500
+Got input.dmrg = no
+Got input.nsweeps = 5
+
+    vN Entropy at center bond b=50 = 0.552717081930
+    Eigs at center bond b=50: 0.8174 0.1625 0.0149 0.0045 
+    Largest link dim during sweep 5/5 was 121
+    Largest truncation error: 8.01922e-13
+    Energy after sweep 5/5 is -26.403015146993
+    Sweep 5/5 CPU time = 1.139s (Wall time = 0.860s)
+terminate called after throwing an instance of 'itensor::ITError'
+  what():  Couldn't open file "/global/u2/n/nsherman/spectral/data/Heisenberg_chain_60/500/psi0" for writing
+    Largest link dim during sweep 1/5 was 20
+    Largest truncation error: 1.76588e-07
+    Energy after sweep 1/5 is -44.083962432351
+    Sweep 1/5 CPU time = 0.616s (Wall time = 0.590s)
+srun: error: nid00981: task 0: Aborted
+srun: Terminating job step 23489839.2
+
+    vN Entropy at center bond b=40 = 0.541778247386
+    Eigs at center bond b=40: 0.8231 0.1572 0.0146 0.0045 
+    Largest link dim during sweep 1/5 was 32
+    Largest truncation error: 4.70644e-07
+    Energy after sweep 1/5 is -35.228559972320
+    Sweep 1/5 CPU time = 0.545s (Wall time = 0.479s)
+
+    vN Entropy at center bond b=50 = 0.790199161784
+    Eigs at center bond b=50: 0.7600 0.1520 0.0548 0.0273 0.0035 0.0011 
+
+    vN Entropy at center bond b=40 = 0.787750597664
+    Eigs at center bond b=40: 0.7695 0.1295 0.0610 0.0348 0.0028 0.0011 
+    Largest link dim during sweep 2/5 was 37
+    Largest truncation error: 8.24751e-09
+    Energy after sweep 2/5 is -44.124857338379
+    Sweep 2/5 CPU time = 0.912s (Wall time = 0.700s)
+    Largest link dim during sweep 2/5 was 37
+    Largest truncation error: 7.98712e-09
+    Energy after sweep 2/5 is -35.263923280089
+    Sweep 2/5 CPU time = 0.759s (Wall time = 0.560s)
+
+    vN Entropy at center bond b=45 = 0.969906934939
+    Eigs at center bond b=45: 0.4700 0.4699 0.0225 0.0225 0.0035 0.0035 0.0035 0.0035 
+
+    vN Entropy at center bond b=40 = 0.875929857631
+    Eigs at center bond b=40: 0.7502 0.0844 0.0806 0.0768 0.0023 0.0021 0.0019 0.0011 
+
+    vN Entropy at center bond b=50 = 0.899824154592
+    Eigs at center bond b=50: 0.7410 0.0947 0.0826 0.0725 0.0030 0.0024 0.0019 0.0013 
+    Largest link dim during sweep 5/5 was 161
+    Largest truncation error: 7.98389e-13
+    Energy after sweep 5/5 is -39.696464754395
+    Sweep 5/5 CPU time = 2.390s (Wall time = 1.918s)
+terminate called after throwing an instance of 'itensor::ITError'
+  what():  Couldn't open file "/global/u2/n/nsherman/spectral/data/Heisenberg_chain_90/500/psi0" for writing
+    Largest link dim during sweep 3/5 was 77
+    Largest truncation error: 8.0518e-11
+    Energy after sweep 3/5 is -35.265228872388
+    Sweep 3/5 CPU time = 0.925s (Wall time = 0.721s)
+srun: error: nid00979: task 0: Aborted
+srun: Terminating job step 23489839.1
+    Largest link dim during sweep 3/5 was 87
+    Largest truncation error: 7.82945e-11
+    Energy after sweep 3/5 is -44.127671298098
+    Sweep 3/5 CPU time = 1.249s (Wall time = 0.937s)
+
+    vN Entropy at center bond b=40 = 0.883871488466
+    Eigs at center bond b=40: 0.7478 0.0814 0.0812 0.0810 0.0022 0.0022 0.0022 0.0012 
+    Largest link dim during sweep 4/5 was 135
+    Largest truncation error: 7.98748e-13
+    Energy after sweep 4/5 is -35.265236993482
+    Sweep 4/5 CPU time = 1.475s (Wall time = 1.160s)
+
+    vN Entropy at center bond b=50 = 0.920909936983
+    Eigs at center bond b=50: 0.7347 0.0859 0.0849 0.0839 0.0028 0.0027 0.0027 0.0015 
+    Largest link dim during sweep 4/5 was 160
+    Largest truncation error: 7.85975e-13
+    Energy after sweep 4/5 is -44.127739192521
+    Sweep 4/5 CPU time = 1.983s (Wall time = 1.638s)
+
+    vN Entropy at center bond b=40 = 0.884234519373
+    Eigs at center bond b=40: 0.7477 0.0813 0.0813 0.0813 0.0022 0.0022 0.0022 0.0012 
+    Largest link dim during sweep 5/5 was 153
+    Largest truncation error: 8.11532e-13
+    Energy after sweep 5/5 is -35.265237054018
+    Sweep 5/5 CPU time = 1.960s (Wall time = 1.532s)
+terminate called after throwing an instance of 'itensor::ITError'
+  what():  Couldn't open file "/global/u2/n/nsherman/spectral/data/Heisenberg_chain_80/500/psi0" for writing
+srun: error: nid12675: task 0: Aborted
+srun: Terminating job step 23489839.5
+
+    vN Entropy at center bond b=50 = 0.922802061428
+    Eigs at center bond b=50: 0.7341 0.0851 0.0851 0.0850 0.0028 0.0028 0.0028 0.0015 
+    Largest link dim during sweep 5/5 was 172
+    Largest truncation error: 8.14285e-13
+    Energy after sweep 5/5 is -44.127739887541
+    Sweep 5/5 CPU time = 3.039s (Wall time = 2.328s)
+terminate called after throwing an instance of 'itensor::ITError'
+  what():  Couldn't open file "/global/u2/n/nsherman/spectral/data/Heisenberg_chain_100/500/psi0" for writing
+srun: error: nid00989: task 0: Aborted
+srun: Terminating job step 23489839.4

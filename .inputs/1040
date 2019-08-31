@@ -1,0 +1,32 @@
+input{
+	dmrg = no
+	calcT = yes
+	calcTR = yes
+	calcCor = no
+	model = Heisenberg
+	lattice = chain
+	N = 10
+	nsweeps = 5
+	nLanczos = 40
+	wi = 0
+	wf = 4.0
+	nw = 201
+	etas = 0.1,0.4
+	qfactor = 1.0
+	maxDim = 400
+	quiet = no
+	reortho = yes
+	quantity = weightsnot
+	cwd = /Users/nsherman/Documents/Research/Joel/spectral/
+
+sweeps
+    {
+    maxdim  mindim  cutoff  niter  noise
+    80      20      1E-6    4      1E-7
+    100      20      1E-8    3      1E-8
+    150     10      1E-10   2      1E-10
+    150     10      1E-12   2      0
+    200     10      1E-12   2      0
+    }
+
+}
