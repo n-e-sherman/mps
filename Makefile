@@ -13,7 +13,7 @@ APP=main
 
 # 4. Add any headers your program depends on here. The make program
 #    will auto-detect if these headers have changed and recompile your app.
-HEADERS= builder.h calculator.h chain.h factory.h groundstatecalculator.h heisenberg.h lattice.h latticebuilder.h model.h modelbuilder.h service.h sitebuilder.h thermalchain.h validator.h
+HEADERS= builder.h calculator.h chain.h factory.h groundstatecalculator.h heisenberg.h lattice.h latticebuilder.h model.h modelbuilder.h service.h sitebuilder.h thermalchain.h validator.h cache.h repository.h repositorybuilder.h
 # 5. For any additional .cc (source) files making up your project,
 #    add their full filenames here.
 CCFILES=$(APP).cc
