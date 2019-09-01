@@ -5,28 +5,27 @@
 #include "infrastructure/builder.h"
 #include "lattice/thermalchain.h"
 #include "lattice/chain.h"
-
-/* TODO: MAKE A REAL CACHE, THIS IS SUPER JANKY.*/
-SiteSet Cache;
-bool readIn = false;
+#include "infrastructure/cache.h"
 
 class SiteBuilder : public Builder
 {
 protected:
+	SiteSet sites;
 public:
 	SiteBuilder(){}
 	~SiteBuilder(){}
 	SiteSet build(InputGroup* input)
 	{
-		if(readIn) {cout << "reading cache. " << endl; return Cache; }
-		SiteSet sites;
+		auto cache = Cache::getInstance();
 		auto sType = input->getString("siteType","spinHalf");
 		auto N = input->getInt("N",100);
+		auto hash = to_string(N)+sType;
+		auto s = (SiteSet*)cache->get(hash);
+		if(s != nullptr) {sites = *s; return sites; }
 		if     (sType == "spinHalf"){ sites = SpinHalf(N); }
 		else if(sType == "spinOne") { sites = SpinOne(N);  }
 		else if(sType == "spinTwo") { sites = SpinTwo(N);  } 
-		Cache = sites;
-		readIn = true;
+		cache->add(hash, &sites);
 		return sites;
 		// TODO: You have no validator to make sure sites was created.
 	}

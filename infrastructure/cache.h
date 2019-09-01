@@ -12,25 +12,26 @@ class Cache
 private:
 	Cache(){}
 	std::map<std::string, void*> cache;
-	static Cache* instance = nullptr;
+	static Cache* instance;
 public:
 	static Cache* getInstance()
 	{
-		if(instance == nullptr)
-			instance = new Cache();
+		if(!instance)
+			instance = new Cache;
 		return instance;
 	}
 
-	void add(std::string& s, void* p)
-	{ 
-		if(cache.find(s) == cache.end()) cache[s] = p; 
+	void add(const std::string& s, void* p)
+	{
+		
+		if(cache.find(s) == cache.end()){cout << "Added " + s + " from cache." << endl; cache[s] = p; }
 	}
-	void* get(std::string& s)
+	void* get(const std::string& s)
 	{ 
-		if(cache.find(s) != cache.end()) return cache(s);
+		if(cache.find(s) != cache.end()) {cout << "Retrieved " + s + " from cache." << endl; return cache[s]; }
 		else return nullptr;
 	}
 
-};
+}; Cache* Cache::instance = nullptr;
 
 #endif

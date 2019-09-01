@@ -19,8 +19,8 @@ private:
 	ModelBuilder*   modelFactory()   {return new ModelBuilder(latticeFactory(), siteFactory()); }
 	SiteBuilder*    siteFactory()    {return new SiteBuilder(); }
 
-	GroundStateCalculator* groundStateFactory() {return new GroundStateCalculator(modelFactory(), siteFactory()); }
-	RepositoryBuilder* repositoryFactor(){return new RepositoryBuilder(); }
+	GroundStateCalculator* groundStateFactory() {return new GroundStateCalculator(modelFactory(), repositoryFactory()); }
+	RepositoryBuilder* repositoryFactory(){return new RepositoryBuilder(); }
 
 
 public:
