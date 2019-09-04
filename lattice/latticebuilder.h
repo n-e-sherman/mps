@@ -8,7 +8,6 @@
 
 class LatticeBuilder : public Builder
 {
-protected:
 public:
 	LatticeBuilder(){}
 	~LatticeBuilder(){}

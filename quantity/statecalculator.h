@@ -4,14 +4,14 @@
 #include "itensor/all.h"
 #include "infrastructure/util.h"
 #include "infrastructure/calculator.h"
-#include "repo/repositorybuilder.h"
-#include "repo/repository.h"
+#include "repository/repositorybuilder.h"
+#include "repository/repository.h"
 #include "model/modelbuilder.h"
 #include "model/sitebuilder.h"
 
 using namespace itensor;
 
-class GroundStateCalculator : public Calculator
+class StateCalculator : public Calculator
 {
 protected:
 	InputGroup* input;
@@ -26,20 +26,15 @@ protected:
 	void calcGroundState()
 	{
 		/* TODO: Add the ability to read in the ground state */
-		calcPsi(); // Only do if NOT read in ground state.
+		calcInitialPsiGS(); // Only do if NOT read in ground state.
 		auto nsweeps = input->getInt("nsweeps",5);
         auto table = InputGroup(*input,"sweeps");
         auto sweeps = Sweeps(nsweeps,table); // how?
-        Print(psi);
-        Print(*(model->getH()));
-        Print(applyMPO(*(model->getH()),psi));
         auto [energy,psiout] = dmrg(*(model->getH()),psi,sweeps,"Quiet");
         E0=energy;
         psi=psiout;
-
-        // E0 = dmrg(psi,*(model->getH()),sweeps,"Quiet");
 	}
-	void calcPsi()
+	void calcInitialPsiGS()
 	{
 		/* TODO: Check for different possible starting states, use inputs. */
 		auto N = input->getInt("N",100);
@@ -51,12 +46,23 @@ protected:
             }
         psi = MPS(state);
 	}
+
+	void calcThermalState()
+	{
+		/* TODO: Fill me in */
+	}
+
+	void calcInitialPsiThermal()
+	{
+		/* TODO: Fill me in */
+	}
 public:
 
-	GroundStateCalculator(ModelBuilder* mb, RepositoryBuilder* rb) : Calculator() {modelBuilder = mb; repoBuilder = rb;}
-	~GroundStateCalculator() {}	
+	StateCalculator(ModelBuilder* mb, RepositoryBuilder* rb) : Calculator() {modelBuilder = mb; repoBuilder = rb; }
+	~StateCalculator() {}	
 	std::tuple<Real,MPS*> calculate(InputGroup* i)
 	{
+		// auto sType = input.getString()
 		input = i;
 		model = modelBuilder->build(input);
 		sites = model->getSites();

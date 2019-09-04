@@ -23,7 +23,6 @@ public:
 
 	void add(const std::string& s, void* p)
 	{
-		
 		if(cache.find(s) == cache.end()){cout << "Added " + s + " from cache." << endl; cache[s] = p; }
 	}
 	void* get(const std::string& s)

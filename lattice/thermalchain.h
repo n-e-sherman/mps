@@ -10,9 +10,6 @@ using namespace itensor;
 
 class ThermalChain : public Lattice
 {
-protected:
-
-
 public:
 	ThermalChain(int N)
 	{ 

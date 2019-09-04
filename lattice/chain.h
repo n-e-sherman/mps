@@ -10,10 +10,6 @@ using namespace itensor;
 
 class Chain : public Lattice
 {
-
-protected:
-
-
 public:
 	Chain(int N){ for(auto i : range1(N-1)) bonds.push_back(bond(i,i+1,physical)); }
 };

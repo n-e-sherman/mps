@@ -1,5 +1,5 @@
-#ifndef __HEISENBERG_H_
-#define __HEISENBERG_H_
+#ifndef __HEISENBERGLOUIVILLE_H_
+#define __HEISENBERGLOUIVILLE_H_
 
 #include <string>
 #include <iostream>
@@ -11,7 +11,7 @@
 using namespace itensor;
 using namespace std;
 
-class Heisenberg : public Model
+class HeisenbergLouiville : public Model
 {
 protected:
 	virtual void calcH()
@@ -25,15 +25,23 @@ protected:
 	            ampo += 0.5,"S-",b.s1,"S+",b.s2;
 	            ampo +=     "Sz",b.s1,"Sz",b.s2;
         	}
+        	if(b.t == Lattice::environment)
+        	{
+	            ampo += -0.5,"S+",b.s1,"S-",b.s2;
+	            ampo += -0.5,"S-",b.s1,"S+",b.s2;
+	            ampo += -1.0,"Sz",b.s1,"Sz",b.s2;
+        	}
         }
         H = toMPO(ampo);
 	}
 public:
-	Heisenberg(){}
-	Heisenberg(Lattice* l, SiteSet s, InputGroup* i) : Model(l,s,i) 
+	HeisenbergLouiville(){}
+	HeisenbergLouiville(Lattice* l, SiteSet s, InputGroup* i) : Model(l,s,i) 
 	{
 		calcH();
 	}
+
+	MPO const * const getL() const {return &H;}
 	~Heisenberg(){}
 };
 #endif
