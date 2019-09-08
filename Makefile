@@ -9,15 +9,16 @@ LIBRARY_DIR=$(HOME)/itensor
 #    set APP to 'myappname'. Running 'make' will compile the app.
 #    Running 'make debug' will make a program called 'myappname-g'
 #    which includes debugging symbols and can be used in gdb (Gnu debugger);
-APP= main
+APP= test
 
 # 4. Add any headers your program depends on here. The make program
 #    will auto-detect if these headers have changed and recompile your app.
 INF_HEADERS= infrastructure/builder.h infrastructure/cache.h infrastructure/calculator.h infrastructure/factory.h infrastructure/service.h infrastructure/util.h infrastructure/validator.h 
 LAT_HEADERS= lattice/chain.h lattice/lattice.h lattice/latticebuilder.h lattice/thermalchain.h 
-MOD_HEADERS= model/heisenberg.h model/model.h model/modelbuilder.h model/sitebuilder.h 
-QTY_HEADERS= quantity/groundstatecalculator.h quantity/statecalculator.h
+MOD_HEADERS= model/heisenberg.h model/model.h model/modelbuilder.h model/sitebuilder.h model/heisenberglouiville.h
+QTY_HEADERS= quantity/quantitycalculatorbuilder.h
 REP_HEADERS= repository/repository.h repository/repositorybuilder.h
+STT_HEADERS= state/groundstate.h state/spectralstate.h state/statecalculator.h state/thermalstate.h state/state.h
 #chain.h factory.h groundstatecalculator.h heisenberg.h lattice.h latticebuilder.h model.h modelbuilder.h service.h sitebuilder.h thermalchain.h validator.h cache.h repository.h repositorybuilder.h
 # 5. For any additional .cc (source) files making up your project,
 #    add their full filenames here.

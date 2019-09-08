@@ -10,6 +10,12 @@
 
 class ModelBuilder : public Builder
 {
+public:
+	enum modelType
+	{
+		normal = 0,
+		thermal = 1
+	};
 protected:
 	LatticeBuilder* latticeBuilder;
 	SiteBuilder* siteBuilder;
@@ -19,18 +25,17 @@ public:
 	ModelBuilder() {}
 	ModelBuilder(LatticeBuilder* lb, SiteBuilder* sb) { latticeBuilder = lb; siteBuilder = sb; }
 	~ModelBuilder(){}
-	Model* build(InputGroup* input)
+	Model* build(InputGroup* input, modelType mType = normal) // Make a general argument system and pass that and put the enum in it
 	{
 		sites = siteBuilder->build(input);
 		lattice = latticeBuilder->build(input);
 		auto model = input->getString("model","Heisenberg");
 		auto thermal = input->getYesNo("thermal",0);
 		Model* M;
-		/* This logic needs to get Louiville when thermal and spectral. */
 		if(model == "Heisenberg") 
 		{
-			if(thermal) M = new HeisenbergLouiville(lattice,site,inputs);
-			else M = new Heisenberg(lattice, sites, input);
+			if(mType == normal) M = new Heisenberg(lattice, sites, input);
+			else if(mType == thermal) M = new HeisenbergLouiville(lattice, sites, input);
 		}
 
 		// Fill in other models as they come up.

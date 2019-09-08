@@ -19,7 +19,7 @@ public:
 	template<class T> 
 	T read(const std::string& fname) { return readFromFile<T>(fname); }
 	template<class T>
-	void writeData(const std::string& fname, const T& t) { writeToFile<T>('.data/'+fname,t); }
+	void writeData(const std::string& fname, const T& t) { writeToFile<T>(".data/"+fname,t); }
 	template<class T>
 	void writeResult(const std::string &s,const T& data)
 	{
@@ -27,7 +27,7 @@ public:
 		 * example: vector<vector<.>>. The outer iterable are
 		 * rows, and the inner iterable is a row.
 		 */
-		auto fname = '.results/'+s;
+		auto fname = ".results/"+s;
 		std::fstream file;
 		file.open(fname);
 		for(const auto & row : data)

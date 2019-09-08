@@ -8,6 +8,8 @@
 // #include "heisenbergchain.h"
 #include "infrastructure/util.h"
 #include <cmath>
+#include <string>
+ #include <typeinfo>
 
 using namespace itensor;
 using namespace std;
@@ -29,8 +31,14 @@ public:
 		sites = s;
 	}
 	virtual ~Model(){}
-	MPO const * const getH() const {return &H;}
+	MPO const * const getH() const {return &H; }
 	SiteSet getSites() const {return sites;}
+	static string getHash(Lattice* l, SiteSet s)
+	{
+		return l->getHash() +  "_" + to_string(s.si(1).dim()); // This is not unique if you do fermions, may have to change later.
+	}
+	virtual string getHash() {return Model::getHash(lattice,sites); }
+
 
 };
 

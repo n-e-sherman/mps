@@ -11,11 +11,17 @@ using namespace itensor;
 class ThermalChain : public Lattice
 {
 public:
-	ThermalChain(int N)
+	ThermalChain(){}
+	ThermalChain(int L) : Lattice(L)
 	{ 
 		for(auto i : range1(N-1)) bonds.push_back(bond(2*i,2*(i+1),physical));
 		for(auto i : range1(N-1)) bonds.push_back(bond(2*i+1,2*(i+1)+1,environment));
 	}
+	static string getHash(int L)
+	{
+		return "ThermalChain_" + Lattice::getHash(L);
+	}
+	virtual string getHash(){ return ThermalChain::getHash(N); }
 
 };
 

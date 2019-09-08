@@ -1,1 +1,1 @@
-spectralCalculator.h
+spectralcalculator.h

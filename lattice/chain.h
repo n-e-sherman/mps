@@ -11,7 +11,13 @@ using namespace itensor;
 class Chain : public Lattice
 {
 public:
-	Chain(int N){ for(auto i : range1(N-1)) bonds.push_back(bond(i,i+1,physical)); }
+	Chain(){}
+	Chain(int L) : Lattice(L) { for(auto i : range1(N-1)) bonds.push_back(bond(i,i+1,physical)); }
+	static string getHash(int N)
+	{
+		return "Chain_" + Lattice::getHash(N);
+	}
+	virtual string getHash(){ return Chain::getHash(N); }
 };
 
 #endif

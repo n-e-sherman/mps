@@ -13,6 +13,6 @@ class Calculator : public Service
 public:
 
 	Calculator() : Service() {}
-	~Calculator() {}	
+	virtual ~Calculator() {}	
 };
 #endif
