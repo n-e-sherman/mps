@@ -15,37 +15,43 @@ using namespace std;
 class ThermalState : public State
 {
 protected:
-	Model* model;
 
 	void calcThermalState()
 	{
-		/* Imaginary time evolved psi. */
+		calcPsii();
+		/* Implement cooling */
 	}
-	void calcPsi()
+	void calcPsii() // Makes an infinite temperature state via purification.
 	{
-		/* Make maximally entangled state */
+		auto sites = model->getSites();
+		*state = MPS(sites);
+		auto N = sites.length();
+    	for(int n = 1; n <= 2*N; n += 2)
+        {
+	        auto s1 = sites(n);
+	        auto s2 = sites(n+1);
+	        auto wf = Tensor(s1,s2);
+	        wf.set(s1(1),s2(2), ISqrt2);
+	        wf.set(s1(2),s2(1), -ISqrt2);
+	        Tensor D;
+	        psi->Aref(n) = Tensor(s1);
+	        psi->Aref(n+1) = Tensor(s2);
+	        svd(wf,psi->Aref(n),D,psi->Aref(n+1));
+	        psi->Aref(n) *= D;
+        }
 	}
 
 public:
 
-	ThermalStateCalculator(Model* m, InputGroup* i) : State(i) 
+	ThermalState(Args* a, Model* m) : State(a,m)
 	{
-		model = m;
+		beta = args->getReal("beta",0);
 		calcThermalState();
 	}
-	~ThermalStateCalculator() {}	
-	// MPS const * const calculate(InputGroup* i)
-	// {
-	// 	input = i;
-	// 	model = modelBuilder->build(input);
-	// 	sites = model->getSites();
-	// 	repo = repoBuilder->build();
-	// 	calcThermalState();
-	// 	return &psi;
-	// }
+	~ThermalState() {}	
 	static string getHash(Model* m)
 	{
-		return "ThermalState_" + m->getHash(); // Going to want a value for beta too.
+		return "ThermalState_" + State::getHash(m);
 	}
 	virtual string getHash() {return ThermalState::getHash(model); }
 };

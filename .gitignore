@@ -1,10 +1,8 @@
-/data
-/results
-/old
-/old-2
-/old-3
+/.data
+/.results
+/.old
 /.debug_objs
-/inputs
+/.inputs
 old_code.cc
 TODO
 trash

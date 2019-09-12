@@ -14,23 +14,30 @@ using namespace std;
 
 class State
 {
-public:
-	struct stateInfo
-	{
-		MPS* state;
-		Real value;
-	};
 protected:
-	InputGroup* input;
-	MPS state;
+	/* Inputs */
+	Args* args;
 	SiteSet sites;
+	Model* model;
+
+	/* Outputs */
+	Real E0;
+	MPS state;
 
 public:
-	State(InputGroup* i) 
+	State(Model* m, Args* a) 
 	{
-		input = i;
+		model = m;
+		args = a;
+		E0 = 0;
 	}
-
-	virtual stateInfo getState() {return stateInfo{&state, -1}; }
+	MPS& applyMPO(const MPO& H){ return applyMPO(H,state,args); }
+	MPS& getState() { return state; }
+	Real getE0() {return E0; }
+	static string getHash(Model* m)
+	{
+		return m->getHash(); // Maybe add some specifications for how you get GS?
+	}
+	virtual string getHash() {return State::getHash(model); }
 };
 #endif

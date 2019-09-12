@@ -1,17 +1,17 @@
 #ifndef __REPOSITORYBUILDER_H_
 #define __REPOSITORYBUILDER_H_
-#include "infrastructure/builder.h"
 #include "repository/repository.h"
 
 
-class RepositoryBuilder : public Builder
+class RepositoryBuilder
 {
 public:
 	RepositoryBuilder() {}
 	~RepositoryBuilder(){}
-	Repository* build()
+	Repository* build(Args* args)
 	{
-		return new Repository();
+		auto cwd = args->getString("cwd","./")
+		return new Repository(cwd);
 	}
 };
 #endif

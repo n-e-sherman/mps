@@ -13,7 +13,6 @@ protected:
 public:
 
 	Service() {}
-	~Service() {}
-	/* Maybe include build, calculate, validate */
+	virtual ~Service() {}
 };
 #endif

@@ -70,6 +70,19 @@ stoc(std::string x)
     return y;
 }
 
+Args* argsFromFile(string fname)
+{
+    // auto input = InputGroup(fname,"input");
+    // auto file = ifstream(fname);
+    // Args* args;
+    // string line;
+    // while(getline(file,line))
+    // { 
+    //     args->add(line); 
+    // }
+    // return args;
+}
+
 
 
 #endif

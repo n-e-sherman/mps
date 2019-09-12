@@ -13,10 +13,10 @@ APP= test
 
 # 4. Add any headers your program depends on here. The make program
 #    will auto-detect if these headers have changed and recompile your app.
-INF_HEADERS= infrastructure/builder.h infrastructure/cache.h infrastructure/calculator.h infrastructure/factory.h infrastructure/service.h infrastructure/util.h infrastructure/validator.h 
+INF_HEADERS= infrastructure/cache.h infrastructure/factory.h infrastructure/service.h infrastructure/util.h 
 LAT_HEADERS= lattice/chain.h lattice/lattice.h lattice/latticebuilder.h lattice/thermalchain.h 
 MOD_HEADERS= model/heisenberg.h model/model.h model/modelbuilder.h model/sitebuilder.h model/heisenberglouiville.h
-QTY_HEADERS= quantity/quantitycalculatorbuilder.h
+QTY_HEADERS= services/spectralweights.h
 REP_HEADERS= repository/repository.h repository/repositorybuilder.h
 STT_HEADERS= state/groundstate.h state/spectralstate.h state/statecalculator.h state/thermalstate.h state/state.h
 #chain.h factory.h groundstatecalculator.h heisenberg.h lattice.h latticebuilder.h model.h modelbuilder.h service.h sitebuilder.h thermalchain.h validator.h cache.h repository.h repositorybuilder.h

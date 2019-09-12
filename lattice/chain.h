@@ -12,7 +12,11 @@ class Chain : public Lattice
 {
 public:
 	Chain(){}
-	Chain(int L) : Lattice(L) { for(auto i : range1(N-1)) bonds.push_back(bond(i,i+1,physical)); }
+	Chain(int L) : Lattice(L) 
+	{
+		for(auto i : range1(N-1)) bonds.push_back(bond{i,i+1,physical}); 
+		for(auto i : range1(N)) sites.push_back(site{i,physical}); 
+	}
 	static string getHash(int N)
 	{
 		return "Chain_" + Lattice::getHash(N);

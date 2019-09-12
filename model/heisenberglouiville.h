@@ -36,14 +36,14 @@ protected:
 	}
 public:
 	HeisenbergLouiville(){}
-	HeisenbergLouiville(Lattice* l, SiteSet s, InputGroup* i) : Model(l,s,i) 
+	HeisenbergLouiville(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) 
 	{
 		calcH();
 	}
 	~HeisenbergLouiville(){}
 	static string getHash(Lattice* l, SiteSet s)
 	{
-		return "HeisenbergLouiville_" + Model::getHash(l,s); // This is not unique if you do fermions, may have to change later.
+		return "HeisenbergLouiville_" + Model::getHash(l,s);
 	}
 	virtual string getHash() {return HeisenbergLouiville::getHash(lattice,sites); }
 };

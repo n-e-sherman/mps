@@ -17,21 +17,18 @@ using namespace std;
 class GroundState : public State
 {
 protected:
-	Model* model;
-	Real E0;
 
 	void calcGroundState()
 	{
-		/* TODO: Add the ability to read in the ground state */
-		calcPsi(); // Only do if NOT read in ground state.
-		auto nsweeps = input->getInt("nsweeps",5);
+		auto nsweeps = args->getInt("nsweeps",5);
         auto table = InputGroup(*input,"sweeps");
         auto sweeps = Sweeps(nsweeps,table); // how?
+        auto sweeps = Cache::getIstance()->get("sweeps");
         auto [energy,psiout] = dmrg(*(model->getH()),state,sweeps,"Quiet");
         E0=energy;
         state=psiout;
 	}
-	void calcPsi() // May want to make this it's own functionality? you are assuming AF GS.
+	void calcPsii() // May want to make this it's own functionality? you are assuming AF GS.
 	{
 		/* TODO: Check for different possible starting states, use inputs. Might want to handle in statecalculator. */
 		auto N = input->getInt("N",100);
@@ -46,16 +43,16 @@ protected:
 
 public:
 
-	GroundState(Model* m, InputGroup* i) : State(i)
+	GroundState(Args* a,Model* m, MPS& in) : State(a,m)
 	{
-		model = m; 
+		state = in;
 		calcGroundState();
 	}
 	~GroundState() {}	
-	virtual stateInfo getState(){return stateInfo{&state, E0}; }
+	// virtual stateInfo getState(){return stateInfo{&state, E0}; }
 	static string getHash(Model* m)
 	{
-		return "GroundState_" + m->getHash(); // Maybe add some specifications for how you get GS?
+		return "GroundState_" + State::getHash(m); // Maybe add some specifications for how you get GS?
 	}
 	virtual string getHash() {return GroundState::getHash(model); }
 };

@@ -17,21 +17,24 @@ using namespace std;
 class Model
 {
 protected:
-	InputGroup* input;
-	MPO H;
+	/* Inputs */
+	Args* args;
 	Lattice* lattice;
+
+	/* Outputs */
+	MPO H;
 	SiteSet sites;
 
 public:
 	Model(){}
-	Model(Lattice* l, SiteSet s, InputGroup* i) 
+	Model(Args* a, Lattice* l, SiteSet s) 
 	{ 
-		input = i;
+		args = a;
 		lattice = l; 
 		sites = s;
 	}
 	virtual ~Model(){}
-	MPO const * const getH() const {return &H; }
+	MPO& getH() const {return &H; }
 	SiteSet getSites() const {return sites;}
 	static string getHash(Lattice* l, SiteSet s)
 	{

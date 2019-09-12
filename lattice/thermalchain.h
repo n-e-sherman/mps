@@ -14,8 +14,10 @@ public:
 	ThermalChain(){}
 	ThermalChain(int L) : Lattice(L)
 	{ 
-		for(auto i : range1(N-1)) bonds.push_back(bond(2*i,2*(i+1),physical));
-		for(auto i : range1(N-1)) bonds.push_back(bond(2*i+1,2*(i+1)+1,environment));
+		for(auto i : range1(N-1)) bonds.push_back(bond{2*i-1,2*(i+1)-1,physical});
+		for(auto i : range1(N-1)) bonds.push_back(bond{2*i,2*(i+1),environment});
+		for(auto i : range1(N)) sites.push_back(site{2*i-1,physical});
+		for(auto i : range1(N)) sites.push_back(site{2*i,environment});
 	}
 	static string getHash(int L)
 	{

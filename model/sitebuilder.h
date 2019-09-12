@@ -7,18 +7,18 @@
 #include "lattice/chain.h"
 #include "infrastructure/cache.h"
 
-class SiteBuilder : public Builder
+class SiteBuilder
 {
 protected:
 	SiteSet sites;
 public:
 	SiteBuilder(){}
 	~SiteBuilder(){}
-	SiteSet build(InputGroup* input)
+	SiteSet build(Args* args)
 	{
 		auto cache = Cache::getInstance();
-		auto sType = input->getString("siteType","spinHalf");
-		auto N = input->getInt("N",100);
+		auto sType = args->getString("siteType","spinHalf");
+		auto N = args->getInt("N",100);
 		auto hash = to_string(N)+sType;
 		auto s = (SiteSet*)cache->get(hash);
 		if(s != nullptr) {sites = *s; return sites; }

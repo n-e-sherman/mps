@@ -30,7 +30,7 @@ protected:
 	}
 public:
 	Heisenberg(){}
-	Heisenberg(Lattice* l, SiteSet s, InputGroup* i) : Model(l,s,i) 
+	Heisenberg(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) 
 	{
 		calcH();
 	}

@@ -8,6 +8,7 @@
 #include "repository/repository.h"
 #include "model/modelbuilder.h"
 #include "model/sitebuilder.h"
+#include <cmath>
 
 using namespace itensor;
 using namespace std;
@@ -15,27 +16,35 @@ using namespace std;
 class SpectralState : public State
 {
 protected:
+	State* in_state;
+	MPO* op;
 
 	void calcSpectralState()
 	{
-		/* Imaginary time evolved psi. */
-	}
-	void calcPsi()
-	{
-		/* Make maximally entangled state */
+        Sk.position(c);
+        psi0.position(c);
+        psii = applyMPO(Sk,psi0);
+        prepare(psii,psi0);
+        spectralNorm = sqrt(2.0/(N+1));
+        psiiNorm = psii.normalize();
 	}
 
 public:
 
-	SpectralStateCalculator(InputGroup* i) : State(i) 
+	SpectralState(Args* a,Model* m, State* in, MPO& o) : State(a,m)
 	{
+		op = &o;
+		in_state = in;
+		E0 = in_state->getE0();
 		calcSpectralState();
+
 	}
-	~SpectralStateCalculator() {}	
-	static string getHash() // This Hash needs some love.
+	~SpectralState() {}	
+	// virtual stateInfo getState(){return stateInfo{&state, E0}; }
+	static string getHash(Model* m, state* in)
 	{
-		return "SpectralState_" + m->getHash(); // Model is unnecesary, need some type of params, maybe don't even save?
+		return "SpectralState_" + in->getHash(); // Maybe add some specifications for how you get GS?
 	}
-	virtual string getHash() {return SpectralState::getHash(model); }
+	virtual string getHash() {return State::getHash(model); }
 };
 #endif

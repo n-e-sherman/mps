@@ -6,22 +6,32 @@
 #include "infrastructure/util.h"
 #include <fstream>
 #include <iterator>
+#include <string>
 
 using namespace itensor;
+using namespace std;
 
 class Repository
 {
-
+protected:
+	string cwd;
+	Cache* cache;
 public:
-	Repository(){}
+	Repository() {}
+	Repository(string c) : cwd(c) {cache = Cache::getInstance();}
 	virtual ~Repository(){}
 
 	template<class T> 
-	T read(const std::string& fname) { return readFromFile<T>(fname); }
+	T* load(const std::string& hash) 
+	{	 
+		auto ret = cache.get(fname);
+		if(ret != nullptr) return (T*)cache;
+		readFromFile<T>(fname); 
+	}
 	template<class T>
-	void writeData(const std::string& fname, const T& t) { writeToFile<T>(".data/"+fname,t); }
-	template<class T>
-	void writeResult(const std::string &s,const T& data)
+	void save(const std::string& hash, const T& t) { writeToFile<T>(cwd".data/"+fname,t); }
+	template<class T,class LabelT>
+	void write(const std::string &s, const LabelT& labels, const T& data, string delimeter = ",")
 	{
 		/* This function assumes a 2D structure of iterables.
 		 * example: vector<vector<.>>. The outer iterable are
@@ -30,13 +40,20 @@ public:
 		auto fname = ".results/"+s;
 		std::fstream file;
 		file.open(fname);
+		auto it = labels.begin();
+		while(it != labels.end())
+		{
+			file << *it;
+			if(++it != row.end()) file << delimeter;
+		}
+		file << "\n";
 		for(const auto & row : data)
 		{
 			auto it = row.begin();
 			while(it != row.end())
 			{
 				file << *it;
-				if(++it != row.end()) file << ",";
+				if(++it != row.end()) file << delimeter;
 			}
 			file << "\n";
 		}

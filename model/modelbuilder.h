@@ -2,13 +2,12 @@
 #define __MODELBUILDER_H_
 #include "model/heisenberg.h"
 #include "lattice/latticebuilder.h"
-#include "infrastructure/builder.h"
 #include "model/sitebuilder.h"
 #include "model/heisenberglouiville.h"
 /* Add lattice types in include. */
 
 
-class ModelBuilder : public Builder
+class ModelBuilder
 {
 public:
 	enum modelType
@@ -25,7 +24,7 @@ public:
 	ModelBuilder() {}
 	ModelBuilder(LatticeBuilder* lb, SiteBuilder* sb) { latticeBuilder = lb; siteBuilder = sb; }
 	~ModelBuilder(){}
-	Model* build(InputGroup* input, modelType mType = normal) // Make a general argument system and pass that and put the enum in it
+	Model* build(Args* a, modelType mType = normal)
 	{
 		sites = siteBuilder->build(input);
 		lattice = latticeBuilder->build(input);
