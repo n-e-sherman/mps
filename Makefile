@@ -9,16 +9,17 @@ LIBRARY_DIR=$(HOME)/itensor
 #    set APP to 'myappname'. Running 'make' will compile the app.
 #    Running 'make debug' will make a program called 'myappname-g'
 #    which includes debugging symbols and can be used in gdb (Gnu debugger);
-APP= test
+APP= main
 
 # 4. Add any headers your program depends on here. The make program
 #    will auto-detect if these headers have changed and recompile your app.
-INF_HEADERS= infrastructure/cache.h infrastructure/factory.h infrastructure/service.h infrastructure/util.h 
+INF_HEADERS= infrastructure/cache.h infrastructure/factory.h infrastructure/util.h
+KRY_HEADERS= krylov/krylov.h krylov/krylovbuilder.h krylov/reorthogonalize.h
 LAT_HEADERS= lattice/chain.h lattice/lattice.h lattice/latticebuilder.h lattice/thermalchain.h 
-MOD_HEADERS= model/heisenberg.h model/model.h model/modelbuilder.h model/sitebuilder.h model/heisenberglouiville.h
-QTY_HEADERS= services/spectralweights.h
+MOD_HEADERS= model/heisenberg.h model/heisenberglouiville.h model/model.h model/modelbuilder.h model/sitebuilder.h 
 REP_HEADERS= repository/repository.h repository/repositorybuilder.h
-STT_HEADERS= state/groundstate.h state/spectralstate.h state/statecalculator.h state/thermalstate.h state/state.h
+SRV_HEADERS= services/service.h services/spectralbroadening.h services/spectralweights.h
+STT_HEADERS= state/groundstate.h state/spectralstate.h state/state.h state/statebuilder.h state/thermalstate.h
 #chain.h factory.h groundstatecalculator.h heisenberg.h lattice.h latticebuilder.h model.h modelbuilder.h service.h sitebuilder.h thermalchain.h validator.h cache.h repository.h repositorybuilder.h
 # 5. For any additional .cc (source) files making up your project,
 #    add their full filenames here.
@@ -40,10 +41,10 @@ OBJECTS=$(patsubst %.cc,%.o, $(CCFILES))
 GOBJECTS=$(patsubst %,.debug_objs/%, $(OBJECTS))
 
 #Rules ------------------
-%.o: %.cc $(INF_HEADERS) $(LAT_HEADERS) $(MOD_HEADERS) $(QTY_HEADERS) $(REP_HEADERS) $(TENSOR_HEADERS)
+%.o: %.cc $(INF_HEADERS) $(KRY_HEADERS) $(LAT_HEADERS) $(MOD_HEADERS) $(REP_HEADERS) $(SRV_HEADERS) $(STT_HEADERS) $(TENSOR_HEADERS)
 	$(CCCOM) -c $(CCFLAGS) -o $@ $<
 
-.debug_objs/%.o: %.cc $(INF_HEADERS) $(LAT_HEADERS) $(MOD_HEADERS) $(QTY_HEADERS) $(REP_HEADERS) $(TENSOR_HEADERS)
+.debug_objs/%.o: %.cc $(INF_HEADERS) $(KRY_HEADERS) $(LAT_HEADERS) $(MOD_HEADERS) $(REP_HEADERS) $(SRV_HEADERS) $(STT_HEADERS) $(TENSOR_HEADERS)
 	$(CCCOM) -c $(CCGFLAGS) -o $@ $<
 
 #Targets -----------------

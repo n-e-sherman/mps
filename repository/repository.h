@@ -1,7 +1,6 @@
 #ifndef __REPOSITORY_H_
 #define __REPOSITORY_H_
 
-#include <string>
 #include "itensor/all.h"
 #include "infrastructure/util.h"
 #include <fstream>
@@ -55,7 +54,7 @@ public:
 			if(++it != row.end()) file << delimeter;
 		}
 		file << "\n";
-		
+
 		for(const auto & row : data)
 		{
 			auto it = row.begin();

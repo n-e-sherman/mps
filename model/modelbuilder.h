@@ -1,11 +1,14 @@
 #ifndef __MODELBUILDER_H_
 #define __MODELBUILDER_H_
-#include "model/heisenberg.h"
+
+#include "itensor/all.h"
+#include "infrastructure/util.h"
 #include "lattice/latticebuilder.h"
+#include "model/model.h"
+#include "model/heisenberg.h"
 #include "model/sitebuilder.h"
 #include "model/heisenberglouiville.h"
-/* Add lattice types in include. */
-
+#include "model/sitebuilder.h"
 
 class ModelBuilder
 {

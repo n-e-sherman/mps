@@ -1,8 +1,11 @@
 #ifndef __LATTICEBUILDER_H_
 #define __LATTICEBUILDER_H_
+
+#include "itensor/all.h"
+#include "infrastructure/util.h"
 #include "lattice/thermalchain.h"
 #include "lattice/chain.h"
-/* Add lattice types in include. */
+#include "lattice/lattice.h"
 
 
 class LatticeBuilder

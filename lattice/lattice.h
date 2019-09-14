@@ -2,7 +2,6 @@
 #define __LATTICE_H_
 #include <vector>
 #include <string>
-#include "infrastructure/service.h"
 #include "itensor/all.h"
 
 

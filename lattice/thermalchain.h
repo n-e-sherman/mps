@@ -1,7 +1,6 @@
 #ifndef __THERMALCHAIN_H_
 #define __THERMALCHAIN_H_
 #include <vector>
-#include "infrastructure/service.h"
 #include "itensor/all.h"
 #include "lattice/lattice.h"
 

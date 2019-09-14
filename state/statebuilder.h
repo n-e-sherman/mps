@@ -3,15 +3,9 @@
 
 #include "itensor/all.h"
 #include "infrastructure/util.h"
-#include "infrastructure/calculator.h"
 #include "repository/repositorybuilder.h"
-#include "repository/repository.h"
 #include "model/modelbuilder.h"
-#include "model/sitebuilder.h"
-#include "state/groundstate.h"
-#include "state/thermalstate.h"
-#include "state/spectralstate.h"
-#include "state/state.h"
+#include "state/statebuilder.h"
 
 using namespace itensor;
 using namespace std;
@@ -32,7 +26,7 @@ public:
 		spectral = 2
 	};
 
-	StateBuilder(ModelBuilder* mb, RepositoryBuilder* rb, LatticeBuilder* lb) : Builder() {modelBuilder = mb; repoBuilder = rb; latticeBuilder = lb; }
+	StateBuilder(ModelBuilder* mb, LatticeBuilder* lb, RepositoryBuilder* rb,) : Builder() {modelBuilder = mb; repoBuilder = rb; latticeBuilder = lb; }
 	~StateBuilder() {}	
 	State* build(Args* a, stateType sType = ground)
 	{

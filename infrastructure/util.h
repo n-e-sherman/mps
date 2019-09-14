@@ -206,6 +206,41 @@ Args* getArgs(int argc, char* argv[])
     return args;
 }
 
+struct StringReal
+{
+    enum type
+    {
+        Numeric = 0,
+        String = 1
+    };
+    string s = "";
+    Real r = NAN;
+    type t = Numeric;
+    StringReal(Real in)
+    {
+        t = Numeric;
+        r = in;
+    }
+    StringReal(char* in)
+    {
+        t = String;
+        s = string(in);
+    }
+    StringReal(string in)
+    {
+        t = String;
+        s = in;
+    }
+    template<class T>
+    StringReal operator=(const T& t) {return StringReal(t);}
+    friend std::ostream& operator<<( ostream& os, const StringReal& sr) 
+    {
+        if (sr.t == Numeric) os << sr.r;
+        else os << sr.s;
+        return os; 
+    }
+};
+
 
 
 #endif

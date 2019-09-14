@@ -5,7 +5,6 @@
 #include <iostream>
 #include "itensor/all.h"
 #include "infrastructure/util.h"
-#include "quantity.h"
 
 using namespace itensor;
 using namespace std;

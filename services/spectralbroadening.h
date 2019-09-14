@@ -1,11 +1,14 @@
 #ifndef __SPECTRALBROADENING_H_
 #define __SPECTRALBROADENING_H_
 
-#include <string>
-#include <iostream>
 #include "itensor/all.h"
 #include "infrastructure/util.h"
 #include "services/service.h"
+#include "model/modelbuilder.h"
+#include "repository/repositorybuilder.h"
+#include "krylov/krylovbuilder.h"
+#include <string>
+#include <iostream>
 
 using namespace itensor;
 using namespace std;
@@ -30,13 +33,13 @@ private:
 
 	/* Outputs */
 	vector<string> labels;
-	vector<vector<Real>> results;
+	vector<vector<StringReal>> results;
 	Real E0;
 	int iterations;
 
 public:
 	SpectralBroadening() : Service(){}
-	SpectralBroadening(ModelBuilder *mb, RepositoryBuilder* rb, KrylovBuilder* kb) : Service()
+	SpectralBroadening(ModelBuilder *mb, KrylovBuilder* kb, RepositoryBuilder* rb) : Service()
 	{ 
 		modelBuilder = mb;
 		repoBuilder = rb;
