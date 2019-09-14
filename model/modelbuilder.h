@@ -16,31 +16,45 @@ public:
 		thermal = 1
 	};
 protected:
+	Args* args;
 	LatticeBuilder* latticeBuilder;
 	SiteBuilder* siteBuilder;
-	SiteSet sites;
-	Lattice* lattice;
+	RepositoryBuilder* repoBuilder;
+	Repository* repo;
 public:
 	ModelBuilder() {}
-	ModelBuilder(LatticeBuilder* lb, SiteBuilder* sb) { latticeBuilder = lb; siteBuilder = sb; }
+	ModelBuilder(LatticeBuilder* lb, SiteBuilder* sb, RepositoryBuilder* rb) { latticeBuilder = lb; siteBuilder = sb; repoBuilder = rb;}
 	~ModelBuilder(){}
 	Model* build(Args* a, modelType mType = normal)
 	{
-		sites = siteBuilder->build(input);
-		lattice = latticeBuilder->build(input);
-		auto model = input->getString("model","Heisenberg");
-		auto thermal = input->getYesNo("thermal",0);
-		Model* M;
-		if(model == "Heisenberg") 
+		args = a;
+		repo = repoBuilder->build(args);
+		auto modelName = args->getString("Model");
+		if(modelName == "Heisenberg") 
 		{
-			if(mType == normal) M = new Heisenberg(lattice, sites, input);
-			else if(mType == thermal) M = new HeisenbergLouiville(lattice, sites, input);
+			if(mType == normal) 
+			{
+				auto model = repo->load(Model::getHash(args,mType), new Heisenberg());
+				if(model != nullptr) return model;
+				model = Heisenberg(args, latticeBuilde->build(args), siteBuilder->build());
+				repo.save(Model::getHash(args,mType), model);
+				return model;
+			}
+			else if(mType == thermal) 
+			{
+				auto model = repo->load(Model::getHash(args,mType), new HeisenbergLouiville());
+				if(model != nullptr) return model;
+				model = new HeisenbergLouiville(args, latticeBuilde->build(args), siteBuilder->build());
+				repo.save(Model::getHash(args,mType), model);
+				return model;
+			}
+		}
+		else
+		{
+			/* Implement other models here, may want to use else if */
+			return nullptr;
 		}
 
-		// Fill in other models as they come up.
-		// else if(model == "")
-		return M;
-		// TODO: You have no validator that M will be created.
 	}
 };
 #endif

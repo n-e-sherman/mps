@@ -48,7 +48,7 @@ public:
 	Reorthogonalize(){}
 	Reorthogonalize(Args* a, Model* m, State* s) : Krylov(a,m,s)
 	{ 
-        epsilon = args->getReal("eps",0.0001);
+        epsilon = args->getReal("eps");
 		reorthogonalize();
 
 	}
@@ -56,11 +56,22 @@ public:
     virtual CMatrix getT() {return TR; }
     virtual vector<CMatrix> getTs() {return vector<CMatrix>{T,TR}; }
     virtual Matrices* getMatrices() {return new RMatrices(T,TR,S,HP,HP2); }
-	static string getHash()
-	{
-		return "";
-	}
-	virtual string getHash() {return Krylov::getHash(); }
+    virtual void load(ifstream & f)
+    {
+        Krylov::load(f);
+        read(f,S);
+        read(f,HP);
+        read(f,HP2);
+        read(f,TR);
+    }
+    virtual void save(ofstream & f)
+    {
+        Krylov::save(f);
+        write(f,S);
+        write(f,HP);
+        write(f,HP2);
+        read(f,TR);
+    }
 
 	
 protected:

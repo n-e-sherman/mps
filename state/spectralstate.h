@@ -16,6 +16,7 @@ using namespace std;
 class SpectralState : public State
 {
 protected:
+	/* Inputs */
 	State* in_state;
 	MPO* op;
 
@@ -40,11 +41,5 @@ public:
 
 	}
 	~SpectralState() {}	
-	// virtual stateInfo getState(){return stateInfo{&state, E0}; }
-	static string getHash(Model* m, state* in)
-	{
-		return "SpectralState_" + in->getHash(); // Maybe add some specifications for how you get GS?
-	}
-	virtual string getHash() {return State::getHash(model); }
 };
 #endif

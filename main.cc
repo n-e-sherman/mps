@@ -2,7 +2,8 @@
 #include "infrastructure/factory.h"
 #include <iostream>
 #include <cstdlib>
-#include "unistd.h"
+#include "infrastructure/util.h"
+#include "infrastructure/factory.h"
 
 using namespace itensor;
 using namespace std;
@@ -10,14 +11,11 @@ using namespace std;
 int 
 main(int argc, char* argv[])
 {
-
-    auto name = "input";
-    if(argc >= 2)
-        name = argv[1];
-    auto input = InputGroup(name,"input");
-    Factory factory(&input);
-    factory.run();
-    return 0;
+	Args* args = getArgs(argc,argv);
+	auto s1 = SpectralWeightsFactory();
+	auto s2 = SpectralBroadeningFactory();
+	s1.calculate(args);
+	s2.calculate(args);
 }
 
 

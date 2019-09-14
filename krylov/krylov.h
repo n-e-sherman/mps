@@ -56,12 +56,23 @@ public:
 	virtual Matrices* getMatrices() {return new Matrices(T); }
 	virtual int getIterations() {return iterations; }
 	int getE0() {return E0; }
-	static string getHash()
+	static string getHash(Args* args)
 	{
-		return "";
+		return State::getHash(args) + "_" + to_string(args->getInt("nLanczos"));
 	}
-	virtual string getHash() {return Krylov::getHash(); }
-	
+
+	virtual void load(ifstream & f)
+	{
+		read(f,iterations);
+		read(f,T);
+		read(f,E0);
+	}
+	virtual void save(ofstream & f)
+	{
+		write(f,iterations);
+		write(f,T);
+		write(f,E0);
+	}
 
 
 
@@ -72,9 +83,9 @@ protected:
 	void calcKrylov()
 	{
 		/* Calc Hred, you already have this code, just paste and modify.*/
-		maxIter = args->getInt("nLanczos",50);
+		maxIter = args->getInt("nLanczos");
 		auto is = siteInds(psii);
-		auto c = args->getInt("c",psii.length());
+		auto c = args->getInt("c");
 
         psii.position(c);
         H.position(c);

@@ -41,10 +41,5 @@ public:
 		calcH();
 	}
 	~HeisenbergLouiville(){}
-	static string getHash(Lattice* l, SiteSet s)
-	{
-		return "HeisenbergLouiville_" + Model::getHash(l,s);
-	}
-	virtual string getHash() {return HeisenbergLouiville::getHash(lattice,sites); }
 };
 #endif

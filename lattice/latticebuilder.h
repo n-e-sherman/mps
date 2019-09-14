@@ -12,21 +12,25 @@ public:
 	~LatticeBuilder(){}
 	Lattice* build(Args* args)
 	{
-		auto N = args->getInt("N",100);
-		auto thermal = args->getYesNo("thermal",0);
-		auto lattice = args->getString("lattice","chain");
-		Lattice* L;
-		if(thermal)
+		/* TODO: Maybe implement repo, kind of overkill though. */
+		auto N = args->getInt("N");
+		auto thermal = args->getBool("thermal");
+		auto latticeName = args->getString("Lattice");
+		if(latticeName == "Chain")
 		{
-			if(lattice == "chain") L = new ThermalChain(N);
+			if(thermal)
+			{
+				return new ThermalChain(N);
+			}
+			else
+			{
+				return new Chain(N);
+			}
 		}
 		else
 		{
-			if(lattice == "chain") L = new Chain(N);
+			/* Implement other lattices here, may want to use else if. */
 		}
-		return L;
-		// TODO: You have no validation that L will be created.
-		// TODO: Add other lattices here. Maybe write a function that checks and builds for cleaner code?
 	}
 };
 #endif

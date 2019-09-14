@@ -19,11 +19,6 @@ public:
 		for(auto i : range1(N)) sites.push_back(site{2*i-1,physical});
 		for(auto i : range1(N)) sites.push_back(site{2*i,environment});
 	}
-	static string getHash(int L)
-	{
-		return "ThermalChain_" + Lattice::getHash(L);
-	}
-	virtual string getHash(){ return ThermalChain::getHash(N); }
 
 };
 

@@ -23,7 +23,6 @@ private:
 	Krylov* krylov;
 
 	/* Helpers */
-	Real E0;
 	vector<Cplx> etas;
     vector<Real> omegas;
 	vector<vector<vector<Real>>> preResults;
@@ -32,6 +31,8 @@ private:
 	/* Outputs */
 	vector<string> labels;
 	vector<vector<Real>> results;
+	Real E0;
+	int iterations;
 
 public:
 	SpectralBroadening() : Service(){}
@@ -47,19 +48,20 @@ public:
 	{
 		args = a;
 		repo = repoBuilder->build(args);
-		auto thermal = args->getYesNo("thermal",0);
+		auto thermal = args->getBool("thermal");
 		if(thermal) model = modelBuilder->build(args,ModelBuilder::thermal);
 		else model = modelBuilder->build(args);
-		auto reortho = args->getYesNo("reortho",0);
+		auto reortho = args->getBool("reorthogonalize");
 		if(reortho) krylov = krylovBuilder->build(args,KrylovBuilder::reorthogonalize);
 		else krylov = krylovBuilder->build(args,KrylovBuilder::bare);
 		auto Ts = krylov->getTs();
 		auto N = krylov->getIterations();
+		iterations = N;
 		E0 = krylov->getE0();
 		omegas = getOmegas();
 		for(auto i : range(Ts.size())) preResults.push_back(calcBroadening(Ts[i],N));
 		processResults();
-		repo.save(results); // Need a hash.
+		repo.save(getHash(),labels,results); // Need a hash.
 	}
 
 
@@ -95,16 +97,15 @@ private:
 
 	vector<Real> getOmegas()
     {
-        auto wi = args->getReal("wi",0);
-        auto wf = args->getReal("wf",3);
-        auto n  = args->getInt("nw",31);
+        auto wi = args->getReal("wi");
+        auto wf = args->getReal("wf");
+        auto n  = args->getInt("nw");
         auto omegas = linspace(wi,wf,n);
         return omegas;
     }
     vector<Cplx> getEtas()
     {
-    	auto temp = input.getString("etas","");
-        auto retas = stringToVector(temp);
+        auto retas = stringToVector(args->getString("etas"));
         for(auto x : retas) etas.push_back(Cplx(0,x));
     }
 
@@ -112,6 +113,46 @@ private:
 	{
 		// pre_results in format [t][eta][omega]
 		// want it in eta omega S SR
+		auto mom = args->defined("qFactor");
+		labels.push_back("eta");
+		labels.push_back("omega");
+		labels.push_back("S");
+		labels.push_back("SR");
+		labels.push_back("E0");
+		if(mom) labels.push_back("qFactor");
+		else labels.push_back("position");
+		labels.push_back("iterations");
+		labels.push_back("maxDim");
+		labels.push_back("N");
+		labels.push_back("Lattice");
+		labels.push_back("Model");
+		labels.push_back("thermal");
+
+		for(auto i : range(etas.size()))
+		for(auto j : range(omegas.size()))
+		{
+			results.push_back(etas[i].imag()); // only need imaginary part, real is zero.
+			results.push_back(omegas[j]);
+			results.push_back(pre_results[0][i][j]);
+			if(results.size() == 2) {results.push_back(pre_results[1][i][j]); }
+			else {results.push_back(NAN); }
+			results.push_back(E0);
+			if(mom) {results.push_back(args->getReal("qFactor")); }
+			else {results.push_back(args->getReal("position")); }
+			results.push_back(iterations);
+			results.push_back("iterations");
+			results.push_back(args->getReal("maxDim"));
+			results.push_back(args->getReal("N"));
+			results.push_back(args->getReal("Lattice"));
+			results.push_back(args->getReal("Model"));
+			results.push_back(Real(args->getBool("thermal")));
+		}
+	}
+
+	/* */
+	virtual string getHash()
+	{
+		return Krylov::getHash(args) + "_SpectralBroadening";
 	}
 
 };

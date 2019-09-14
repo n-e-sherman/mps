@@ -22,9 +22,10 @@ private:
 	KrylovBuilder* krylovBuilder;
 	Krylov* krylov;
 
-	/* Outputs */
+	/* Helpers */
+	Real E0;
 
-	// TODO: Format is not complete, you need to give everything that specifies this run in labels and results....
+	/* Outputs */
 	vector<string> labels;
 	vector<vector<Real>> results;
 
@@ -42,7 +43,7 @@ public:
 	{
 		args = a;
 		repo = repoBuilder->build(args);
-		auto thermal = args->getYesNo("thermal",0);
+		auto thermal = args->getYesNo("thermal");
 		if(thermal) model = modelBuilder->build(args,ModelBuilder::thermal);
 		else model = modelBuilder->build(args);
 		krylov = krylovBuilder->build(args,KrylovBuilder::reorthogonalize);
@@ -50,8 +51,13 @@ public:
 		auto M = krylov->getMatrices();
 		auto N = krylov->getIterations();
 		calcWeights(M,N);
-		repo.save(results); // Need a hash.
+		repo.save(getHash(),labels,results); // Need a hash.
 	}
+
+
+
+
+
 
 private:
 
@@ -105,23 +111,47 @@ private:
 	        }
 	        for(auto i : range(temp.size())) residues(n,i) = temp[i];
 	    }
+		auto mom = args->defined("qFactor");
 		labels.push_back("iterations");
-		labels.push_back("E0");
 		for(auto i : range1(n)) labels.push_back("Barefrequencies"+to_string(i));
 		for(auto i : range1(n)) labels.push_back("frequencies"+to_string(i));
 		for(auto i : range1(n)) labels.push_back("residues"+to_string(i));
 		for(i : range1(n)) labels.push_back("weights"+to_string(i));
+		labels.push_back("E0");
+		if(mom) labels.push_back("qFactor");
+		else labels.push_back("position");
+		labels.push_back("nLanczos");
+		labels.push_back("maxDim");
+		labels.push_back("N");
+		labels.push_back("Lattice");
+		labels.push_back("Model");
+		labels.push_back("thermal");
+
 		auto temp = vector<Real>;
 		for(auto i : range(n))
 		{
 			temp.push_back(i+1);
-			temp.push_back(E0);
 			for(auto j : range(n)) temp.push_back(frequenciesBare(i,j));
 			for(auto j : range(n)) temp.push_back(frequencies(i,j));
 			for(auto j : range(n)) temp.push_back(residues(i,j));
 			for(auto j : range(n)) temp.push_back(weights(i,j));
+			temp.push_back(E0);
+			if(mom) llabels.push_back(args->getReal("qFactor"));
+			else labels.push_back(args->getReal("position"));
+			labels.push_back(args->getReal("nLanczos"));
+			labels.push_back(args->getReal("maxDim"));
+			labels.push_back(args->getReal("N"));
+			labels.push_back(args->getReal("Lattice")); // This is garbage.
+			labels.push_back(args->getReal("Model"));   // This is garbage.
+			labels.push_back(Real(args->getBool("thermal")));
+
 			results.push_back(temp);
 		}
+	}
+	/* Need a static method? */
+	virtual string getHash()
+	{
+		return Krylov::getHash(args) + "_SpectralWeights";
 	}
 
 

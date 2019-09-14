@@ -49,10 +49,5 @@ public:
 		calcThermalState();
 	}
 	~ThermalState() {}	
-	static string getHash(Model* m)
-	{
-		return "ThermalState_" + State::getHash(m);
-	}
-	virtual string getHash() {return ThermalState::getHash(model); }
 };
 #endif

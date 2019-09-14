@@ -47,25 +47,30 @@ public:
 	int length(){ return N; }
 	vector<bond>::iterator begin(){ return bonds.begin(); }
 	vector<bond>::iterator end(){ return bonds.end(); }
-	static string getHash(int N)
-	{
-		return to_string(N);
-	}
-	virtual string getHash(){ return Lattice::getHash(); }
 	int getN(){ return N; }
+	static string getHash(Args* args)
+	{
+		string s = "";
+		if(args->getBool("thermal")) s = "thermal";
+		return to_string(args->getInt("N")) + "_" + s + args->getString("Lattice");
+	}
+
+	/* Saving is useless here... */
+	// virtual void load(ifstream & f)
+	// {
+	// 	read(f,bonds);
+	// 	read(f,sites);
+	// 	read(f,N);
+	// }
+	// virtual void save(ofstream & f)
+	// {
+	// 	write(f,bonds);
+	// 	write(f,sites);
+	// 	write(f,N);
+	// }
+
 
 
 };
-
-// template<class T>
-// class LatticeCRTP : public Lattice
-// {
-// 	LatticeCRTP(int N) : Lattice(N) {} 
-// 	virtual string _getHash() = 0;
-// 	static string getHash(int N)
-// 	{
-// 		return T::_getHash()+to_string(N);
-// 	}
-// };
 
 #endif

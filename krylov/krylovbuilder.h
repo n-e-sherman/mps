@@ -19,31 +19,65 @@ public:
 protected:
 	Args* args;
 	modelBuilder* modelBuilder;
-	Model* model;
 	StateBuilder* stateBuilder;
-	State* state;
+	RepositoryBuilder* repoBuilder;
+	Repository* repo;
 public:
-	KrylovBuilder(ModelBuilder* mb, StateBuilder* sb){ modelBuilder = mb; stateBuilder = sb; }
+	KrylovBuilder(ModelBuilder* mb, StateBuilder* sb, RepositoryBuilder* rb){ modelBuilder = mb; stateBuilder = sb; repoBuilder = rb;}
 	~KrylovBuilder(){}
 	Krylov* build(Args* a, KrylovType kType = reorthogonalize)
 	{
 		args = a;
-		auto spectral = args->getYesNo("spectral",1);
-		if(spectral) state = stateBuilder->build(args,StateBuilder::spectral);
+		repo = repoBuilder->build(args);
+		auto spectral = args->getBool("spectral");
+		auto thermal = args->getBool("thermal");
+		auto reortho = args->getBool("reorthogonalize");
+		if(spectral) 
+		{
+			if(thermal) 
+			{
+				if(kType == reorthogonalize) 
+				{
+					auto krylov = repo->load(Reorthogonalize::getHash(args), new Reorthogonalize());
+					if(krylov != nullptr) return krylov;
+					krylov = new Reorthogonalize(args,modelBuilder->build(args,ModelBuilder::thermal),stateBuilder->build(args,StateBuilder::spectral));
+					repo->save(Reorthogonalize::getHash(args), krylov);
+					return krylov;
+				}
+				else 
+				{
+					auto krylov = repo->load(Krylov::getHash(args), new Krylov());
+					if(krylov != nullptr) return krylov;
+					krylov = new Krylov(args,modelBuilder->build(args,ModelBuilder::thermal),stateBuilder->build(args,StateBuilder::spectral));
+					repo->save(Reorthogonalize::getHash(args), krylov);
+					return krylov;
+				}
+			}
+			else 
+			{
+				if(kType == reorthogonalize) 
+				{
+					auto krylov = repo->load(Reorthogonalize::getHash(args), new Reorthogonalize());
+					if(krylov != nullptr) return krylov;
+					krylov = new Reorthogonalize(args,modelBuilder->build(args),stateBuilder->build(args,StateBuilder::spectral));
+					repo->save(Reorthogonalize::getHash(args), krylov);
+					return krylov;
+				}
+				else 
+				{
+					auto krylov = repo->load(Krylov::getHash(args), new Krylov());
+					if(krylov != nullptr) return krylov;
+					krylov = new Krylov(args,modelBuilder->build(args),stateBuilder->build(args,StateBuilder::spectral));
+					repo->save(Reorthogonalize::getHash(args), krylov);
+					return krylov;
+				}
+			}
+		}
 		else
 		{
-			/* If you want anything else */
+			/* Implement other states here, you may want an else if. */
+			return nullptr;
 		}
-		auto thermal = args->getYesNo("thermal",0);
-		if(thermal) model = modelBuilder->build(args,ModelBuilder::thermal);
-		else model = modelBuilder->build(args);
-		auto reortho = args->getYesNo("reorthogonalize",1);
-		if(kType == reorthogonalize) return new Reorthogonalize(args,model,state);
-		else return new Krylov(args,model,state);
-	}
-
-
-		// TODO: You have no validator to make sure sites was created.
 	}
 };
 #endif

@@ -35,10 +35,5 @@ public:
 		calcH();
 	}
 	~Heisenberg(){}
-	static string getHash(Lattice* l, SiteSet s)
-	{
-		return "Heisenberg_" + Model::getHash(l,s); // This is not unique if you do fermions, may have to change later.
-	}
-	virtual string getHash() {return Heisenberg::getHash(lattice,sites); }
 };
 #endif

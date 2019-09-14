@@ -21,12 +21,9 @@ class StateBuilder : public Builder
 protected:
 	Args* args;
 	ModelBuilder* modelBuilder;
-	Model* model;
+	LatticeBuilder* latticeBuilder;
 	RepositoryBuilder* repoBuilder;
 	Repository* repo;
-	LatticeBuilder* latticeBuilder;
-	Lattice* lattice;
-	SiteSet sites;
 public:
 	enum stateType
 	{
@@ -40,26 +37,55 @@ public:
 	State* build(Args* a, stateType sType = ground)
 	{
 		args = a;
-		model = modelBuilder->build();
-		sites = model->getSites();
+		repo = repoBuilder->build(args);
 		return build(sType);
 	}
 
 private:
 	State* build(stateType sType = ground)
 	{
-		State* s;
-		if(sType == ground) {s = new GroundState(args, model, buildInitialState()); }
-		else if(sType == thermal) {s = new ThermalState(args, model); }
+		auto thermal = args->getBool("thermal");
+		if(sType == ground) 
+		{
+			auto state = repo->load(State::getHash(args,sType), new GroundState());
+			if(state != nullptr) return state;
+			state = new GroundState(args, modelBuilder->build(), buildInitialState()); 
+			repo->save(State::getHash(args,sType), state);
+			return state;
+		}
+		else if(sType == thermal) 
+		{
+			auto state = repo->load(State::getHash(args,sType), new ThermalState());
+			if(state != nullptr) return state;
+			state = new ThermalState(args, modelBuilder->build()); 
+			repo->save(State::getHash(args,sType), state);
+			return state;
+		}
+
 		else if(sType == spectral)
 		{
-			lattice = latticeBuilder->build(args);
-			auto thermal = args.getYesNo("thermal",0);
-			if(thermal) {s = new SpectralState(args, model, build(thermal)); }
-			else{s = new SpectralState(model, args, build(ground), buildOperator()); }
-			/* May want to adjust this if you have more than two options. */
+			if(thermal) 
+			{
+				auto state = repo->load(State::getHash(args,sType), new SpectralState());
+				if(state != nullptr) return state;
+				state = new SpectralState(args, modelBuilder->build(), build(thermal), buildOperator()); 
+				repo->save(State::getHash(args,sType), state);
+				return state;
+			}
+			else
+			{
+				auto state = repo->load(State::getHash(args,sType), new SpectralState());
+				if(state != nullptr) return state;
+				state = new SpectralState(args, modelBuilder->build(), build(ground), buildOperator()); 
+				repo->save(State::getHash(args,sType), state);
+				return state;
+			}
 		}
-		return s;
+		else
+		{
+			/* Implement other states here, may want to use else if. */
+			return nullptr;
+		}
 	}
 
 
@@ -70,7 +96,7 @@ private:
 		auto init = args->getString("initial","AF");
 		if (init == "AF")
 		{
-			auto N = args->getInt("N",100);
+			auto N = args->getInt("N");
 			auto _state = InitState(sites);
 	        for(auto i : range1(N))
 	            {
@@ -87,10 +113,10 @@ private:
 
 	MPO buildOperator()
 	{
-		auto mom = args->getYesNo("momentum",1);
+		auto mom = args->getBool("momentum");
 		if(mom)
 		{
-			auto qfactor = args->getReal("qfactor",1.0);
+			auto qfactor = args->getReal("qFactor");
 	        auto q = qfactor*M_PI*(Real(N)/Real(N+1));
 	        auto ampo = AutoMPO(sites);
 	        for(auto s : lattice->getSites())

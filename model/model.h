@@ -5,7 +5,6 @@
 #include <iostream>
 #include "itensor/all.h"
 #include "lattice/lattice.h"
-// #include "heisenbergchain.h"
 #include "infrastructure/util.h"
 #include <cmath>
 #include <string>
@@ -36,11 +35,21 @@ public:
 	virtual ~Model(){}
 	MPO& getH() const {return &H; }
 	SiteSet getSites() const {return sites;}
-	static string getHash(Lattice* l, SiteSet s)
+	static string getHash(Args* args, ModelBuilder::modelType mType = normal)
 	{
-		return l->getHash() +  "_" + to_string(s.si(1).dim()); // This is not unique if you do fermions, may have to change later.
+		return Lattice::getHash(args) + "_" + args->getString("Model") + "_" + args->getString("SiteSet") + "_" + to_string(mType);
 	}
-	virtual string getHash() {return Model::getHash(lattice,sites); }
+
+	virtual void load(ifstream & f)
+	{
+		read(f,H);
+		read(f,sites);
+	}
+	virtual void save(ofstream & f)
+	{
+		write(f,H);
+		write(f,sites);
+	}
 
 
 };

@@ -1,22 +1,25 @@
 input{
-	dmrg = no
-	calcT = no
-	calcCor = no
-	model = Heisenberg
-	lattice = chain
+	Model = Heisenberg
+	Lattice = Chain
+	Quantity = SpectralWeights
+	Quantity = SpectralBroadening
+	SiteSet = SpinHalf
+
+	reortho = yes
+	thermal = yes
+	momentum = yes
+
+	cwd = /Users/nsherman/Documents/Research/Joel/spectral/
 	N = 2
-	nsweeps = 5
+	nSweeps = 5
 	nLanczos = 4
 	wi = 0
 	wf = 4.0
 	nw = 201
 	etas = 0.1,2.0
-	qfactor = 1.0
+	qFactor = 1.0
 	maxDim = 400
 	quiet = no
-	reortho = yes
-	quantity = weights
-	cwd = /Users/nsherman/Documents/Research/Joel/spectral/
 
 sweeps
     {

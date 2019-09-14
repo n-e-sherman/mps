@@ -10,7 +10,7 @@ public:
 	~RepositoryBuilder(){}
 	Repository* build(Args* args)
 	{
-		auto cwd = args->getString("cwd","./")
+		auto cwd = args->getString("cwd")
 		return new Repository(cwd);
 	}
 };

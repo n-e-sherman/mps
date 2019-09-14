@@ -28,18 +28,6 @@ protected:
         E0=energy;
         state=psiout;
 	}
-	void calcPsii() // May want to make this it's own functionality? you are assuming AF GS.
-	{
-		/* TODO: Check for different possible starting states, use inputs. Might want to handle in statecalculator. */
-		auto N = input->getInt("N",100);
-		auto _state = InitState(sites);
-        for(auto i : range1(N))
-            {
-            if(i%2 == 1) _state.set(i,"Up");
-            else         _state.set(i,"Dn");
-            }
-        state = MPS(_state);
-	}
 
 public:
 
@@ -48,12 +36,16 @@ public:
 		state = in;
 		calcGroundState();
 	}
-	~GroundState() {}	
-	// virtual stateInfo getState(){return stateInfo{&state, E0}; }
-	static string getHash(Model* m)
+	~GroundState() {}
+
+	Sweeps getSweeps()
 	{
-		return "GroundState_" + State::getHash(m); // Maybe add some specifications for how you get GS?
+		auto maxdim = stringToVector(args->getString("sweeps_maxdim"));
+		auto mindim = stringToVector(args->getString("sweeps_mindim"));
+		auto cutoff = stringToVector(args->getString("sweeps_cutoff"));
+		auto niter = stringToVector(args->getString("sweeps_niter"));
+		auto noise = stringToVector(args->getString("sweeps_noise"));
+
 	}
-	virtual string getHash() {return GroundState::getHash(model); }
 };
 #endif
