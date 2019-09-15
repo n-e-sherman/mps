@@ -29,6 +29,7 @@ private:
 	vector<Cplx> etas;
     vector<Real> omegas;
 	vector<vector<vector<Real>>> preResults;
+	Real psiiNorm;
 
 
 	/* Outputs */
@@ -61,10 +62,11 @@ public:
 		auto N = krylov->getIterations();
 		iterations = N;
 		E0 = krylov->getE0();
+		psiiNorm = krylov->getPsiiNorm();
 		omegas = getOmegas();
 		for(auto i : range(Ts.size())) preResults.push_back(calcBroadening(Ts[i],N));
 		processResults();
-		repo.save(getHash(),labels,results); // Need a hash.
+		repo->save(getHash(),labels,results);
 	}
 
 
@@ -72,7 +74,7 @@ public:
 
 private:
 
-	vector<vector<Real>> calcBroadening(CMatrix& T, int Nmax)
+	vector<vector<Real>> calcBroadening(CMatrix& T, int nMax)
 	{
         Vector d;
         CMatrix U;
@@ -90,7 +92,8 @@ private:
                 diagonal(D) &= delta;
                 auto R = U*D*conj(transpose(U)); // 1/(z-M)
                 auto res = R(0,0).imag();
-                res = -1*(1.0/M_PI)*psiiNorm*psiiNorm*res;
+		        auto spectralNorm = sqrt(2.0/(Real(args->getInt("N")+1)));
+                res = -1*(1.0/M_PI)*spectralNorm*psiiNorm*res;
                 temp.push_back(res);
             }
             result.push_back(temp);
@@ -110,6 +113,7 @@ private:
     {
         auto retas = stringToVector(args->getString("etas"));
         for(auto x : retas) etas.push_back(Cplx(0,x));
+        return etas;
     }
 
 	void processResults()
@@ -131,24 +135,26 @@ private:
 		labels.push_back("Model");
 		labels.push_back("thermal");
 
+		auto temp = vector<StringReal>();
 		for(auto i : range(etas.size()))
 		for(auto j : range(omegas.size()))
 		{
-			results.push_back(etas[i].imag()); // only need imaginary part, real is zero.
-			results.push_back(omegas[j]);
-			results.push_back(pre_results[0][i][j]);
-			if(results.size() == 2) {results.push_back(pre_results[1][i][j]); }
-			else {results.push_back(NAN); }
-			results.push_back(E0);
-			if(mom) {results.push_back(args->getReal("qFactor")); }
-			else {results.push_back(args->getReal("position")); }
-			results.push_back(iterations);
-			results.push_back("iterations");
-			results.push_back(args->getReal("maxDim"));
-			results.push_back(args->getReal("N"));
-			results.push_back(args->getReal("Lattice"));
-			results.push_back(args->getReal("Model"));
-			results.push_back(Real(args->getBool("thermal")));
+			temp.push_back(etas[i].imag()); // only need imaginary part, real is zero.
+			temp.push_back(omegas[j]);
+			temp.push_back(preResults[0][i][j]);
+			if(preResults.size() == 2) {temp.push_back(preResults[1][i][j]); }
+			else {temp.push_back(NAN); }
+			temp.push_back(E0);
+			if(mom) {temp.push_back(args->getReal("qFactor")); }
+			else {temp.push_back(args->getReal("position")); }
+			temp.push_back(iterations);
+			temp.push_back(string("iterations"));
+			temp.push_back(args->getReal("maxDim"));
+			temp.push_back(args->getReal("N"));
+			temp.push_back(args->getReal("Lattice"));
+			temp.push_back(args->getReal("Model"));
+			temp.push_back(Real(args->getBool("thermal")));
+			results.push_back(temp);
 		}
 	}
 

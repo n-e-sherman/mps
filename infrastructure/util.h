@@ -233,6 +233,28 @@ struct StringReal
     }
     template<class T>
     StringReal operator=(const T& t) {return StringReal(t);}
+
+    template<class T>
+    bool operator==(T& t_in)
+    {
+        if((*this).t == Numeric){return ((*this).r == t_in); }
+        else{return (*this).s == t_in; }
+    }
+    // bool operator==(Real in)
+    // {
+    //     if((*this).t == Numeric){return ((*this).r == in); }
+    //     else{return false; }
+    // }
+    // bool operator==(string in)
+    // {
+    //     if((*this).t == Numeric){return false; }
+    //     else{return ((*this).s == in); }
+    // }
+    // bool operator==(char* in)
+    // {
+    //     if((*this).t == Numeric){return false; }
+    //     else{return ((*this).s == string(in)); }
+    // }
     friend std::ostream& operator<<( ostream& os, const StringReal& sr) 
     {
         if (sr.t == Numeric) os << sr.r;

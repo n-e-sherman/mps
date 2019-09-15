@@ -32,6 +32,8 @@ public:
 		}
 		else
 		{
+			cout << "This should never be called Lattice..." << endl;
+			return nullptr;
 			/* Implement other lattices here, may want to use else if. */
 		}
 	}

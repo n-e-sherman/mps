@@ -15,6 +15,10 @@ public:
 	class Matrices
 	{
 	public:
+        CMatrix tr;
+        CMatrix s;
+        CMatrix h;
+        CMatrix h2;
 		CMatrix t;
 		Matrices(CMatrix& _t) {t = t;}
 	};
@@ -35,6 +39,7 @@ protected:
 	int iterations;
 	CMatrix T;
 	Real E0;
+	Real psiiNorm;
 
 public:
 	Krylov(){}
@@ -45,6 +50,7 @@ public:
 		model = m;
 		state = s;
 		psii = state->getState();
+		psiiNorm = psii.normalize();
 		E0 = state->getE0();
 		H = model->getH();
 		calcKrylov();	
@@ -54,7 +60,8 @@ public:
 	virtual vector<CMatrix> getTs() {return vector<CMatrix>{T}; }
 	virtual Matrices* getMatrices() {return new Matrices(T); }
 	virtual int getIterations() {return iterations; }
-	int getE0() {return E0; }
+	Real getE0() {return E0; }
+	Real getPsiiNorm() {return psiiNorm; }
 	static string getHash(Args* args)
 	{
 		return State::getHash(args) + "_" + to_string(args->getInt("nLanczos"));
@@ -94,10 +101,10 @@ protected:
         T = CMatrix(maxIter,maxIter);
         for(auto& el : T) el = Cplx(0,0);
         V[0] = MPS(psii);
-       	WP[0] = applyMPO(H,V[0],args);
+       	WP[0] = applyMPO(H,V[0],*args);
         T(0,0) = innerC(WP[0],V[0]).real();
         prepare(V[0],WP[0],c,is);
-        W[0] = sum(WP[0],-1*T(0,0)*V[0],args);
+        W[0] = sum(WP[0],-1*T(0,0)*V[0],*args);
         i = 1;
         while(!converged())
         {
@@ -105,12 +112,12 @@ protected:
             T(i-1,i) = norm(W[i-1]);
             T(i,i-1) = norm(W[i-1]);
             V[i] = (1.0/norm(W[i-1]))*W[i-1];
-            WP[i] = applyMPO(H,V[i],args);
+            WP[i] = applyMPO(H,V[i],*args);
             T(i,i) = innerC(WP[i],V[i]).real();
             prepare(WP[i],V[i],c,is);
-            auto temp = sum(WP[i],-1*T(i,i)*V[i],args);
+            auto temp = sum(WP[i],-1*T(i,i)*V[i],*args);
             prepare(temp,V[i-1],c,is);
-            W[i] = sum(temp,-1*T(i,i-1)*V[i-1],args);
+            W[i] = sum(temp,-1*T(i,i-1)*V[i-1],*args);
             i+=1;
         }
         iterations = i;
@@ -122,7 +129,7 @@ protected:
 		if(i >= maxIter) return true;
 		else return false;
 	}
-	prepare(MPS &a, MPS &b, int c)
+	void prepare(MPS &a, MPS &b, int c, IndexSet is)
 	{
 	    a.replaceSiteInds(is);
 	    b.replaceSiteInds(is);

@@ -39,16 +39,16 @@ public:
 			{
 				auto model = repo->load(Model::getHash(args,mType), new Heisenberg());
 				if(model != nullptr) return model;
-				model = Heisenberg(args, latticeBuilde->build(args), siteBuilder->build());
-				repo.save(Model::getHash(args,mType), model);
+				model = new Heisenberg(args, latticeBuilder->build(args), siteBuilder->build(args));
+				repo->save(Model::getHash(args,mType), model);
 				return model;
 			}
 			else if(mType == thermal) 
 			{
 				auto model = repo->load(Model::getHash(args,mType), new HeisenbergLouiville());
 				if(model != nullptr) return model;
-				model = new HeisenbergLouiville(args, latticeBuilde->build(args), siteBuilder->build());
-				repo.save(Model::getHash(args,mType), model);
+				model = new HeisenbergLouiville(args, latticeBuilder->build(args), siteBuilder->build(args));
+				repo->save(Model::getHash(args,mType), model);
 				return model;
 			}
 		}
@@ -57,6 +57,7 @@ public:
 			/* Implement other models here, may want to use else if */
 			return nullptr;
 		}
+		return nullptr;
 
 	}
 };

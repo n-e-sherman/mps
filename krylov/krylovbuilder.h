@@ -20,14 +20,14 @@ public:
 	};
 protected:
 	Args* args;
-	modelBuilder* modelBuilder;
+	ModelBuilder* modelBuilder;
 	StateBuilder* stateBuilder;
 	RepositoryBuilder* repoBuilder;
 	Repository* repo;
 public:
 	KrylovBuilder(ModelBuilder* mb, StateBuilder* sb, RepositoryBuilder* rb){ modelBuilder = mb; stateBuilder = sb; repoBuilder = rb;}
 	~KrylovBuilder(){}
-	Krylov* build(Args* a, KrylovType kType = reorthogonalize)
+	Krylov* build(Args* a, krylovType kType = reorthogonalize)
 	{
 		args = a;
 		repo = repoBuilder->build(args);

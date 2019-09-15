@@ -12,6 +12,7 @@ public:
 	~SiteBuilder(){}
 	SiteSet build(Args* args)
 	{
+		auto N = args->getInt("N");
 		auto sType = args->getString("SiteSet");
 		if     (sType == "spinHalf"){ sites = SpinHalf(N); }
 		else if(sType == "spinOne") { sites = SpinOne(N);  }

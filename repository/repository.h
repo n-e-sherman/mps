@@ -3,6 +3,7 @@
 
 #include "itensor/all.h"
 #include "infrastructure/util.h"
+#include "infrastructure/cache.h"
 #include <fstream>
 #include <iterator>
 #include <string>
@@ -23,20 +24,21 @@ public:
 	template<class T> 
 	T* load(const std::string& hash, T* T_in) 
 	{	 
-		auto retC = (T*)cache.load(fname);
+		auto retC = (T*)cache->load(hash);
 		if(retC != nullptr) return retC;
 		ifstream file;
 		file.open(cwd+".data/"+hash, ios::in | ios::binary);
-		if(file.is_open()) {T_in.load(file); }
+		if(file.is_open()) {T_in->load(file); }
 		else {T_in = nullptr; }
+		return T_in;
 	}
 	template<class T>
 	void save(const std::string& hash, T* t) 
 	{ 
-		cache.save(hash,t);
+		cache->save(hash,t);
 		ofstream file;
 		file.open(cwd+ ".data/" + hash, ios::out | ios::binary);
-		t->write(file);
+		t->save(file);
 	}
 	template<class T,class LabelT>
 	void save(const std::string &hash, const LabelT& labels, const T& data, string delimeter = ",")
@@ -51,7 +53,7 @@ public:
 		while(it != labels.end())
 		{
 			file << *it;
-			if(++it != row.end()) file << delimeter;
+			if(++it != labels.end()) file << delimeter;
 		}
 		file << "\n";
 
@@ -60,7 +62,8 @@ public:
 			auto it = row.begin();
 			while(it != row.end())
 			{
-				if(*it != NAN) file << *it;
+				file << *it;
+				// if(!(*it == NAN)) file << *it;
 				if(++it != row.end()) file << delimeter;
 			}
 			file << "\n";

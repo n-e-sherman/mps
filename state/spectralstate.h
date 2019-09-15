@@ -3,11 +3,7 @@
 
 #include "itensor/all.h"
 #include "infrastructure/util.h"
-#include "infrastructure/calculator.h"
-#include "repository/repositorybuilder.h"
-#include "repository/repository.h"
-#include "model/modelbuilder.h"
-#include "model/sitebuilder.h"
+#include "state/state.h"
 #include <cmath>
 
 using namespace itensor;
@@ -18,23 +14,34 @@ class SpectralState : public State
 protected:
 	/* Inputs */
 	State* in_state;
-	MPO* op;
+	MPO op;
 
 	void calcSpectralState()
 	{
-        Sk.position(c);
+		auto c = args->getInt("c");
+		auto N = args->getInt("N");
+		auto psi0 = in_state->getState();
+		auto is = siteInds(psi0);
+        op.position(c);
         psi0.position(c);
-        psii = applyMPO(Sk,psi0);
-        prepare(psii,psi0);
-        spectralNorm = sqrt(2.0/(N+1));
-        psiiNorm = psii.normalize();
+        auto psii = applyMPO(op,psi0);
+        prepare(psii,psi0,c,is);
+        // auto psiiNorm = psii.normalize(); // Need to save this
+	}
+	void prepare(MPS &a, MPS &b, int c, IndexSet is)
+	{
+	    a.replaceSiteInds(is);
+	    b.replaceSiteInds(is);
+	    a.position(c);
+	    b.position(c);
 	}
 
 public:
 
-	SpectralState(Args* a,Model* m, State* in, MPO& o) : State(a,m)
+	SpectralState() : State(){}
+	SpectralState(Args* a,Model* m, State* in, const MPO& o) : State(a,m)
 	{
-		op = &o;
+		op = o;
 		in_state = in;
 		E0 = in_state->getE0();
 		calcSpectralState();

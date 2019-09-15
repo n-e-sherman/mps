@@ -6,6 +6,7 @@
 #include "itensor/all.h"
 #include "lattice/lattice.h"
 #include "infrastructure/util.h"
+#include "model/modelbuilder.h"
 #include <cmath>
 #include <string>
  #include <typeinfo>
@@ -33,9 +34,9 @@ public:
 		sites = s;
 	}
 	virtual ~Model(){}
-	MPO& getH() const {return &H; }
+	MPO& getH() {return H; }
 	SiteSet getSites() const {return sites;}
-	static string getHash(Args* args, ModelBuilder::modelType mType = normal)
+	static string getHash(Args* args, int mType = 0)
 	{
 		return Lattice::getHash(args) + "_" + args->getString("Model") + "_" + args->getString("SiteSet") + "_" + to_string(mType);
 	}

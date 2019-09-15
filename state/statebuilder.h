@@ -1,20 +1,25 @@
-#ifndef __STATECALCULATOR_H_
-#define __STATECALCULATOR_H_
+#ifndef __STATEBUILDER_H_
+#define __STATEBUILDER_H_
 
 #include "itensor/all.h"
 #include "infrastructure/util.h"
 #include "repository/repositorybuilder.h"
 #include "model/modelbuilder.h"
-#include "state/statebuilder.h"
+#include "state/spectralstate.h"
+#include "state/groundstate.h"
+#include "state/thermalstate.h"
+#include "state/state.h"
 
 using namespace itensor;
 using namespace std;
 
-class StateBuilder : public Builder
+class StateBuilder
 {
 protected:
 	Args* args;
 	ModelBuilder* modelBuilder;
+	Model* model;
+	SiteSet sites;
 	LatticeBuilder* latticeBuilder;
 	RepositoryBuilder* repoBuilder;
 	Repository* repo;
@@ -26,24 +31,27 @@ public:
 		spectral = 2
 	};
 
-	StateBuilder(ModelBuilder* mb, LatticeBuilder* lb, RepositoryBuilder* rb,) : Builder() {modelBuilder = mb; repoBuilder = rb; latticeBuilder = lb; }
+	StateBuilder() {}
+	StateBuilder(ModelBuilder* mb, LatticeBuilder* lb, RepositoryBuilder* rb) {modelBuilder = mb; repoBuilder = rb; latticeBuilder = lb; }
 	~StateBuilder() {}	
 	State* build(Args* a, stateType sType = ground)
 	{
 		args = a;
 		repo = repoBuilder->build(args);
+		model = modelBuilder->build(args);
+		sites = model->getSites();
 		return build(sType);
 	}
 
 private:
 	State* build(stateType sType = ground)
 	{
-		auto thermal = args->getBool("thermal");
+		auto t = args->getBool("thermal");
 		if(sType == ground) 
 		{
 			auto state = repo->load(State::getHash(args,sType), new GroundState());
 			if(state != nullptr) return state;
-			state = new GroundState(args, modelBuilder->build(), buildInitialState()); 
+			state = new GroundState(args, model, buildInitialState()); 
 			repo->save(State::getHash(args,sType), state);
 			return state;
 		}
@@ -51,18 +59,18 @@ private:
 		{
 			auto state = repo->load(State::getHash(args,sType), new ThermalState());
 			if(state != nullptr) return state;
-			state = new ThermalState(args, modelBuilder->build()); 
+			state = new ThermalState(args, model); 
 			repo->save(State::getHash(args,sType), state);
 			return state;
 		}
 
 		else if(sType == spectral)
 		{
-			if(thermal) 
+			if(t) 
 			{
 				auto state = repo->load(State::getHash(args,sType), new SpectralState());
 				if(state != nullptr) return state;
-				state = new SpectralState(args, modelBuilder->build(), build(thermal), buildOperator()); 
+				state = new SpectralState(args, model, build(thermal), buildOperator()); 
 				repo->save(State::getHash(args,sType), state);
 				return state;
 			}
@@ -70,7 +78,7 @@ private:
 			{
 				auto state = repo->load(State::getHash(args,sType), new SpectralState());
 				if(state != nullptr) return state;
-				state = new SpectralState(args, modelBuilder->build(), build(ground), buildOperator()); 
+				state = new SpectralState(args, model, build(ground), buildOperator()); 
 				repo->save(State::getHash(args,sType), state);
 				return state;
 			}
@@ -101,13 +109,18 @@ private:
     	}
     	else
     	{
+    		cout << "This should never be called..." << endl;
+    		return MPS(sites);
     		/* Fill me in with other options. */ 
     	}
 	}
 
 	MPO buildOperator()
 	{
+		auto lattice = latticeBuilder->build(args);
 		auto mom = args->getBool("momentum");
+		auto N = args->getInt("N");
+		// auto sites = siteBuilder
 		if(mom)
 		{
 			auto qfactor = args->getReal("qFactor");
@@ -116,15 +129,15 @@ private:
 	        for(auto s : lattice->getSites())
 	        {
 	        	if(s.t == Lattice::physical)
-	            	ampo += sin(s.s*q),"Sz",i;
+	            	ampo += sin(s.s*q),"Sz",s.s;
 	        }
 	        return toMPO(ampo);
 		}
 		else
 		{
-			auto i = args->getInt("i",lattice->length()/2);
+			auto I = args->getInt("position",lattice->length()/2);
 			auto ampo = AutoMPO(sites);
-			ampo += 1,"Sz",i;
+			ampo += 1.0,"Sz",int(I);
 			return toMPO(ampo);
 		}
 

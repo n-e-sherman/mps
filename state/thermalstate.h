@@ -3,7 +3,6 @@
 
 #include "itensor/all.h"
 #include "infrastructure/util.h"
-#include "infrastructure/calculator.h"
 #include "repository/repositorybuilder.h"
 #include "repository/repository.h"
 #include "model/modelbuilder.h"
@@ -15,7 +14,7 @@ using namespace std;
 class ThermalState : public State
 {
 protected:
-
+	Real beta;
 	void calcThermalState()
 	{
 		calcPsii();
@@ -24,7 +23,7 @@ protected:
 	void calcPsii() // Makes an infinite temperature state via purification.
 	{
 		auto sites = model->getSites();
-		*state = MPS(sites);
+		state = MPS(sites);
 		auto N = sites.length();
     	for(int n = 1; n <= 2*N; n += 2)
         {
@@ -43,9 +42,10 @@ protected:
 
 public:
 
+	ThermalState(){}
 	ThermalState(Args* a, Model* m) : State(a,m)
 	{
-		beta = args->getReal("beta",0);
+		beta = args->getReal("beta");
 		calcThermalState();
 	}
 	~ThermalState() {}	

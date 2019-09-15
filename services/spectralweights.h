@@ -46,7 +46,7 @@ public:
 	{
 		args = a;
 		repo = repoBuilder->build(args);
-		auto thermal = args->getYesNo("thermal");
+		auto thermal = args->getBool("thermal");
 		if(thermal) model = modelBuilder->build(args,ModelBuilder::thermal);
 		else model = modelBuilder->build(args);
 		krylov = krylovBuilder->build(args,KrylovBuilder::reorthogonalize);
@@ -54,7 +54,7 @@ public:
 		auto M = krylov->getMatrices();
 		auto N = krylov->getIterations();
 		calcWeights(M,N);
-		repo.save(getHash(),labels,results); // Need a hash.
+		repo->save(getHash(),labels,results); // Need a hash.
 	}
 
 
@@ -64,7 +64,7 @@ public:
 
 private:
 
-	void calcWeights(Krylov::Matrices* M, N)
+	void calcWeights(Krylov::Matrices* M, int N)
 	{
 		Vector d;
         CMatrix U;
@@ -73,10 +73,10 @@ private:
         auto weights = Matrix(N,N);
         for(auto &el : weights) el = NAN;
         auto frequencies = Matrix(N,N);
-        for(auto &el : frequecies) el = NAN;
+        for(auto &el : frequencies) el = NAN;
         auto frequenciesBare = Matrix(N,N);
         for(auto &el : frequenciesBare) el = NAN;
-       	for(n : range1(N))
+       	for(auto n : range1(N))
        	{
 	        auto Tref = subMatrix(M->tr,0,n,0,n);
 	        diagHermitian(Tref,U,d);
@@ -116,10 +116,10 @@ private:
 	    }
 		auto mom = args->defined("qFactor");
 		labels.push_back("iterations");
-		for(auto i : range1(n)) labels.push_back("Barefrequencies"+to_string(i));
-		for(auto i : range1(n)) labels.push_back("frequencies"+to_string(i));
-		for(auto i : range1(n)) labels.push_back("residues"+to_string(i));
-		for(i : range1(n)) labels.push_back("weights"+to_string(i));
+		for(auto i : range1(N)) labels.push_back("Barefrequencies"+to_string(i));
+		for(auto i : range1(N)) labels.push_back("frequencies"+to_string(i));
+		for(auto i : range1(N)) labels.push_back("residues"+to_string(i));
+		for(auto i : range1(N)) labels.push_back("weights"+to_string(i));
 		labels.push_back("E0");
 		if(mom) labels.push_back("qFactor");
 		else labels.push_back("position");
@@ -130,23 +130,23 @@ private:
 		labels.push_back("Model");
 		labels.push_back("thermal");
 
-		auto temp = vector<Real>;
-		for(auto i : range(n))
+		auto temp = vector<StringReal>();
+		for(auto i : range(N))
 		{
 			temp.push_back(i+1);
-			for(auto j : range(n)) temp.push_back(frequenciesBare(i,j));
-			for(auto j : range(n)) temp.push_back(frequencies(i,j));
-			for(auto j : range(n)) temp.push_back(residues(i,j));
-			for(auto j : range(n)) temp.push_back(weights(i,j));
+			for(auto j : range(N)) temp.push_back(frequenciesBare(i,j));
+			for(auto j : range(N)) temp.push_back(frequencies(i,j));
+			for(auto j : range(N)) temp.push_back(residues(i,j));
+			for(auto j : range(N)) temp.push_back(weights(i,j));
 			temp.push_back(E0);
-			if(mom) llabels.push_back(args->getReal("qFactor"));
-			else labels.push_back(args->getReal("position"));
-			labels.push_back(args->getReal("nLanczos"));
-			labels.push_back(args->getReal("maxDim"));
-			labels.push_back(args->getReal("N"));
-			labels.push_back(args->getReal("Lattice")); // This is garbage.
-			labels.push_back(args->getReal("Model"));   // This is garbage.
-			labels.push_back(Real(args->getBool("thermal")));
+			if(mom) temp.push_back(args->getReal("qFactor"));
+			else temp.push_back(args->getReal("position"));
+			temp.push_back(args->getReal("nLanczos"));
+			temp.push_back(args->getReal("maxDim"));
+			temp.push_back(args->getReal("N"));
+			temp.push_back(args->getReal("Lattice")); // This is garbage.
+			temp.push_back(args->getReal("Model"));   // This is garbage.
+			temp.push_back(Real(args->getBool("thermal")));
 
 			results.push_back(temp);
 		}

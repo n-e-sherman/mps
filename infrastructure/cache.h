@@ -2,6 +2,8 @@
 #define __CACHE_H_
 
 #include "itensor/all.h"
+#include "infrastructure/util.h"
+#include "infrastructure/cache.h"
 #include <vector>
 #include <string>
 #include <map>

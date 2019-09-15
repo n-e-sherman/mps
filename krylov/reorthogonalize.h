@@ -47,7 +47,7 @@ public:
 	Reorthogonalize(){}
 	Reorthogonalize(Args* a, Model* m, State* s) : Krylov(a,m,s)
 	{ 
-        epsilon = args->getReal("eps");
+        eps = args->getReal("eps");
 		reorthogonalize();
 
 	}
@@ -69,12 +69,12 @@ public:
         write(f,S);
         write(f,HP);
         write(f,HP2);
-        read(f,TR);
+        write(f,TR);
     }
 
 	
 protected:
-	void reorthognalize()
+	void reorthogonalize()
 	{
         HP = CMatrix(iterations,iterations);
         for (auto &el : HP) el = Cplx(NAN,NAN);
@@ -99,7 +99,7 @@ protected:
             for(auto j : range(iterations))
             {
                 W(i,j) = innerC(V[i],V[j]);
-                HP(i,j) = innerC(V[i],H,V[j])            
+                HP(i,j) = innerC(V[i],H,V[j]);          
                 HP2(i,j) = innerC(prime(V[i]),prime(H),H,V[j]);;
             }
         }
@@ -155,7 +155,7 @@ protected:
         for(auto l : range(j+1))
             val += getST(k,j)*getST(l,j)*W(k,l);
         Norm(j) = sqrt(val);
-        if(Norm(j) == 0) Norm(j) = eps;
+        if(Norm(j) == Cplx(0,0)) Norm(j) = Cplx(eps,0);
         return Norm(j);
     }
 
