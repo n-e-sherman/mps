@@ -30,6 +30,7 @@ protected:
 	}
 public:
 	Heisenberg(){}
+	Heisenberg(Args* a) : Model(a) {}
 	Heisenberg(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) 
 	{
 		calcH();

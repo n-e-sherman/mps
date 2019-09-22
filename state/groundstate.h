@@ -38,18 +38,20 @@ public:
 
 	Sweeps getSweeps()
 	{
-		Sweeps sweeps;
-		sweeps.nsweep(args->getInt("nSweeps"));
-		auto maxdim = stringToVector(args->getString("sweeps_maxdim"));
-		for(auto i : range(maxdim.size())) sweeps.setmaxdim(i,maxdim[i]);
+		/* This needs love */
+		Sweeps sweeps(args->getInt("nSweeps"));
+		auto maxdim = stringToVectorI(args->getString("sweeps_maxdim"));
+		// sweeps.maxdim() = SweepSetter(smaxdim);
+		// sweeps.maxdim() = maxdim;
+		for(auto i : range(maxdim.size())) sweeps.setmaxdim(i+1,maxdim[i]);
 		auto mindim = stringToVector(args->getString("sweeps_mindim"));
-		for(auto i : range(mindim.size())) sweeps.setmindim(i,mindim[i]);
+		for(auto i : range(mindim.size())) sweeps.setmindim(i+1,mindim[i]);
 		auto cutoff = stringToVector(args->getString("sweeps_cutoff"));
-		for(auto i : range(cutoff.size())) sweeps.setcutoff(i,cutoff[i]);
+		for(auto i : range(cutoff.size())) sweeps.setcutoff(i+1,cutoff[i]);
 		auto niter = stringToVector(args->getString("sweeps_niter"));
-		for(auto i : range(niter.size())) sweeps.setniter(i,niter[i]);
+		for(auto i : range(niter.size())) sweeps.setniter(i+1,niter[i]);
 		auto noise = stringToVector(args->getString("sweeps_noise"));
-		for(auto i : range(noise.size())) sweeps.setnoise(i,noise[i]);
+		for(auto i : range(noise.size())) sweeps.setnoise(i+1,noise[i]);
 		return sweeps;
 	}
 };

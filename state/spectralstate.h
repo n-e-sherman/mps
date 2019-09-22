@@ -24,9 +24,8 @@ protected:
 		auto is = siteInds(psi0);
         op.position(c);
         psi0.position(c);
-        auto psii = applyMPO(op,psi0);
-        prepare(psii,psi0,c,is);
-        // auto psiiNorm = psii.normalize(); // Need to save this
+        state = applyMPO(op,psi0);
+        prepare(state,psi0,c,is);
 	}
 	void prepare(MPS &a, MPS &b, int c, IndexSet is)
 	{

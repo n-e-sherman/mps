@@ -31,7 +31,6 @@ private:
 	vector<vector<vector<Real>>> preResults;
 	Real psiiNorm;
 
-
 	/* Outputs */
 	vector<string> labels;
 	vector<vector<StringReal>> results;
@@ -50,6 +49,7 @@ public:
 
 	void calculate(Args* a)
 	{
+		cout << "Calculating spectral broadening." << endl;
 		args = a;
 		repo = repoBuilder->build(args);
 		auto thermal = args->getBool("thermal");
@@ -63,6 +63,7 @@ public:
 		iterations = N;
 		E0 = krylov->getE0();
 		psiiNorm = krylov->getPsiiNorm();
+		etas = getEtas();
 		omegas = getOmegas();
 		for(auto i : range(Ts.size())) preResults.push_back(calcBroadening(Ts[i],N));
 		processResults();
@@ -80,6 +81,7 @@ private:
         CMatrix U;
         diagHermitian(T,U,d);
         vector<vector<Real>> result;
+
         for(auto eta : etas)
         {
             vector<Real> temp;
@@ -93,6 +95,10 @@ private:
                 auto R = U*D*conj(transpose(U)); // 1/(z-M)
                 auto res = R(0,0).imag();
 		        auto spectralNorm = sqrt(2.0/(Real(args->getInt("N")+1)));
+                Print(res);
+		        Print(spectralNorm);
+		        Print(psiiNorm);
+		        Print(M_PI);
                 res = -1*(1.0/M_PI)*spectralNorm*psiiNorm*res;
                 temp.push_back(res);
             }
@@ -129,16 +135,16 @@ private:
 		if(mom) labels.push_back("qFactor");
 		else labels.push_back("position");
 		labels.push_back("iterations");
-		labels.push_back("maxDim");
+		labels.push_back("MaxDim");
 		labels.push_back("N");
 		labels.push_back("Lattice");
 		labels.push_back("Model");
 		labels.push_back("thermal");
 
-		auto temp = vector<StringReal>();
 		for(auto i : range(etas.size()))
 		for(auto j : range(omegas.size()))
 		{
+			auto temp = vector<StringReal>();
 			temp.push_back(etas[i].imag()); // only need imaginary part, real is zero.
 			temp.push_back(omegas[j]);
 			temp.push_back(preResults[0][i][j]);
@@ -148,11 +154,10 @@ private:
 			if(mom) {temp.push_back(args->getReal("qFactor")); }
 			else {temp.push_back(args->getReal("position")); }
 			temp.push_back(iterations);
-			temp.push_back(string("iterations"));
-			temp.push_back(args->getReal("maxDim"));
+			temp.push_back(args->getReal("MaxDim"));
 			temp.push_back(args->getReal("N"));
-			temp.push_back(args->getReal("Lattice"));
-			temp.push_back(args->getReal("Model"));
+			temp.push_back(args->getString("Lattice"));
+			temp.push_back(args->getString("Model"));
 			temp.push_back(Real(args->getBool("thermal")));
 			results.push_back(temp);
 		}

@@ -22,7 +22,7 @@ protected:
 
 	/* Outputs */
 	Real E0;
-	MPS state;
+	MPS state = MPS();
 
 public:
 	State(){}
@@ -36,10 +36,10 @@ public:
 	Real getE0() {return E0; }
 	static string getHash(Args* args, int sType = 0)
 	{	
-		string s = "";
-		if(args->getBool("momentum")) s = args->getString("qFactor");
-		else s = args->getString("position");
-		return Model::getHash(args) + "_" + to_string(args->getInt("maxDim")) + "_" + s; // Maybe add some specifications for how you get GS?
+		Real s;
+		if(args->defined("qFactor")) s = args->getReal("qFactor");
+		else s = args->getReal("position");
+		return Model::getHash(args) + "_" + to_string(args->getInt("MaxDim")) + "_" + to_string(sType) + "_" + to_string(s); // Maybe add some specifications for how you get GS?
 	}
 	virtual void load(ifstream & f)
 	{

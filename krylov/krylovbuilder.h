@@ -29,6 +29,7 @@ public:
 	~KrylovBuilder(){}
 	Krylov* build(Args* a, krylovType kType = reorthogonalize)
 	{
+		cout << "building krylov" << endl;
 		args = a;
 		repo = repoBuilder->build(args);
 		auto spectral = args->getBool("spectral");

@@ -36,6 +36,7 @@ public:
 	~StateBuilder() {}	
 	State* build(Args* a, stateType sType = ground)
 	{
+		cout << "building state" << endl;
 		args = a;
 		repo = repoBuilder->build(args);
 		model = modelBuilder->build(args);
@@ -118,7 +119,7 @@ private:
 	MPO buildOperator()
 	{
 		auto lattice = latticeBuilder->build(args);
-		auto mom = args->getBool("momentum");
+		auto mom = args->defined("qFactor");
 		auto N = args->getInt("N");
 		// auto sites = siteBuilder
 		if(mom)

@@ -11,22 +11,6 @@ using namespace std;
 
 class Reorthogonalize : public Krylov
 {
-public:
-    class RMatrices : public Matrices
-    {
-    public:
-        CMatrix tr;
-        CMatrix s;
-        CMatrix h;
-        CMatrix h2;
-        RMatrices(CMatrix& _t, CMatrix& _tr, CMatrix& _s, CMatrix& _h, CMatrix& _h2) : Matrices(_t) 
-        {
-            tr = _tr;
-            s = _s;
-            h = _h;
-            h2 = _h2;
-        }
-    };
 protected:
 	/* Krylov makes T,V,iterations and has H and psi*/
 
@@ -54,7 +38,10 @@ public:
 	virtual ~Reorthogonalize(){}
     virtual CMatrix getT() {return TR; }
     virtual vector<CMatrix> getTs() {return vector<CMatrix>{T,TR}; }
-    virtual Matrices* getMatrices() {return new RMatrices(T,TR,S,HP,HP2); }
+    virtual Matrices* getMatrices() 
+    {
+        return new Matrices(T,TR,S,HP,HP2);
+    }
     virtual void load(ifstream & f)
     {
         Krylov::load(f);
@@ -96,11 +83,14 @@ protected:
         for(auto i : range(iterations))
         {
             cout << i << endl;
-            for(auto j : range(iterations))
+            for(auto j : range(i+1))
             {
                 W(i,j) = innerC(V[i],V[j]);
                 HP(i,j) = innerC(V[i],H,V[j]);          
-                HP2(i,j) = innerC(prime(V[i]),prime(H),H,V[j]);;
+                HP2(i,j) = innerC(prime(V[i]),prime(H),H,V[j]);
+                W(j,i) = W(i,j);
+                HP(j,i) = HP(i,j);          
+                HP2(j,i) = HP2(i,j);
             }
         }
         S(0,0) = 1;

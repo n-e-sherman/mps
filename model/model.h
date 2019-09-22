@@ -27,6 +27,7 @@ protected:
 
 public:
 	Model(){}
+	Model(Args* a){args = a; }
 	Model(Args* a, Lattice* l, SiteSet s) 
 	{ 
 		args = a;
@@ -44,7 +45,11 @@ public:
 	virtual void load(ifstream & f)
 	{
 		read(f,H);
-		read(f,sites);
+		auto sType = args->getString("SiteSet");
+		if     (sType == "SpinHalf"){ sites = SpinHalf(); sites.read(f); }
+		else if(sType == "SpinOne") { sites = SpinOne(); sites.read(f);  }
+		else if(sType == "SpinTwo") { sites = SpinTwo(); sites.read(f);  } 
+
 	}
 	virtual void save(ofstream & f)
 	{

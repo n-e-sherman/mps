@@ -9,7 +9,7 @@ using namespace itensor;
 using namespace std;
 
 int 
-main(int argc, char* argv[])
+main(int argc, char** argv)
 {
 	Args* args = getArgs(argc,argv);
 	auto s1 = SpectralWeightsFactory();

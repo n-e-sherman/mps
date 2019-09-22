@@ -22,6 +22,20 @@ vector<Real> stringToVector(string s)
     for(auto x : sres) res.push_back(stod(x));
     return res;
 }
+vector<int> stringToVectorI(string s)
+{   // I am assuming this string is comma separated, and NO SPACES
+    stringstream ss(s);
+    vector<string> sres;
+    while( ss.good() )
+    {
+        string substr;
+        getline( ss, substr, ',' );
+        sres.push_back( substr );
+    }
+    vector<int> res;
+    for(auto x : sres) res.push_back(stoi(x));
+    return res;
+}
 
 vector<string> splitString(string s)
 {   // I am assuming this string is comma separated, and NO SPACES
@@ -77,12 +91,14 @@ Args* getArgs(int argc, char* argv[])
 
     /* Code parameters */
     args->add("cwd","./");
-    args->add("maxDim",500);
+    args->add("Method","Fit");
+    args->add("MaxDim",500);
     args->add("spectral");
+    args->add("thermal",false);
+    args->add("beta",0);
     args->add("reorthogonalize");
     args->add("initial","AF");
     args->add("N",100);
-    args->add("c",args->getInt("N")/2);
     args->add("nLanczos",40);
     args->add("eps",0.0001);
     args->add("wi",0);
@@ -202,7 +218,7 @@ Args* getArgs(int argc, char* argv[])
     } 
     if(!args->defined("position"))
         if(!args->defined("qFactor")) args->add("qFactor",1.0);
-
+    args->add("c",args->getInt("N")/2);
     return args;
 }
 

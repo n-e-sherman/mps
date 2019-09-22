@@ -30,6 +30,7 @@ public:
 	~ModelBuilder(){}
 	Model* build(Args* a, modelType mType = normal)
 	{
+		cout << "building model" << endl;
 		args = a;
 		repo = repoBuilder->build(args);
 		auto modelName = args->getString("Model");
@@ -37,7 +38,7 @@ public:
 		{
 			if(mType == normal) 
 			{
-				auto model = repo->load(Model::getHash(args,mType), new Heisenberg());
+				auto model = repo->load(Model::getHash(args,mType), new Heisenberg(args),true);
 				if(model != nullptr) return model;
 				model = new Heisenberg(args, latticeBuilder->build(args), siteBuilder->build(args));
 				repo->save(Model::getHash(args,mType), model);
@@ -45,7 +46,7 @@ public:
 			}
 			else if(mType == thermal) 
 			{
-				auto model = repo->load(Model::getHash(args,mType), new HeisenbergLouiville());
+				auto model = repo->load(Model::getHash(args,mType), new HeisenbergLouiville(args),true);
 				if(model != nullptr) return model;
 				model = new HeisenbergLouiville(args, latticeBuilder->build(args), siteBuilder->build(args));
 				repo->save(Model::getHash(args,mType), model);

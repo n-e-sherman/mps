@@ -15,6 +15,7 @@ public:
 	~LatticeBuilder(){}
 	Lattice* build(Args* args)
 	{
+		cout << "building lattice" << endl;
 		/* TODO: Maybe implement repo, kind of overkill though. */
 		auto N = args->getInt("N");
 		auto thermal = args->getBool("thermal");

@@ -20,7 +20,18 @@ public:
         CMatrix h;
         CMatrix h2;
 		CMatrix t;
-		Matrices(CMatrix& _t) {t = t;}
+		Matrices(CMatrix& _t)
+		{
+			t = _t;
+		}
+        Matrices(CMatrix& _t, CMatrix& _tr, CMatrix& _s, CMatrix& _h, CMatrix& _h2) 
+        {  
+        	t = _t;
+            tr = _tr;
+            s = _s;
+            h = _h;
+            h2 = _h2;
+        }
 	};
 protected:
 	/* Inputs */
@@ -58,7 +69,7 @@ public:
 	virtual ~Krylov(){}
 	virtual CMatrix getT() {return T; }
 	virtual vector<CMatrix> getTs() {return vector<CMatrix>{T}; }
-	virtual Matrices* getMatrices() {return new Matrices(T); }
+	virtual Matrices* getMatrices(){return new Matrices(T); }
 	virtual int getIterations() {return iterations; }
 	Real getE0() {return E0; }
 	Real getPsiiNorm() {return psiiNorm; }
@@ -72,12 +83,14 @@ public:
 		read(f,iterations);
 		read(f,T);
 		read(f,E0);
+		read(f,psiiNorm);
 	}
 	virtual void save(ofstream & f)
 	{
 		write(f,iterations);
 		write(f,T);
 		write(f,E0);
+		write(f,psiiNorm);
 	}
 
 

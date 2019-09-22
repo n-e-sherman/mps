@@ -36,6 +36,7 @@ protected:
 	}
 public:
 	HeisenbergLouiville(){}
+	HeisenbergLouiville(Args* a) : Model(a) {}
 	HeisenbergLouiville(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) 
 	{
 		calcH();

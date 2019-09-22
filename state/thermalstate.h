@@ -22,21 +22,23 @@ protected:
 	}
 	void calcPsii() // Makes an infinite temperature state via purification.
 	{
+		/* N is off here, you're maxing out the sites */
 		auto sites = model->getSites();
 		state = MPS(sites);
 		auto N = sites.length();
     	for(int n = 1; n <= 2*N; n += 2)
         {
+        	cout << n << endl;
 	        auto s1 = sites(n);
 	        auto s2 = sites(n+1);
-	        auto wf = Tensor(s1,s2);
+	        auto wf = ITensor(s1,s2);
 	        wf.set(s1(1),s2(2), ISqrt2);
 	        wf.set(s1(2),s2(1), -ISqrt2);
-	        Tensor D;
-	        psi->Aref(n) = Tensor(s1);
-	        psi->Aref(n+1) = Tensor(s2);
-	        svd(wf,psi->Aref(n),D,psi->Aref(n+1));
-	        psi->Aref(n) *= D;
+	        ITensor D;
+	        state.Aref(n) = ITensor(s1);
+	        state.Aref(n+1) = ITensor(s2);
+	        svd(wf,state.Aref(n),D,state.Aref(n+1));
+	        state.Aref(n) *= D;
         }
 	}
 

@@ -44,6 +44,7 @@ public:
 
 	void calculate(Args* a)
 	{
+		cout << "Calculating spectral weights." << endl;
 		args = a;
 		repo = repoBuilder->build(args);
 		auto thermal = args->getBool("thermal");
@@ -76,13 +77,13 @@ private:
         for(auto &el : frequencies) el = NAN;
         auto frequenciesBare = Matrix(N,N);
         for(auto &el : frequenciesBare) el = NAN;
-       	for(auto n : range1(N))
+       	for(auto n : range(N))
        	{
-	        auto Tref = subMatrix(M->tr,0,n,0,n);
+	        auto Tref = subMatrix(M->tr,0,n+1,0,n+1);
 	        diagHermitian(Tref,U,d);
 	        Vector dBare;
 	        CMatrix UBare;
-	        auto TrefBare = subMatrix(M->t,0,n,0,n);
+	        auto TrefBare = subMatrix(M->t,0,n+1,0,n+1);
 	        diagHermitian(TrefBare,UBare,dBare);
 
 	        auto temp = vector<Real>();
@@ -98,12 +99,12 @@ private:
 	        for(auto i : range(temp.size())) frequenciesBare(n,i) = temp[i];
 
 	        temp = vector<Real>();
-	        for(auto k : range(n)) // may be n+1
+	        for(auto k : range(n+1)) // may be n+1
 	        {
 	            auto tempH = Cplx(0,0);
 	            auto tempH2 = Cplx(0,0);
-	            for(auto i : range(n))
-	            for(auto j : range(n))
+	            for(auto i : range(n+1))
+	            for(auto j : range(n+1))
 	            for(auto p : range(i+1))
 	            for(auto q : range(j+1))
 	            {
@@ -116,7 +117,7 @@ private:
 	    }
 		auto mom = args->defined("qFactor");
 		labels.push_back("iterations");
-		for(auto i : range1(N)) labels.push_back("Barefrequencies"+to_string(i));
+		for(auto i : range1(N)) labels.push_back("frequenciesBare"+to_string(i));
 		for(auto i : range1(N)) labels.push_back("frequencies"+to_string(i));
 		for(auto i : range1(N)) labels.push_back("residues"+to_string(i));
 		for(auto i : range1(N)) labels.push_back("weights"+to_string(i));
@@ -130,9 +131,9 @@ private:
 		labels.push_back("Model");
 		labels.push_back("thermal");
 
-		auto temp = vector<StringReal>();
 		for(auto i : range(N))
 		{
+			auto temp = vector<StringReal>();
 			temp.push_back(i+1);
 			for(auto j : range(N)) temp.push_back(frequenciesBare(i,j));
 			for(auto j : range(N)) temp.push_back(frequencies(i,j));
@@ -142,12 +143,11 @@ private:
 			if(mom) temp.push_back(args->getReal("qFactor"));
 			else temp.push_back(args->getReal("position"));
 			temp.push_back(args->getReal("nLanczos"));
-			temp.push_back(args->getReal("maxDim"));
+			temp.push_back(args->getReal("MaxDim"));
 			temp.push_back(args->getReal("N"));
-			temp.push_back(args->getReal("Lattice")); // This is garbage.
-			temp.push_back(args->getReal("Model"));   // This is garbage.
+			temp.push_back(args->getString("Lattice")); // This is garbage.
+			temp.push_back(args->getString("Model"));   // This is garbage.
 			temp.push_back(Real(args->getBool("thermal")));
-
 			results.push_back(temp);
 		}
 	}

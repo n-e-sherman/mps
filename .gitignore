@@ -3,6 +3,7 @@
 .old/
 .debug_objs/
 .inputs/
+.vscode/
 old_code.cc
 TODO
 trash
