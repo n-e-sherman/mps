@@ -14,7 +14,7 @@
 /* Memory manage the new pointers. */
 LatticeBuilder* latticeFactory() {return new LatticeBuilder(); }
 RepositoryBuilder* repositoryFactory() {return new RepositoryBuilder(); }
-SiteBuilder* siteFactory() {return new SiteBuilder(); }
+SiteBuilder* siteFactory() {return new SiteBuilder(repositoryFactory()); }
 ModelBuilder* modelFactory() {return new ModelBuilder(latticeFactory(), siteFactory(), repositoryFactory()); }
 StateBuilder* stateFactory() {return new StateBuilder(modelFactory(), latticeFactory(), repositoryFactory()); }
 KrylovBuilder* krylovFactory() {return new KrylovBuilder(modelFactory(), stateFactory(), repositoryFactory()); }

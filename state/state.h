@@ -39,7 +39,9 @@ public:
 		Real s;
 		if(args->defined("qFactor")) s = args->getReal("qFactor");
 		else s = args->getReal("position");
-		return Model::getHash(args) + "_" + to_string(args->getInt("MaxDim")) + "_" + to_string(sType) + "_" + to_string(s); // Maybe add some specifications for how you get GS?
+		int mType = 0;
+		if(args->getBool("thermal")) mType = ModelBuilder::thermal;
+		return Model::getHash(args,mType) + "_" + to_string(args->getInt("MaxDim")) + "_" + to_string(sType) + "_" + to_string(s); // Maybe add some specifications for how you get GS?
 	}
 	virtual void load(ifstream & f)
 	{

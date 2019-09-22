@@ -18,21 +18,18 @@ protected:
 
 	void calcSpectralState()
 	{
-		auto c = args->getInt("c");
 		auto N = args->getInt("N");
 		auto psi0 = in_state->getState();
 		auto is = siteInds(psi0);
-        op.position(c);
-        psi0.position(c);
+        op.position(1);
+        psi0.position(1);
         state = applyMPO(op,psi0);
-        prepare(state,psi0,c,is);
+        prepare(state,psi0,is);
 	}
-	void prepare(MPS &a, MPS &b, int c, IndexSet is)
+	void prepare(MPS &a, MPS &b, IndexSet is)
 	{
 	    a.replaceSiteInds(is);
 	    b.replaceSiteInds(is);
-	    a.position(c);
-	    b.position(c);
 	}
 
 public:

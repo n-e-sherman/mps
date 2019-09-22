@@ -23,7 +23,7 @@ public:
 
 	template<class T> 
 	T* load(const std::string& hash, T* T_in, bool onlyCache = false) 
-	{	 
+	{	
 		auto retC = (T*)cache->load(hash);
 		if(retC != nullptr) return retC;
 		ifstream file;

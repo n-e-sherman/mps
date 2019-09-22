@@ -99,6 +99,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("reorthogonalize");
     args->add("initial","AF");
     args->add("N",100);
+    args->add("c",1);
     args->add("nLanczos",40);
     args->add("eps",0.0001);
     args->add("wi",0);
@@ -218,7 +219,6 @@ Args* getArgs(int argc, char* argv[])
     } 
     if(!args->defined("position"))
         if(!args->defined("qFactor")) args->add("qFactor",1.0);
-    args->add("c",args->getInt("N")/2);
     return args;
 }
 

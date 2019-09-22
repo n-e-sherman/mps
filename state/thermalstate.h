@@ -26,9 +26,9 @@ protected:
 		auto sites = model->getSites();
 		state = MPS(sites);
 		auto N = sites.length();
-    	for(int n = 1; n <= 2*N; n += 2)
+    	for(int n = 1; n <= N; n += 2)
         {
-        	cout << n << endl;
+        	cout << n << "," << N << endl;
 	        auto s1 = sites(n);
 	        auto s2 = sites(n+1);
 	        auto wf = ITensor(s1,s2);

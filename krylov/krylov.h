@@ -104,10 +104,9 @@ protected:
 		/* Calc Hred, you already have this code, just paste and modify.*/
 		maxIter = args->getInt("nLanczos");
 		auto is = siteInds(psii);
-		auto c = args->getInt("c");
 
-        psii.position(c);
-        H.position(c);
+        psii.position(1);
+        H.position(1);
         V = std::vector<MPS>(maxIter,MPS(psii));
         auto W = std::vector<MPS>(maxIter,MPS(psii));
         auto WP = std::vector<MPS>(maxIter,MPS(psii));
@@ -115,8 +114,9 @@ protected:
         for(auto& el : T) el = Cplx(0,0);
         V[0] = MPS(psii);
        	WP[0] = applyMPO(H,V[0],*args);
+       	WP[0].noPrime("Site");
         T(0,0) = innerC(WP[0],V[0]).real();
-        prepare(V[0],WP[0],c,is);
+        prepare(V[0],WP[0],is);
         W[0] = sum(WP[0],-1*T(0,0)*V[0],*args);
         i = 1;
         while(!converged())
@@ -127,9 +127,9 @@ protected:
             V[i] = (1.0/norm(W[i-1]))*W[i-1];
             WP[i] = applyMPO(H,V[i],*args);
             T(i,i) = innerC(WP[i],V[i]).real();
-            prepare(WP[i],V[i],c,is);
+            prepare(WP[i],V[i],is);
             auto temp = sum(WP[i],-1*T(i,i)*V[i],*args);
-            prepare(temp,V[i-1],c,is);
+            prepare(temp,V[i-1],is);
             W[i] = sum(temp,-1*T(i,i-1)*V[i-1],*args);
             i+=1;
         }
@@ -142,12 +142,10 @@ protected:
 		if(i >= maxIter) return true;
 		else return false;
 	}
-	void prepare(MPS &a, MPS &b, int c, IndexSet is)
+	void prepare(MPS &a, MPS &b, IndexSet is)
 	{
 	    a.replaceSiteInds(is);
 	    b.replaceSiteInds(is);
-	    a.position(c);
-	    b.position(c);
 	}
 
 };
