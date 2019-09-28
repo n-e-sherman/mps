@@ -22,7 +22,6 @@ protected:
 		int s1 = 0;
 		int s2 = 0;
 		type t = physical;
-		// bond(int x1, int x2, bondType s) {s1=x1; s2=x2; t=s;}
 	};
 	struct site
 	{
@@ -54,7 +53,7 @@ public:
 		return to_string(args->getInt("N")) + "_" + s + args->getString("Lattice");
 	}
 
-	/* Saving is useless here... */
+	/* TODO: Maybe implement saving? */
 	// virtual void load(ifstream & f)
 	// {
 	// 	read(f,bonds);

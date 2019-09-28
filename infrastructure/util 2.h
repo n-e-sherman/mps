@@ -74,7 +74,7 @@ vector<Real> linspace(Real a, Real b, int n)
 
 char* stoc(std::string x)
 {
-    char *y = new char[x.length() + 1];
+    char* y = new char[x.length() + 1];
     std::strcpy(y, x.c_str());
     return y;
 }
@@ -256,6 +256,21 @@ struct StringReal
         if((*this).t == Numeric){return ((*this).r == t_in); }
         else{return (*this).s == t_in; }
     }
+    // bool operator==(Real in)
+    // {
+    //     if((*this).t == Numeric){return ((*this).r == in); }
+    //     else{return false; }
+    // }
+    // bool operator==(string in)
+    // {
+    //     if((*this).t == Numeric){return false; }
+    //     else{return ((*this).s == in); }
+    // }
+    // bool operator==(char* in)
+    // {
+    //     if((*this).t == Numeric){return false; }
+    //     else{return ((*this).s == string(in)); }
+    // }
     friend std::ostream& operator<<( ostream& os, const StringReal& sr) 
     {
         if (sr.t == Numeric) os << sr.r;

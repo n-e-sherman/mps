@@ -55,7 +55,7 @@ public:
 		auto M = krylov->getMatrices();
 		auto N = krylov->getIterations();
 		calcWeights(M,N);
-		repo->save(getHash(),labels,results); // Need a hash.
+		repo->save(getHash(),"weights",labels,results); // Need a hash.
 	}
 
 
@@ -145,13 +145,13 @@ private:
 			temp.push_back(args->getReal("nLanczos"));
 			temp.push_back(args->getReal("MaxDim"));
 			temp.push_back(args->getReal("N"));
-			temp.push_back(args->getString("Lattice")); // This is garbage.
-			temp.push_back(args->getString("Model"));   // This is garbage.
+			temp.push_back(args->getString("Lattice"));
+			temp.push_back(args->getString("Model")); 
 			temp.push_back(Real(args->getBool("thermal")));
 			results.push_back(temp);
 		}
 	}
-	/* Need a static method? */
+	
 	virtual string getHash()
 	{
 		return Krylov::getHash(args) + "_SpectralWeights";

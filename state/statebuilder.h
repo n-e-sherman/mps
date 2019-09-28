@@ -121,7 +121,6 @@ private:
 		auto lattice = latticeBuilder->build(args);
 		auto mom = args->defined("qFactor");
 		auto N = args->getInt("N");
-		// auto sites = siteBuilder
 		if(mom)
 		{
 			auto qfactor = args->getReal("qFactor");

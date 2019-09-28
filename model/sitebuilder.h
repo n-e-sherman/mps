@@ -10,16 +10,12 @@ class SiteBuilder
 {
 protected:
 	SiteSet sites;
-	RepositoryBuilder* repoBuilder;
-	Repository* repo;
 public:
 	SiteBuilder(){}
-	SiteBuilder(RepositoryBuilder* rb){repoBuilder = rb; }
 	~SiteBuilder(){}
 	SiteSet build(Args* args)
 	{
 		cout << "building sites" << endl;
-		repo = repoBuilder->build(args);
 		auto cache = Cache::getInstance();
 		auto pSites = (SiteSet*)cache->load(SiteBuilder::getHash(args));
 		if(pSites != nullptr) return *pSites;

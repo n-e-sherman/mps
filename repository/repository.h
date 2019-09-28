@@ -22,7 +22,7 @@ public:
 	virtual ~Repository(){}
 
 	template<class T> 
-	T* load(const std::string& hash, T* T_in, bool onlyCache = false) 
+	T* load(const std::string& hash, T* T_in) 
 	{	
 		auto retC = (T*)cache->load(hash);
 		if(retC != nullptr) return retC;
@@ -41,14 +41,14 @@ public:
 		t->save(file);
 	}
 	template<class T,class LabelT>
-	void save(const std::string &hash, const LabelT& labels, const T& data, string delimeter = ",")
+	void save(const std::string &hash, const std::string& folder, const LabelT& labels, const T& data, string delimeter = ",")
 	{
 		/* This function assumes a 2D structure of iterables.
 		 * example: vector<vector<.>>. The outer iterable are
 		 * rows, and the inner iterable is a row.
 		 */
 		ofstream file;
-		file.open(cwd + ".results/" + hash);
+		file.open(cwd + ".results/" + folder + "/" + hash);
 		auto it = labels.begin();
 		while(it != labels.end())
 		{

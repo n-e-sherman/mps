@@ -12,8 +12,8 @@ int
 main(int argc, char** argv)
 {
 	Args* args = getArgs(argc,argv);
-	auto s1 = SpectralWeightsFactory();
-	auto s2 = SpectralBroadeningFactory();
+	auto s1 = spectralWeightsFactory();
+	auto s2 = spectralBroadeningFactory();
 	s1->calculate(args);
 	s2->calculate(args);
 }

@@ -6,8 +6,9 @@
 #include "lattice/latticebuilder.h"
 #include "model/model.h"
 #include "model/heisenberg.h"
-#include "model/sitebuilder.h"
 #include "model/heisenberglouiville.h"
+#include "model/xx.h"
+#include "model/xxlouiville.h"
 #include "model/sitebuilder.h"
 
 class ModelBuilder
@@ -38,7 +39,7 @@ public:
 		{
 			if(mType == normal) 
 			{
-				auto model = repo->load(Model::getHash(args,mType), new Heisenberg(args),true);
+				auto model = repo->load(Model::getHash(args,mType), new Heisenberg(args));
 				if(model != nullptr) return model;
 				model = new Heisenberg(args, latticeBuilder->build(args), siteBuilder->build(args));
 				repo->save(Model::getHash(args,mType), model);
@@ -46,9 +47,29 @@ public:
 			}
 			else if(mType == thermal) 
 			{
-				auto model = repo->load(Model::getHash(args,mType), new HeisenbergLouiville(args),true);
+				auto model = repo->load(Model::getHash(args,mType), new HeisenbergLouiville(args));
 				if(model != nullptr) return model;
 				model = new HeisenbergLouiville(args, latticeBuilder->build(args), siteBuilder->build(args));
+				repo->save(Model::getHash(args,mType), model);
+				return model;
+			}
+		}
+		else
+		if(modelName == "XX") 
+		{
+			if(mType == normal) 
+			{
+				auto model = repo->load(Model::getHash(args,mType), new XX(args));
+				if(model != nullptr) return model;
+				model = new XX(args, latticeBuilder->build(args), siteBuilder->build(args));
+				repo->save(Model::getHash(args,mType), model);
+				return model;
+			}
+			else if(mType == thermal) 
+			{
+				auto model = repo->load(Model::getHash(args,mType), new XXLouiville(args));
+				if(model != nullptr) return model;
+				model = new XXLouiville(args, latticeBuilder->build(args), siteBuilder->build(args));
 				repo->save(Model::getHash(args,mType), model);
 				return model;
 			}

@@ -46,9 +46,9 @@ public:
 	{
 		read(f,H);
 		auto sType = args->getString("SiteSet");
-		if     (sType == "SpinHalf"){ sites = SpinHalf(); sites.read(f); }
-		else if(sType == "SpinOne") { sites = SpinOne(); sites.read(f);  }
-		else if(sType == "SpinTwo") { sites = SpinTwo(); sites.read(f);  } 
+		if     (sType == "SpinHalf"){ auto rSites = SpinHalf(args->getInt("N")); rSites.read(f); sites = rSites; }
+		else if(sType == "SpinOne") { auto rSites = SpinOne(args->getInt("N")); rSites.read(f); sites = rSites;  }
+		else if(sType == "SpinTwo") { auto rSites = SpinTwo(args->getInt("N")); rSites.read(f); sites = rSites;  } 
 
 	}
 	virtual void save(ofstream & f)

@@ -22,7 +22,6 @@ protected:
 	}
 	void calcPsii() // Makes an infinite temperature state via purification.
 	{
-		/* N is off here, you're maxing out the sites */
 		auto sites = model->getSites();
 		state = MPS(sites);
 		auto N = sites.length();

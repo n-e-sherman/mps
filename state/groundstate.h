@@ -38,11 +38,8 @@ public:
 
 	Sweeps getSweeps()
 	{
-		/* This needs love */
 		Sweeps sweeps(args->getInt("nSweeps"));
 		auto maxdim = stringToVectorI(args->getString("sweeps_maxdim"));
-		// sweeps.maxdim() = SweepSetter(smaxdim);
-		// sweeps.maxdim() = maxdim;
 		for(auto i : range(maxdim.size())) sweeps.setmaxdim(i+1,maxdim[i]);
 		auto mindim = stringToVector(args->getString("sweeps_mindim"));
 		for(auto i : range(mindim.size())) sweeps.setmindim(i+1,mindim[i]);

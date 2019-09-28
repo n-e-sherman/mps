@@ -67,7 +67,7 @@ public:
 		omegas = getOmegas();
 		for(auto i : range(Ts.size())) preResults.push_back(calcBroadening(Ts[i],N));
 		processResults();
-		repo->save(getHash(),labels,results);
+		repo->save(getHash(),"broadening",labels,results);
 	}
 
 
