@@ -16,11 +16,9 @@ class XXLouiville : public Model
 protected:
 	virtual void calcH()
 	{
-		cout << "XXLouiville calculating. " << endl;
-		auto ampo = AutoMPO(sites);
+                auto ampo = AutoMPO(sites);
                 for(auto b : *lattice)
                 {
-                        cout << b.t << "," << b.s1 << "," << b.s2 << endl;
                 	if(b.t == Lattice::physical)
                 	{
         	            ampo += 0.5,"S+",b.s1,"S-",b.s2;
