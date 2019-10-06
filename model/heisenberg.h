@@ -25,6 +25,10 @@ protected:
 	            ampo += 0.5,"S-",b.s1,"S+",b.s2;
 	            ampo +=     "Sz",b.s1,"Sz",b.s2;
         	}
+        	// if(b.t == Lattice::environment)
+        	// {
+        	// 	ampo += 1,"Id",b.s1,"Id",b.s2;
+        	// }
         }
         H = toMPO(ampo);
 	}

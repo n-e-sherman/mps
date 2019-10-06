@@ -50,6 +50,12 @@ vector<string> splitString(string s)
     return sres;
 }
 
+void prepare(MPS &a, MPS &b, IndexSet is)
+{
+    a.replaceSiteInds(is);
+    b.replaceSiteInds(is);
+}
+
 
 bool pathExists(const std::string &s) 
 {
@@ -88,10 +94,13 @@ Args* getArgs(int argc, char* argv[])
     args->add("Lattice","Chain");
     args->add("Model","Heisenberg");
     args->add("SiteSet","SpinHalf");
+    args->add("Weights",false);
+    args->add("Chevyshev",true);
+    args->add("Broadening",false);
 
     /* Code parameters */
     args->add("cwd","./");
-    args->add("Method","Fit");
+    args->add("Method","DensityMatrix");
     args->add("MaxDim",500);
     args->add("spectral");
     args->add("thermal",false);
@@ -106,6 +115,9 @@ Args* getArgs(int argc, char* argv[])
     args->add("wf",4);
     args->add("nw",201);
     args->add("etas","0.1,0.2");
+    args->add("W",8);
+    args->add("Wp",0.9875);
+    args->add("nChebyshev",100);
 
     /* Sweeps for DMRG */
     args->add("nSweeps",5);

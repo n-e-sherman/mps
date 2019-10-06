@@ -1,7 +1,9 @@
 #ifndef __SITEBUILDER_H_
 #define __SITEBUILDER_H_
+
 #include "itensor/all.h"
 #include "itensor/mps/sites/spintwo.h"
+#include "infrastructure/cache.h"
 #include <string>
 
 using namespace std;

@@ -4,9 +4,11 @@
 .debug_objs/
 .inputs/
 .vscode/
+jupyter/
 old_code.cc
 TODO
 trash
+trash.txt
 main
 main-g
 main.o

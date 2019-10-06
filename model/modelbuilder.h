@@ -10,6 +10,7 @@
 #include "model/xx.h"
 #include "model/xxlouiville.h"
 #include "model/sitebuilder.h"
+#include "repository/repositorybuilder.h"
 
 class ModelBuilder
 {

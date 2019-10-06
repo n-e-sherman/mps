@@ -24,6 +24,7 @@ protected:
 	{
 		auto sites = model->getSites();
 		state = MPS(sites);
+		state = removeQNs(state);
 		auto N = sites.length();
     	for(int n = 1; n <= N; n += 2)
         {
@@ -39,6 +40,8 @@ protected:
 	        svd(wf,state.Aref(n),D,state.Aref(n+1));
 	        state.Aref(n) *= D;
         }
+        state.orthogonalize();
+        state.normalize();
 	}
 
 public:

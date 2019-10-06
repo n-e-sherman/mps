@@ -14,8 +14,13 @@ main(int argc, char** argv)
 	Args* args = getArgs(argc,argv);
 	auto s1 = spectralWeightsFactory();
 	auto s2 = spectralBroadeningFactory();
-	s1->calculate(args);
-	s2->calculate(args);
+	auto c  = chebyshevFactory();
+	if(args->getBool("Chebyshev"))
+		c->calculate(args);
+	if(args->getBool("Weights"))
+		s1->calculate(args);
+	if(args->getBool("Broadening"))
+		s2->calculate(args);
 }
 
 

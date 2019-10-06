@@ -6,7 +6,7 @@
 #include "services/service.h"
 #include "model/modelbuilder.h"
 #include "repository/repositorybuilder.h"
-#include "krylov/krylovbuilder.h"
+#include "lanczos/lanczosbuilder.h"
 #include <string>
 #include <iostream>
 
@@ -22,8 +22,8 @@ private:
 	Model* model;
 	RepositoryBuilder* repoBuilder;
 	Repository* repo;
-	KrylovBuilder* krylovBuilder;
-	Krylov* krylov;
+	LanczosBuilder* lanczosBuilder;
+	Lanczos* lanczos;
 
 	/* Helpers */
 	vector<Cplx> etas;
@@ -39,11 +39,11 @@ private:
 
 public:
 	SpectralBroadening() : Service(){}
-	SpectralBroadening(ModelBuilder *mb, KrylovBuilder* kb, RepositoryBuilder* rb) : Service()
+	SpectralBroadening(ModelBuilder *mb, LanczosBuilder* lb, RepositoryBuilder* rb) : Service()
 	{ 
 		modelBuilder = mb;
 		repoBuilder = rb;
-		krylovBuilder = kb;
+		lanczosBuilder = lb;
 	}
 	~SpectralBroadening(){}
 
@@ -53,16 +53,17 @@ public:
 		args = a;
 		repo = repoBuilder->build(args);
 		auto thermal = args->getBool("thermal");
-		if(thermal) model = modelBuilder->build(args,ModelBuilder::thermal);
-		else model = modelBuilder->build(args);
+		// if(thermal) model = modelBuilder->build(args,ModelBuilder::thermal);
+		// else model = modelBuilder->build(args);
 		auto reortho = args->getBool("reorthogonalize");
-		if(reortho) krylov = krylovBuilder->build(args,KrylovBuilder::reorthogonalize);
-		else krylov = krylovBuilder->build(args,KrylovBuilder::bare);
-		auto Ts = krylov->getTs();
-		auto N = krylov->getIterations();
+		if(reortho) lanczos = lanczosBuilder->build(args,LanczosBuilder::reorthogonalize);
+		else lanczos = lanczosBuilder->build(args,LanczosBuilder::bare);
+		auto Ts = lanczos->getTs();
+		auto N = lanczos->getIterations();
 		iterations = N;
-		E0 = krylov->getE0();
-		psiiNorm = krylov->getPsiiNorm();
+		E0 = lanczos->getE0();
+		Print(E0);
+		psiiNorm = lanczos->getPsiiNorm();
 		etas = getEtas();
 		omegas = getOmegas();
 		for(auto i : range(Ts.size())) preResults.push_back(calcBroadening(Ts[i],N));
@@ -79,7 +80,9 @@ private:
 	{
         Vector d;
         CMatrix U;
+        Print(subMatrix(T,0,5,0,5));
         diagHermitian(T,U,d);
+        Print(d);
         vector<vector<Real>> result;
 
         for(auto eta : etas)
@@ -88,18 +91,18 @@ private:
             for(auto omega : omegas)
             {
                 auto z = omega + E0 + eta;
+                Print(z);
                 auto delta = CVector(nMax);
                 for(int i = 0; i < nMax; i++) delta(i) = 1.0/(z-d(i));
+                // Print(delta);
                 auto D = CMatrix(nMax,nMax);
                 diagonal(D) &= delta;
                 auto R = U*D*conj(transpose(U)); // 1/(z-M)
+                // auto R = conj(transpose(U))*D*U; // 1/(z-M)
+                // auto R = U*D*conj(transpose(U)); // 1/(z-M)
+                Print(R(0,0));
                 auto res = R(0,0).imag();
-		        auto spectralNorm = sqrt(2.0/(Real(args->getInt("N")+1)));
-                Print(res);
-		        Print(spectralNorm);
-		        Print(psiiNorm);
-		        Print(M_PI);
-                res = -1*(1.0/M_PI)*spectralNorm*psiiNorm*res;
+                res = -1*(1.0/M_PI)*psiiNorm*res;
                 temp.push_back(res);
             }
             result.push_back(temp);
@@ -163,10 +166,9 @@ private:
 		}
 	}
 
-	/* */
 	virtual string getHash()
 	{
-		return Krylov::getHash(args) + "_SpectralBroadening";
+		return Lanczos::getHash(args) + "_SpectralBroadening";
 	}
 
 };

@@ -9,7 +9,7 @@
 using namespace itensor;
 using namespace std;
 
-class Krylov
+class Lanczos
 {
 public:
 	class Matrices
@@ -40,6 +40,7 @@ protected:
 	State* state;
 	MPS psii;
 	MPO H;
+	SiteSet sites;
 
 	/* Helpers */
 	int i;
@@ -53,20 +54,22 @@ protected:
 	Real psiiNorm;
 
 public:
-	Krylov(){}
-	Krylov(Args* a, Model* m, State* s)
+	Lanczos(){}
+	Lanczos(Args* a, Model* m, State* s)
 	{ 
 
 		args = a;
 		model = m;
+		sites = m->getSites();
 		state = s;
 		psii = state->getState();
 		psiiNorm = psii.normalize();
+		Print(psiiNorm);
 		E0 = state->getE0();
 		H = model->getH();
 		calcKrylov();	
 	}
-	virtual ~Krylov(){}
+	virtual ~Lanczos(){}
 	virtual CMatrix getT() {return T; }
 	virtual vector<CMatrix> getTs() {return vector<CMatrix>{T}; }
 	virtual Matrices* getMatrices(){return new Matrices(T); }
@@ -101,32 +104,43 @@ public:
 protected:
 	void calcKrylov()
 	{
-		/* Calc Hred, you already have this code, just paste and modify.*/
 		maxIter = args->getInt("nLanczos");
 		auto is = siteInds(psii);
 
         psii.position(1);
         H.position(1);
+        Print(norm(psii));
         V = std::vector<MPS>(maxIter,MPS(psii));
         auto W = std::vector<MPS>(maxIter,MPS(psii));
         auto WP = std::vector<MPS>(maxIter,MPS(psii));
         T = CMatrix(maxIter,maxIter);
         for(auto& el : T) el = Cplx(0,0);
         V[0] = MPS(psii);
+       	cout << "norm of V[0] = " << norm(V[0]) << endl;
        	WP[0] = applyMPO(H,V[0],*args);
+       	cout << "norm of Hpsi = " << norm(WP[0]) << endl;
        	WP[0].noPrime("Site");
-        T(0,0) = innerC(WP[0],V[0]).real();
+        T(0,0) = innerC(WP[0],V[0]);
         prepare(V[0],WP[0],is);
         W[0] = sum(WP[0],-1*T(0,0)*V[0],*args);
         i = 1;
+       	cout << "norm of V[0] = " << norm(V[0]) << endl;
         while(!converged())
         {
         	cout << i << endl;
             T(i-1,i) = norm(W[i-1]);
             T(i,i-1) = norm(W[i-1]);
             V[i] = (1.0/norm(W[i-1]))*W[i-1];
+            if(norm(V[i]) == 0)
+            {
+            	cout << "making random V at iteration " << i << endl;
+            	V[i] = randomMPS(InitState(sites));
+            	V[i].position(1);
+            	V[i].normalize();
+            	V[i].replaceSiteInds(is);
+            }
             WP[i] = applyMPO(H,V[i],*args);
-            T(i,i) = innerC(WP[i],V[i]).real();
+            T(i,i) = innerC(WP[i],V[i]);
             prepare(WP[i],V[i],is);
             auto temp = sum(WP[i],-1*T(i,i)*V[i],*args);
             prepare(temp,V[i-1],is);
@@ -134,6 +148,7 @@ protected:
             i+=1;
         }
         iterations = i;
+        // Print(T);
         if(iterations < maxIter) T = subMatrix(T,0,iterations,0,iterations);
 	}
 
@@ -142,11 +157,11 @@ protected:
 		if(i >= maxIter) return true;
 		else return false;
 	}
-	void prepare(MPS &a, MPS &b, IndexSet is)
-	{
-	    a.replaceSiteInds(is);
-	    b.replaceSiteInds(is);
-	}
+	// void prepare(MPS &a, MPS &b, IndexSet is)
+	// {
+	//     a.replaceSiteInds(is);
+	//     b.replaceSiteInds(is);
+	// }
 
 };
 

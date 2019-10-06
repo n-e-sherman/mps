@@ -16,23 +16,23 @@ class XXLouiville : public Model
 protected:
 	virtual void calcH()
 	{
+		cout << "XXLouiville calculating. " << endl;
 		auto ampo = AutoMPO(sites);
-        for(auto b : *lattice)
-        {
-        	if(b.t == Lattice::physical)
-        	{
-	            ampo += 0.5,"S+",b.s1,"S-",b.s2;
-	            ampo += 0.5,"S-",b.s1,"S+",b.s2;
-	            ampo +=     "Sz",b.s1,"Sz",b.s2;
-        	}
-        	if(b.t == Lattice::environment)
-        	{
-	            ampo += -0.5,"S+",b.s1,"S-",b.s2;
-	            ampo += -0.5,"S-",b.s1,"S+",b.s2;
-	            ampo += -1.0,"Sz",b.s1,"Sz",b.s2;
-        	}
-        }
-        H = toMPO(ampo);
+                for(auto b : *lattice)
+                {
+                        cout << b.t << "," << b.s1 << "," << b.s2 << endl;
+                	if(b.t == Lattice::physical)
+                	{
+        	            ampo += 0.5,"S+",b.s1,"S-",b.s2;
+        	            ampo += 0.5,"S-",b.s1,"S+",b.s2;
+                	}
+                	if(b.t == Lattice::environment)
+                	{
+        	            ampo += -0.5,"S+",b.s1,"S-",b.s2;
+        	            ampo += -0.5,"S-",b.s1,"S+",b.s2;
+                	}
+                }
+                H = toMPO(ampo);
 	}
 public:
 	XXLouiville(){}

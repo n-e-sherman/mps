@@ -9,7 +9,7 @@
 using namespace itensor;
 using namespace std;
 
-class Reorthogonalize : public Krylov
+class Reorthogonalize : public Lanczos
 {
 protected:
 	/* Krylov makes T,V,iterations and has H and psi*/
@@ -29,7 +29,7 @@ protected:
 
 public:
 	Reorthogonalize(){}
-	Reorthogonalize(Args* a, Model* m, State* s) : Krylov(a,m,s)
+	Reorthogonalize(Args* a, Model* m, State* s) : Lanczos(a,m,s)
 	{ 
         eps = args->getReal("eps");
 		reorthogonalize();
@@ -44,7 +44,7 @@ public:
     }
     virtual void load(ifstream & f)
     {
-        Krylov::load(f);
+        Lanczos::load(f);
         read(f,S);
         read(f,HP);
         read(f,HP2);
@@ -52,7 +52,7 @@ public:
     }
     virtual void save(ofstream & f)
     {
-        Krylov::save(f);
+        Lanczos::save(f);
         write(f,S);
         write(f,HP);
         write(f,HP2);

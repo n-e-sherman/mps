@@ -22,23 +22,31 @@ public:
 	virtual ~Repository(){}
 
 	template<class T> 
-	T* load(const std::string& hash, T* T_in) 
+	T* load(const std::string& hash, T* T_in, bool loadFile = true) 
 	{	
 		auto retC = (T*)cache->load(hash);
 		if(retC != nullptr) return retC;
-		ifstream file;
-		file.open(cwd+".data/"+hash, ios::in | ios::binary);
-		if(file.is_open()) {T_in->load(file); }
-		else {T_in = nullptr; }
-		return T_in;
+		if(loadFile)
+		{
+			ifstream file;
+			file.open(cwd+".data/"+hash, ios::in | ios::binary);
+			if(file.is_open()) {T_in->load(file); }
+			else {T_in = nullptr; }
+			return T_in;
+		}
+		else
+			return nullptr;
 	}
 	template<class T>
-	void save(const std::string& hash, T* t) 
+	void save(const std::string& hash, T* t, bool saveFile = true) 
 	{ 
 		cache->save(hash,t);
-		ofstream file;
-		file.open(cwd+ ".data/" + hash, ios::out | ios::binary);
-		t->save(file);
+		if(saveFile)
+		{
+			ofstream file;
+			file.open(cwd+ ".data/" + hash, ios::out | ios::binary);
+			t->save(file);
+		}
 	}
 	template<class T,class LabelT>
 	void save(const std::string &hash, const std::string& folder, const LabelT& labels, const T& data, string delimeter = ",")

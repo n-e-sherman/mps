@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include "model/sitebuilder.h"
 #include "itensor/all.h"
 #include "lattice/lattice.h"
 #include "infrastructure/util.h"

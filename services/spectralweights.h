@@ -6,7 +6,7 @@
 #include "services/service.h"
 #include "model/modelbuilder.h"
 #include "repository/repositorybuilder.h"
-#include "krylov/krylovbuilder.h"
+#include "lanczos/lanczosbuilder.h"
 #include <string>
 #include <iostream>
 
@@ -22,8 +22,8 @@ private:
 	Model* model;
 	RepositoryBuilder* repoBuilder;
 	Repository* repo;
-	KrylovBuilder* krylovBuilder;
-	Krylov* krylov;
+	LanczosBuilder* lanczosBuilder;
+	Lanczos* lanczos;
 
 	/* Helpers */
 	Real E0;
@@ -34,11 +34,11 @@ private:
 
 public:
 	SpectralWeights() : Service(){}
-	SpectralWeights(ModelBuilder *mb, KrylovBuilder* kb, RepositoryBuilder* rb) : Service()
+	SpectralWeights(ModelBuilder *mb, LanczosBuilder* lb, RepositoryBuilder* rb) : Service()
 	{ 
 		modelBuilder = mb;
 		repoBuilder = rb;
-		krylovBuilder = kb;
+		lanczosBuilder = lb;
 	}
 	~SpectralWeights(){}
 
@@ -50,10 +50,10 @@ public:
 		auto thermal = args->getBool("thermal");
 		if(thermal) model = modelBuilder->build(args,ModelBuilder::thermal);
 		else model = modelBuilder->build(args);
-		krylov = krylovBuilder->build(args,KrylovBuilder::reorthogonalize);
-		E0 = krylov->getE0();
-		auto M = krylov->getMatrices();
-		auto N = krylov->getIterations();
+		lanczos = lanczosBuilder->build(args,LanczosBuilder::reorthogonalize);
+		E0 = lanczos->getE0();
+		auto M = lanczos->getMatrices();
+		auto N = lanczos->getIterations();
 		calcWeights(M,N);
 		repo->save(getHash(),"weights",labels,results); // Need a hash.
 	}
@@ -65,7 +65,7 @@ public:
 
 private:
 
-	void calcWeights(Krylov::Matrices* M, int N)
+	void calcWeights(Lanczos::Matrices* M, int N)
 	{
 		Vector d;
         CMatrix U;
@@ -125,7 +125,7 @@ private:
 		if(mom) labels.push_back("qFactor");
 		else labels.push_back("position");
 		labels.push_back("nLanczos");
-		labels.push_back("maxDim");
+		labels.push_back("MaxDim");
 		labels.push_back("N");
 		labels.push_back("Lattice");
 		labels.push_back("Model");
@@ -154,7 +154,7 @@ private:
 	
 	virtual string getHash()
 	{
-		return Krylov::getHash(args) + "_SpectralWeights";
+		return Lanczos::getHash(args) + "_SpectralWeights";
 	}
 
 

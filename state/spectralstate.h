@@ -24,13 +24,16 @@ protected:
         op.position(1);
         psi0.position(1);
         state = applyMPO(op,psi0);
+        cout << "Norm of thermalstate= " << innerC(psi0,psi0) << endl;
+        cout << "Norm of spectralstate= " << innerC(state,state) << endl;
+        cout << "Innerproduct= " << innerC(state,psi0) << endl;
         prepare(state,psi0,is);
 	}
-	void prepare(MPS &a, MPS &b, IndexSet is)
-	{
-	    a.replaceSiteInds(is);
-	    b.replaceSiteInds(is);
-	}
+	// void prepare(MPS &a, MPS &b, IndexSet is)
+	// {
+	//     a.replaceSiteInds(is);
+	//     b.replaceSiteInds(is);
+	// }
 
 public:
 
@@ -40,6 +43,7 @@ public:
 		op = o;
 		in_state = in;
 		E0 = in_state->getE0();
+		Print(E0);
 		calcSpectralState();
 
 	}

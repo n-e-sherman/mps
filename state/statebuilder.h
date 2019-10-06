@@ -121,17 +121,34 @@ private:
 		auto lattice = latticeBuilder->build(args);
 		auto mom = args->defined("qFactor");
 		auto N = args->getInt("N");
+		Print(N);
 		if(mom)
 		{
+			cout << "Building Sq" << endl;
 			auto qfactor = args->getReal("qFactor");
 	        auto q = qfactor*M_PI*(Real(N)/Real(N+1));
+	        Print(q);
+	        auto thermal = args->getBool("thermal");
+	        auto coeff = sqrt(2);
+	        if(thermal) coeff *= sqrt(1.0/(Real(N/2)+1));
+	        else coeff *= sqrt(1.0/(Real(N+1)));
 	        auto ampo = AutoMPO(sites);
 	        for(auto s : lattice->getSites())
 	        {
 	        	if(s.t == Lattice::physical)
-	            	ampo += sin(s.s*q),"Sz",s.s;
+	        	{
+	        		cout << (0.5*(s.s+1)) << "," << s.s << endl;
+	        		if(thermal)
+	        		{
+		            	ampo += coeff*sin(0.5*(s.s+1)*q),"Sz",s.s;
+	        		}
+		            else
+		            	ampo += coeff*sin(s.s*q),"Sz",s.s;
+		        }
 	        }
-	        return toMPO(ampo);
+	        auto res = toMPO(ampo);
+	        PrintData(res);
+	        return res;
 		}
 		else
 		{
