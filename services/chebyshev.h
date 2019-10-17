@@ -105,6 +105,8 @@ public:
 		labels.push_back("thermal");
 		labels.push_back("W");
 		labels.push_back("Wp");
+		labels.push_back("Method");
+		if(args->getString("Method")=="Fit") labels.push_back("Nsweep");
 
 		for(auto i : range(res.size()))
 		{
@@ -120,6 +122,8 @@ public:
 			temp.push_back(args->getBool("thermal"));
 			temp.push_back(args->getReal("W"));
 			temp.push_back(args->getReal("Wp"));
+			temp.push_back(args->getString("Method"));
+			if(args->getString("Method")=="Fit") temp.push_back(args->getReal("Nsweep"));
 			results.push_back(temp);
 		}
 
@@ -128,7 +132,10 @@ public:
 
 	virtual string getHash()
 	{
-		return State::getHash(args) + "_" + to_string(args->getReal("W")) + "_" + to_string(args->getInt("nChebyshev")) + "_Chebyshev";
+		string sweeps = "";
+		if(args->getString("Method") == "Fit") sweeps = "_" + to_string(args->getReal("Nsweeps"));
+		return State::getHash(args) + "_" + to_string(args->getReal("W")) + "_" + 
+		to_string(args->getInt("nChebyshev")) + "_" + args->getString("Method") + sweeps + "_Chebyshev";
 	}
 
 };

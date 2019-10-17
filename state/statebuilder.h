@@ -121,13 +121,11 @@ private:
 		auto lattice = latticeBuilder->build(args);
 		auto mom = args->defined("qFactor");
 		auto N = args->getInt("N");
-		Print(N);
 		if(mom)
 		{
 			cout << "Building Sq" << endl;
 			auto qfactor = args->getReal("qFactor");
 	        auto q = qfactor*M_PI*(Real(N)/Real(N+1));
-	        Print(q);
 	        auto thermal = args->getBool("thermal");
 	        auto coeff = sqrt(2);
 	        if(thermal) coeff *= sqrt(1.0/(Real(N/2)+1));
@@ -147,7 +145,6 @@ private:
 		        }
 	        }
 	        auto res = toMPO(ampo);
-	        PrintData(res);
 	        return res;
 		}
 		else

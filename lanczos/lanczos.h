@@ -64,7 +64,6 @@ public:
 		state = s;
 		psii = state->getState();
 		psiiNorm = psii.normalize();
-		Print(psiiNorm);
 		E0 = state->getE0();
 		H = model->getH();
 		calcKrylov();	
@@ -78,7 +77,9 @@ public:
 	Real getPsiiNorm() {return psiiNorm; }
 	static string getHash(Args* args)
 	{
-		return State::getHash(args) + "_" + to_string(args->getInt("nLanczos"));
+		string sweeps = "";
+		if(args->getString("Method") == "Fit") sweeps = "_" + to_string(args->getReal("Nsweeps"));
+		return State::getHash(args) + "_" + args->getString("Method") + sweeps + "_" + to_string(args->getInt("nLanczos"));
 	}
 
 	virtual void load(ifstream & f)
@@ -109,7 +110,6 @@ protected:
 
         psii.position(1);
         H.position(1);
-        Print(norm(psii));
         V = std::vector<MPS>(maxIter,MPS(psii));
         auto W = std::vector<MPS>(maxIter,MPS(psii));
         auto WP = std::vector<MPS>(maxIter,MPS(psii));
@@ -148,7 +148,6 @@ protected:
             i+=1;
         }
         iterations = i;
-        // Print(T);
         if(iterations < maxIter) T = subMatrix(T,0,iterations,0,iterations);
 	}
 
@@ -157,11 +156,6 @@ protected:
 		if(i >= maxIter) return true;
 		else return false;
 	}
-	// void prepare(MPS &a, MPS &b, IndexSet is)
-	// {
-	//     a.replaceSiteInds(is);
-	//     b.replaceSiteInds(is);
-	// }
 
 };
 

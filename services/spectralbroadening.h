@@ -62,7 +62,6 @@ public:
 		auto N = lanczos->getIterations();
 		iterations = N;
 		E0 = lanczos->getE0();
-		Print(E0);
 		psiiNorm = lanczos->getPsiiNorm();
 		etas = getEtas();
 		omegas = getOmegas();
@@ -80,9 +79,7 @@ private:
 	{
         Vector d;
         CMatrix U;
-        Print(subMatrix(T,0,5,0,5));
         diagHermitian(T,U,d);
-        Print(d);
         vector<vector<Real>> result;
 
         for(auto eta : etas)
@@ -91,16 +88,11 @@ private:
             for(auto omega : omegas)
             {
                 auto z = omega + E0 + eta;
-                Print(z);
                 auto delta = CVector(nMax);
                 for(int i = 0; i < nMax; i++) delta(i) = 1.0/(z-d(i));
-                // Print(delta);
                 auto D = CMatrix(nMax,nMax);
                 diagonal(D) &= delta;
                 auto R = U*D*conj(transpose(U)); // 1/(z-M)
-                // auto R = conj(transpose(U))*D*U; // 1/(z-M)
-                // auto R = U*D*conj(transpose(U)); // 1/(z-M)
-                Print(R(0,0));
                 auto res = R(0,0).imag();
                 res = -1*(1.0/M_PI)*psiiNorm*res;
                 temp.push_back(res);
@@ -143,6 +135,8 @@ private:
 		labels.push_back("Lattice");
 		labels.push_back("Model");
 		labels.push_back("thermal");
+		labels.push_back("Method");
+		if(args->getString("Method")=="Fit") labels.push_back("Nsweep");
 
 		for(auto i : range(etas.size()))
 		for(auto j : range(omegas.size()))
@@ -162,6 +156,8 @@ private:
 			temp.push_back(args->getString("Lattice"));
 			temp.push_back(args->getString("Model"));
 			temp.push_back(Real(args->getBool("thermal")));
+			temp.push_back(args->getString("Method"));
+			if(args->getString("Method")=="Fit") temp.push_back(args->getReal("Nsweep"));
 			results.push_back(temp);
 		}
 	}

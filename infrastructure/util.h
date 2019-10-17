@@ -118,6 +118,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("W",8);
     args->add("Wp",0.9875);
     args->add("nChebyshev",100);
+    args->add("Nsweep",3);
 
     /* Sweeps for DMRG */
     args->add("nSweeps",5);

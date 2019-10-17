@@ -130,6 +130,8 @@ private:
 		labels.push_back("Lattice");
 		labels.push_back("Model");
 		labels.push_back("thermal");
+		labels.push_back("Method");
+		if(args->getString("Method")=="Fit") labels.push_back("Nsweep");
 
 		for(auto i : range(N))
 		{
@@ -148,6 +150,8 @@ private:
 			temp.push_back(args->getString("Lattice"));
 			temp.push_back(args->getString("Model")); 
 			temp.push_back(Real(args->getBool("thermal")));
+			temp.push_back(args->getString("Method"));
+			if(args->getString("Method")=="Fit") temp.push_back(args->getReal("Nsweep"));
 			results.push_back(temp);
 		}
 	}
