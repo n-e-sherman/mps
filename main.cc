@@ -15,12 +15,16 @@ main(int argc, char** argv)
 	auto s1 = spectralWeightsFactory();
 	auto s2 = spectralBroadeningFactory();
 	auto c  = chebyshevFactory();
+	auto m  = momentsFactory();
 	if(args->getBool("Chebyshev"))
 		c->calculate(args);
 	if(args->getBool("Weights"))
 		s1->calculate(args);
 	if(args->getBool("Broadening"))
 		s2->calculate(args);
+	if(args->getBool("Moments"))
+		m->calculate(args);
+
 }
 
 

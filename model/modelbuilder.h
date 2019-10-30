@@ -43,6 +43,7 @@ public:
 				auto model = repo->load(Model::getHash(args,mType), new Heisenberg(args));
 				if(model != nullptr) return model;
 				model = new Heisenberg(args, latticeBuilder->build(args), siteBuilder->build(args));
+				if(args->getBool("squared")) model->squared();
 				repo->save(Model::getHash(args,mType), model);
 				return model;
 			}
@@ -51,6 +52,7 @@ public:
 				auto model = repo->load(Model::getHash(args,mType), new HeisenbergLouiville(args));
 				if(model != nullptr) return model;
 				model = new HeisenbergLouiville(args, latticeBuilder->build(args), siteBuilder->build(args));
+				if(args->getBool("squared")) model->squared();
 				repo->save(Model::getHash(args,mType), model);
 				return model;
 			}
@@ -63,6 +65,7 @@ public:
 				auto model = repo->load(Model::getHash(args,mType), new XX(args));
 				if(model != nullptr) return model;
 				model = new XX(args, latticeBuilder->build(args), siteBuilder->build(args));
+				if(args->getBool("squared")) model->squared();
 				repo->save(Model::getHash(args,mType), model);
 				return model;
 			}
@@ -71,6 +74,7 @@ public:
 				auto model = repo->load(Model::getHash(args,mType), new XXLouiville(args));
 				if(model != nullptr) return model;
 				model = new XXLouiville(args, latticeBuilder->build(args), siteBuilder->build(args));
+				if(args->getBool("squared")) model->squared();
 				repo->save(Model::getHash(args,mType), model);
 				return model;
 			}

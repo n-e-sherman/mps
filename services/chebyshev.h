@@ -52,6 +52,7 @@ public:
 		auto thermal = args->getBool("thermal");
 		auto nChebyshev = args->getInt("nChebyshev");
 		auto W = args->getReal("W");
+		if(args->getBool("squared")) W = W*W;
 		auto Wp = args->getReal("Wp");
 		auto r = args->getBool("reorthogonalize");
 
@@ -107,6 +108,7 @@ public:
 		labels.push_back("Wp");
 		labels.push_back("Method");
 		if(args->getString("Method")=="Fit") labels.push_back("Nsweep");
+		labels.push_back("squared");
 
 		for(auto i : range(res.size()))
 		{
@@ -124,6 +126,7 @@ public:
 			temp.push_back(args->getReal("Wp"));
 			temp.push_back(args->getString("Method"));
 			if(args->getString("Method")=="Fit") temp.push_back(args->getReal("Nsweep"));
+			temp.push_back(args->getBool("squared"));
 			results.push_back(temp);
 		}
 

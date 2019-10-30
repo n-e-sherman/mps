@@ -11,6 +11,7 @@
 #include "services/spectralbroadening.h"
 #include "services/spectralweights.h"
 #include "services/chebyshev.h"
+#include "services/moments.h"
 
 /* Memory manage the new pointers. */
 LatticeBuilder* latticeFactory() {return new LatticeBuilder(); }
@@ -22,5 +23,6 @@ LanczosBuilder* lanczosFactory() {return new LanczosBuilder(modelFactory(), stat
 SpectralWeights* spectralWeightsFactory() {return new SpectralWeights(modelFactory(), lanczosFactory(), repositoryFactory()); }
 SpectralBroadening* spectralBroadeningFactory() {return new SpectralBroadening(modelFactory(), lanczosFactory(), repositoryFactory()); }
 Chebyshev* chebyshevFactory() {return new Chebyshev(modelFactory(), stateFactory(), repositoryFactory()); }
+Moments* momentsFactory() {return new Moments(modelFactory(), stateFactory(), latticeFactory(), repositoryFactory()); }
 
 #endif

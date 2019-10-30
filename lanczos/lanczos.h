@@ -129,7 +129,7 @@ protected:
         {
         	cout << i << endl;
             T(i-1,i) = norm(W[i-1]);
-            T(i,i-1) = norm(W[i-1]);
+            T(i,i-1) = T(i-1,i);
             V[i] = (1.0/norm(W[i-1]))*W[i-1];
             if(norm(V[i]) == 0)
             {

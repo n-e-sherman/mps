@@ -40,7 +40,9 @@ public:
 	SiteSet getSites() const {return sites;}
 	static string getHash(Args* args, int mType = 0)
 	{
-		return Lattice::getHash(args) + "_" + args->getString("Model") + "_" + args->getString("SiteSet") + "_" + to_string(mType);
+		string sSquared = "";
+		if(args->getBool("squared")) sSquared = "squared_";
+		return Lattice::getHash(args) + "_" + args->getString("Model") + "_" + sSquared + args->getString("SiteSet") + "_" + to_string(mType);
 	}
 
 	virtual void load(ifstream & f)
@@ -56,6 +58,14 @@ public:
 	{
 		write(f,H);
 		write(f,sites);
+	}
+
+	virtual void squared()
+	{
+		auto res = nmultMPO(H, prime(H));
+		res.mapPrime(2,1);
+		for(auto i : range(length(H))) cout << "(" << siteIndex(H, i) << "," << siteIndex(res,i) << ")" << endl;
+		H=res;
 	}
 
 

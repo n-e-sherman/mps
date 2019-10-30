@@ -127,9 +127,7 @@ private:
 			auto qfactor = args->getReal("qFactor");
 	        auto q = qfactor*M_PI*(Real(N)/Real(N+1));
 	        auto thermal = args->getBool("thermal");
-	        auto coeff = sqrt(2);
-	        if(thermal) coeff *= sqrt(1.0/(Real(N/2)+1));
-	        else coeff *= sqrt(1.0/(Real(N+1)));
+	        auto coeff = sqrt(2.0/(Real(N+1)));
 	        auto ampo = AutoMPO(sites);
 	        for(auto s : lattice->getSites())
 	        {

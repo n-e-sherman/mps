@@ -95,8 +95,9 @@ Args* getArgs(int argc, char* argv[])
     args->add("Model","Heisenberg");
     args->add("SiteSet","SpinHalf");
     args->add("Weights",false);
-    args->add("Chevyshev",true);
+    args->add("Chevyshev",false);
     args->add("Broadening",false);
+    args->add("Moments",true);
 
     /* Code parameters */
     args->add("cwd","./");
@@ -104,6 +105,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("MaxDim",500);
     args->add("spectral");
     args->add("thermal",false);
+    args->add("squared",false);
     args->add("beta",0);
     args->add("reorthogonalize");
     args->add("initial","AF");
@@ -119,6 +121,8 @@ Args* getArgs(int argc, char* argv[])
     args->add("Wp",0.9875);
     args->add("nChebyshev",100);
     args->add("Nsweep",3);
+    args->add("Nmoments",0);
+    args->add("momentum",true);
 
     /* Sweeps for DMRG */
     args->add("nSweeps",5);

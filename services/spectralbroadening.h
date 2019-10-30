@@ -137,6 +137,7 @@ private:
 		labels.push_back("thermal");
 		labels.push_back("Method");
 		if(args->getString("Method")=="Fit") labels.push_back("Nsweep");
+		if(args->getBool("squared")) labels.push_back("squared");
 
 		for(auto i : range(etas.size()))
 		for(auto j : range(omegas.size()))
@@ -158,6 +159,7 @@ private:
 			temp.push_back(Real(args->getBool("thermal")));
 			temp.push_back(args->getString("Method"));
 			if(args->getString("Method")=="Fit") temp.push_back(args->getReal("Nsweep"));
+			if(args->getBool("squared")) temp.push_back(1);
 			results.push_back(temp);
 		}
 	}
