@@ -27,8 +27,13 @@ private:
 	MPO H;
 
 	/* Helpers */
-	vector<MPS> t;
+	MPS psi;
+	MPS t0;
+	MPS t1;
+	MPS t2;
+	IndexSet is;
 	vector<Real> res;
+	int iStart = 2;
 
 	/* Outputs */
 	vector<string> labels;
@@ -55,26 +60,34 @@ public:
 		if(args->getBool("squared")) W = W*W;
 		auto Wp = args->getReal("Wp");
 		auto r = args->getBool("reorthogonalize");
+		auto nSave = args->getInt("nSave");
 
 		if(thermal) model = modelBuilder->build(args,ModelBuilder::thermal);
 		else model = modelBuilder->build(args);
-		/* May need to scale H here, double check this */
 		H = model->getH();
-		if(thermal) H *= (2.0*Wp/W);
-		/* May want to make this general, might have another thing in mind for the initial state. */
-		state = stateBuilder->build(args,StateBuilder::spectral);
-		auto psi = state->getState();
-		psi.position(1);
+		if(thermal) H *= (2.0*Wp/W); /* Only works for thermal, need different scaling for ground */
+		repo = repoBuilder->build(args);
+		if(repo->load(getHash(),this) != nullptr) 
+		{ /* Loading. */
+
+			t0.position(1);
+			t1.position(1);
+			t2.position(1);
+		}   
+		else
+		{ /* Starting a new run. */
+			state = stateBuilder->build(args,StateBuilder::spectral); /* May want to make this general, might have another thing in mind for the initial state. */
+			psi = state->getState();
+			psi.position(1);
+			t0 = MPS(psi);
+			res.push_back(inner(t0,t0)); // May want to change inner to innerC if you get complex values at some point. 
+			t1 = noPrime(applyMPO(H,t0,*args));
+			t2 = t1;
+			res.push_back(inner(t0,t1));
+		}
 		H.position(1);
-		// t = vector<MPS>(nChebyshev);
-		auto t0 = MPS(psi);
-		auto is = siteInds(t0);
-		/* May want to change inner to innerC if you get complex values at some point. */
-		res.push_back(inner(t0,t0));
-		auto t1 = noPrime(applyMPO(H,t0,*args));
-		auto t2 = t1;
-		res.push_back(inner(t0,t1));
-		for(auto i : range(2,nChebyshev))
+		is = siteInds(t0);
+		for(auto i : range(iStart,nChebyshev))
 		{
 			cout << i << endl;
 			auto temp = applyMPO(H,t1,*args);
@@ -84,10 +97,11 @@ public:
 			res.push_back(inner(psi,t2));
 			t0 = t1;
 			t1 = t2;
-			// if(!r) 
+			iStart = i+1;
+			if((i % nSave) == 0) repo->save(getHash(),this);
 		}
 		processResults();
-		repo = repoBuilder->build(args);
+		repo->save(getHash(),this);
 		repo->save(getHash(),"chebyshev",labels,results);
 
 	}
@@ -137,8 +151,28 @@ public:
 	{
 		string sweeps = "";
 		if(args->getString("Method") == "Fit") sweeps = "_" + to_string(args->getReal("Nsweeps"));
-		return State::getHash(args) + "_" + to_string(args->getReal("W")) + "_" + 
-		to_string(args->getInt("nChebyshev")) + "_" + args->getString("Method") + sweeps + "_Chebyshev";
+		return State::getHash(args) + "_" + to_string(args->getReal("W")) + "_" + args->getString("Method") + sweeps + "_Chebyshev";
+	}
+
+	virtual void load(ifstream & f)
+	{
+
+		read(f,psi);
+		read(f,t0);
+		read(f,t1);
+		read(f,t2);
+		read(f,res);
+		read(f,iStart);
+
+	}
+	virtual void save(ofstream & f)
+	{
+		write(f,psi);
+		write(f,t0);
+		write(f,t1);
+		write(f,t2);
+		write(f,res);
+		write(f,iStart);
 	}
 
 };

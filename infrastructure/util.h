@@ -4,6 +4,7 @@
 #include <sstream> 
 #include <sys/stat.h>
 #include "itensor/all.h"
+#include<bits/stdc++.h> 
 
 using namespace itensor;
 using namespace std;
@@ -120,6 +121,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("W",8);
     args->add("Wp",0.9875);
     args->add("nChebyshev",100);
+    args->add("nSave",INT_MAX);
     args->add("Nsweep",3);
     args->add("Nmoments",0);
     args->add("momentum",true);

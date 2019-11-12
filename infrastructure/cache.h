@@ -25,7 +25,8 @@ public:
 
 	void save(const std::string& s, void* p)
 	{
-		if(cache.find(s) == cache.end()){cout << "Added " + s + " to cache." << endl; cache[s] = p; }
+		cout << "Added " + s + " to cache." << endl;
+		cache[s] = p;
 	}
 	void* load(const std::string& s)
 	{ 
