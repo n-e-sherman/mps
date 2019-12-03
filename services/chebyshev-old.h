@@ -49,6 +49,7 @@ public:
 		repoBuilder = rb;
 		stateBuilder = sb;
 	}
+	
 	~Chebyshev(){}
 
 	void calculate(Args* a)
@@ -69,7 +70,7 @@ public:
 		repo = repoBuilder->build(args);
 		if(repo->load(getHash(),this) != nullptr) 
 		{ /* Loading. */
-
+			psi.position(1);
 			t0.position(1);
 			t1.position(1);
 			t2.position(1);

@@ -10,7 +10,8 @@
 #include "lanczos/lanczosbuilder.h"
 #include "services/spectralbroadening.h"
 #include "services/spectralweights.h"
-#include "services/chebyshev.h"
+#include "chebyshev/chebyshevbuilder.h"
+#include "chebyshev/chebyshevservice.h"
 #include "services/moments.h"
 
 /* Memory manage the new pointers. */
@@ -22,7 +23,9 @@ StateBuilder* stateFactory() {return new StateBuilder(modelFactory(), latticeFac
 LanczosBuilder* lanczosFactory() {return new LanczosBuilder(modelFactory(), stateFactory(), repositoryFactory()); }
 SpectralWeights* spectralWeightsFactory() {return new SpectralWeights(modelFactory(), lanczosFactory(), repositoryFactory()); }
 SpectralBroadening* spectralBroadeningFactory() {return new SpectralBroadening(modelFactory(), lanczosFactory(), repositoryFactory()); }
-Chebyshev* chebyshevFactory() {return new Chebyshev(modelFactory(), stateFactory(), repositoryFactory()); }
 Moments* momentsFactory() {return new Moments(modelFactory(), stateFactory(), latticeFactory(), repositoryFactory()); }
+
+ChebyshevBuilder* chebyshevBuilderFactory() {return new ChebyshevBuilder(modelFactory(), stateFactory(), latticeFactory(), repositoryFactory()); }
+ChebyshevService* chebyshevServiceFactory() {return new ChebyshevService(chebyshevBuilderFactory(), repositoryFactory()); }
 
 #endif

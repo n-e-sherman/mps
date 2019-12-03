@@ -14,7 +14,7 @@ main(int argc, char** argv)
 	Args* args = getArgs(argc,argv);
 	auto s1 = spectralWeightsFactory();
 	auto s2 = spectralBroadeningFactory();
-	auto c  = chebyshevFactory();
+	auto c  = chebyshevServiceFactory();
 	auto m  = momentsFactory();
 	if(args->getBool("Chebyshev"))
 		c->calculate(args);

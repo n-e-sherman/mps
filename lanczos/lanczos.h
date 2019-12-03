@@ -57,7 +57,6 @@ public:
 	Lanczos(){}
 	Lanczos(Args* a, Model* m, State* s)
 	{ 
-
 		args = a;
 		model = m;
 		sites = m->getSites();
@@ -116,15 +115,12 @@ protected:
         T = CMatrix(maxIter,maxIter);
         for(auto& el : T) el = Cplx(0,0);
         V[0] = MPS(psii);
-       	cout << "norm of V[0] = " << norm(V[0]) << endl;
        	WP[0] = applyMPO(H,V[0],*args);
-       	cout << "norm of Hpsi = " << norm(WP[0]) << endl;
        	WP[0].noPrime("Site");
         T(0,0) = innerC(WP[0],V[0]);
         prepare(V[0],WP[0],is);
         W[0] = sum(WP[0],-1*T(0,0)*V[0],*args);
         i = 1;
-       	cout << "norm of V[0] = " << norm(V[0]) << endl;
         while(!converged())
         {
         	cout << i << endl;

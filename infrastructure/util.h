@@ -96,16 +96,16 @@ Args* getArgs(int argc, char* argv[])
     args->add("Model","Heisenberg");
     args->add("SiteSet","SpinHalf");
     args->add("Weights",false);
-    args->add("Chevyshev",false);
+    args->add("Chevyshev",true);
     args->add("Broadening",false);
-    args->add("Moments",true);
+    args->add("Moments",false);
 
     /* Code parameters */
     args->add("cwd","./");
     args->add("Method","DensityMatrix");
     args->add("MaxDim",500);
     args->add("spectral");
-    args->add("thermal",false);
+    args->add("thermal",true);
     args->add("squared",false);
     args->add("beta",0);
     args->add("reorthogonalize");
@@ -125,6 +125,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("Nsweep",3);
     args->add("Nmoments",0);
     args->add("momentum",true);
+    args->add("UseSVD",true);
 
     /* Sweeps for DMRG */
     args->add("nSweeps",5);
@@ -141,7 +142,6 @@ Args* getArgs(int argc, char* argv[])
     string ddash = "--";
     for(int i = 1; i < argc; i++)
     {
-        cout << i << "," << argc << endl;
         auto arg = string(argv[i]);
 
         if(arg.find(ddash) != string::npos) // double dash argument
