@@ -45,6 +45,7 @@ public:
 		args = a;
 		repo = repoBuilder->build(args);
 		chebyshev = chebyshevBuilder->build(args);
+    	auto save = args->getBool("saveChebyshev");
 		int nSave = args->getInt("nSave");
 		int nChebyshev = args->getInt("nChebyshev");
 		int remaining = nChebyshev - chebyshev->getIteration();
@@ -53,7 +54,7 @@ public:
 			cout << "remaining: " << remaining << endl;
 			chebyshev->calculate(min(remaining,nSave));
 			remaining = nChebyshev - chebyshev->getIteration();
-			repo->save(Chebyshev::getHash(args),chebyshev);
+			repo->save(Chebyshev::getHash(args),chebyshev,save);
 		}
 		auto [labels,results] = chebyshev->getResults();
 		string type = "x";

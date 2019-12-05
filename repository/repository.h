@@ -44,8 +44,9 @@ public:
 		if(saveFile)
 		{
 			ofstream file;
-			file.open(cwd+ ".data/" + hash, ios::out | ios::binary);
+			file.open(cwd+ ".data/" + hash, ios::binary | ofstream::trunc);
 			t->save(file);
+			file.close();
 		}
 	}
 	template<class T,class LabelT>

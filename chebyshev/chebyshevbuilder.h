@@ -36,13 +36,14 @@ public:
 		repo = repoBuilder->build(args);
 		auto momentum = args->getBool("momentum");
 		auto thermal = args->getBool("thermal");
+		auto save = args->getBool("saveChebyshev");
 		if(momentum) 
 		{
 				auto chebyshev = repo->load(Chebyshev::getHash(args), new Chebyshevp(args));
 				if(chebyshev != nullptr) return chebyshev;
 				if(thermal) chebyshev = new Chebyshevp(args, modelBuilder->build(args,ModelBuilder::thermal),stateBuilder->build(args,StateBuilder::spectral));
 				else {chebyshev = new Chebyshevp(args, modelBuilder->build(args,ModelBuilder::normal),stateBuilder->build(args,StateBuilder::spectral));}
-				repo->save(Chebyshev::getHash(args), chebyshev);
+				repo->save(Chebyshev::getHash(args), chebyshev,save);
 				return chebyshev;
 		}
 		else
@@ -51,7 +52,7 @@ public:
 				if(chebyshev != nullptr) return chebyshev;
 				if(thermal) chebyshev = new Chebyshevx(args, modelBuilder->build(args,ModelBuilder::thermal),stateBuilder->build(args,StateBuilder::thermal),latticeBuilder->build(args));
 				else {chebyshev = new Chebyshevx(args, modelBuilder->build(args,ModelBuilder::normal),stateBuilder->build(args,StateBuilder::ground),latticeBuilder->build(args));}
-				repo->save(Chebyshev::getHash(args), chebyshev);
+				repo->save(Chebyshev::getHash(args), chebyshev,save);
 				return chebyshev;
 		}
 	}
