@@ -16,9 +16,10 @@ class Repository
 protected:
 	string cwd;
 	Cache* cache;
+	bool readFile = false;
 public:
 	Repository() {}
-	Repository(string c) : cwd(c) {cache = Cache::getInstance();}
+	Repository(string c, bool rf = false) : cwd(c) {cache = Cache::getInstance(); readFile = rf; }
 	virtual ~Repository(){}
 
 	template<class T> 
@@ -26,7 +27,7 @@ public:
 	{	
 		auto retC = (T*)cache->load(hash);
 		if(retC != nullptr) return retC;
-		if(loadFile)
+		if(loadFile & readFile)
 		{
 			ifstream file;
 			file.open(cwd+".data/"+hash, ios::in | ios::binary);

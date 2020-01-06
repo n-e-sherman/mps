@@ -127,6 +127,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("momentum",true);
     args->add("UseSVD",true);
     args->add("saveChebyshev",false);
+    args->add("readFile",false);
 
     /* Sweeps for DMRG */
     args->add("nSweeps",5);

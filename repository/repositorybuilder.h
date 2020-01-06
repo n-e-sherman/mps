@@ -12,7 +12,8 @@ public:
 	Repository* build(Args* args)
 	{
 		auto cwd = args->getString("cwd");
-		return new Repository(cwd);
+		auto readFile = args->getBool("readFile");
+		return new Repository(cwd,readFile);
 	}
 };
 #endif
