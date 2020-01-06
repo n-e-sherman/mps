@@ -13,7 +13,8 @@ public:
 	{
 		auto cwd = args->getString("cwd");
 		auto readFile = args->getBool("readFile");
-		return new Repository(cwd,readFile);
+		auto writeFile = args->getBool("writeFile");
+		return new Repository(cwd,readFile,writeFile);
 	}
 };
 #endif

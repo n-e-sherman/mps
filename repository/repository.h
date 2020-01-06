@@ -17,9 +17,10 @@ protected:
 	string cwd;
 	Cache* cache;
 	bool readFile = false;
+	bool writeFile = false;
 public:
 	Repository() {}
-	Repository(string c, bool rf = false) : cwd(c) {cache = Cache::getInstance(); readFile = rf; }
+	Repository(string c, bool rf = false, bool wf = false) : cwd(c) {cache = Cache::getInstance(); readFile = rf; writeFile = wf; }
 	virtual ~Repository(){}
 
 	template<class T> 
