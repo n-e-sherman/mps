@@ -45,18 +45,18 @@ public:
     virtual void load(ifstream & f)
     {
         Lanczos::load(f);
-        read(f,S);
-        read(f,HP);
-        read(f,HP2);
-        read(f,TR);
+        // read(f,S);
+        // read(f,HP);
+        // read(f,HP2);
+        // read(f,TR);
     }
     virtual void save(ofstream & f)
     {
         Lanczos::save(f);
-        write(f,S);
-        write(f,HP);
-        write(f,HP2);
-        write(f,TR);
+        // write(f,S);
+        // write(f,HP);
+        // write(f,HP2);
+        // write(f,TR);
     }
 
 	

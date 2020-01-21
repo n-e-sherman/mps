@@ -1,5 +1,5 @@
-#ifndef __HEISENBERG_H_
-#define __HEISENBERG_H_
+#ifndef __XXZ_H_
+#define __XXZ_H_
 
 #include <string>
 #include <iostream>
@@ -11,8 +11,9 @@
 using namespace itensor;
 using namespace std;
 
-class Heisenberg : public Model
+class XXZ : public Model
 {
+	Real Delta;
 protected:
 	virtual void calcH()
 	{
@@ -20,20 +21,21 @@ protected:
         {
         	if(b.t == Lattice::physical)
         	{
-	            ampo += 0.5,"S+",b.s1,"S-",b.s2;
-	            ampo += 0.5,"S-",b.s1,"S+",b.s2;
+	            ampo += 0.5*Delta,"S+",b.s1,"S-",b.s2;
+	            ampo += 0.5*Delta,"S-",b.s1,"S+",b.s2;
 	            ampo +=     "Sz",b.s1,"Sz",b.s2;
         	}
         }
 	}
 public:
-	Heisenberg(){}
-	Heisenberg(Args* a) : Model(a) {}
-	Heisenberg(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) 
+	XXZ(){}
+	XXZ(Args* a) : Model(a) {}
+	XXZ(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) 
 	{
+		Delta = args->getReal("Delta");
 		calcH();
         H = toMPO(ampo);
 	}
-	~Heisenberg(){}
+	~XXZ(){}
 };
 #endif

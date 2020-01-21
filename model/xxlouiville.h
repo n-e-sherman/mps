@@ -16,7 +16,6 @@ class XXLouiville : public Model
 protected:
 	virtual void calcH()
 	{
-                auto ampo = AutoMPO(sites);
                 for(auto b : *lattice)
                 {
                 	if(b.t == Lattice::physical)
@@ -30,14 +29,14 @@ protected:
         	            ampo += -0.5,"S-",b.s1,"S+",b.s2;
                 	}
                 }
-                H = toMPO(ampo);
 	}
 public:
 	XXLouiville(){}
 	XXLouiville(Args* a) : Model(a) {}
 	XXLouiville(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) 
 	{
-		calcH();
+        	calcH();
+                H = toMPO(ampo);
 	}
 	~XXLouiville(){}
 };

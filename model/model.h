@@ -24,7 +24,11 @@ protected:
 
 	/* Outputs */
 	MPO H;
+	MPO expH;
 	SiteSet sites;
+	AutoMPO ampo;
+	vector<BondGate> thermalGates;
+	vector<BondGate> timeGates;
 
 public:
 	Model(){}
@@ -32,11 +36,13 @@ public:
 	Model(Args* a, Lattice* l, SiteSet s) 
 	{ 
 		args = a;
-		lattice = l; 
+		lattice = l;
 		sites = s;
+		ampo = AutoMPO(sites);
 	}
 	virtual ~Model(){}
 	MPO& getH() {return H; }
+	AutoMPO& getAmpo() {return ampo; }
 	SiteSet getSites() const {return sites;}
 	static string getHash(Args* args, int mType = 0)
 	{
@@ -64,7 +70,6 @@ public:
 	{
 		auto res = nmultMPO(H, prime(H));
 		res.mapPrime(2,1);
-		for(auto i : range(length(H))) cout << "(" << siteIndex(H, i) << "," << siteIndex(res,i) << ")" << endl;
 		H=res;
 	}
 

@@ -14,18 +14,18 @@ APP= main
 # 4. Add any headers your program depends on here. The make program
 #    will auto-detect if these headers have changed and recompile your app.
 INF_HEADERS= infrastructure/cache.h infrastructure/factory.h infrastructure/util.h
-LAN_HEADERS= lanczos/lanczos.h lanczos/lanczosbuilder.h lanczos/reorthogonalize.h
 LAT_HEADERS= lattice/chain.h lattice/lattice.h lattice/latticebuilder.h lattice/thermalchain.h 
-MOD_HEADERS= model/heisenberg.h model/heisenberglouiville.h model/model.h model/modelbuilder.h model/sitebuilder.h model/xx.h model/xxlouiville.h
+MOD_HEADERS= model/heisenberg.h model/heisenberglouiville.h model/model.h model/modelbuilder.h model/sitebuilder.h model/xx.h model/xxlouiville.h model/xxz.h model/xxzlouiville.h model/dimer.h model/dimerlouiville.h
 REP_HEADERS= repository/repository.h repository/repositorybuilder.h
 SRV_HEADERS= services/service.h services/spectralbroadening.h services/spectralweights.h services/moments.h
 STT_HEADERS= state/groundstate.h state/spectralstate.h state/state.h state/statebuilder.h state/thermalstate.h
 CHB_HEADERS= chebyshev/chebyshev.h chebyshev/chebyshevx.h chebyshev/chebyshevp.h chebyshev/chebyshevbuilder.h chebyshev/chebyshevservice.h
+#LAN_HEADERS= lanczos/lanczos.h lanczos/lanczosbuilder.h lanczos/reorthogonalize.h
 #chain.h factory.h groundstatecalculator.h heisenberg.h lattice.h latticebuilder.h model.h modelbuilder.h service.h sitebuilder.h thermalchain.h validator.h cache.h repository.h repositorybuilder.h
 # 5. For any additional .cc (source) files making up your project,
 #    add their full filenames here.
 CCFILES=$(APP).cc
-CCCOMCRAY=g++-9 -std=c++17 -fPIC
+# CCCOM=g++-9 -std=c++17 -fPIC
 #################################################################
 #################################################################
 #################################################################
@@ -54,10 +54,10 @@ build: $(APP)
 debug: $(APP)-g
 
 $(APP): $(OBJECTS) $(ITENSOR_LIBS)
-	$(CCCOMCRAY) $(CCFLAGS) $(OBJECTS) -o $(APP) $(LIBFLAGS)
+	$(CCCOM) $(CCFLAGS) $(OBJECTS) -o $(APP) $(LIBFLAGS)
 
 $(APP)-g: mkdebugdir $(GOBJECTS) $(ITENSOR_GLIBS)
-	$(CCCOMCRAY) $(CCGFLAGS) $(GOBJECTS) -o $(APP)-g $(LIBGFLAGS)
+	$(CCCOM) $(CCGFLAGS) $(GOBJECTS) -o $(APP)-g $(LIBGFLAGS)
 
 clean:
 	rm -fr .debug_objs *.o $(APP) $(APP)-g

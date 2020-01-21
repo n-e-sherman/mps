@@ -133,7 +133,6 @@ private:
 	        {
 	        	if(s.t == Lattice::physical)
 	        	{
-	        		cout << (0.5*(s.s+1)) << "," << s.s << endl;
 	        		if(thermal)
 	        		{
 		            	ampo += coeff*sin(0.5*(s.s+1)*q),"Sz",s.s;

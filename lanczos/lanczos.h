@@ -84,14 +84,14 @@ public:
 	virtual void load(ifstream & f)
 	{
 		read(f,iterations);
-		read(f,T);
+		// read(f,T);
 		read(f,E0);
 		read(f,psiiNorm);
 	}
 	virtual void save(ofstream & f)
 	{
 		write(f,iterations);
-		write(f,T);
+		// write(f,T);
 		write(f,E0);
 		write(f,psiiNorm);
 	}

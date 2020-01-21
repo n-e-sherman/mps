@@ -9,6 +9,10 @@
 #include "model/heisenberglouiville.h"
 #include "model/xx.h"
 #include "model/xxlouiville.h"
+#include "model/xxz.h"
+#include "model/xxzlouiville.h"
+#include "model/dimer.h"
+#include "model/dimerlouiville.h"
 #include "model/sitebuilder.h"
 #include "repository/repositorybuilder.h"
 
@@ -74,6 +78,48 @@ public:
 				auto model = repo->load(Model::getHash(args,mType), new XXLouiville(args));
 				if(model != nullptr) return model;
 				model = new XXLouiville(args, latticeBuilder->build(args), siteBuilder->build(args));
+				if(args->getBool("squared")) model->squared();
+				repo->save(Model::getHash(args,mType), model);
+				return model;
+			}
+		}
+		if(modelName == "XXZ") 
+		{
+			if(mType == normal) 
+			{
+				auto model = repo->load(Model::getHash(args,mType), new XXZ(args));
+				if(model != nullptr) return model;
+				model = new XXZ(args, latticeBuilder->build(args), siteBuilder->build(args));
+				if(args->getBool("squared")) model->squared();
+				repo->save(Model::getHash(args,mType), model);
+				return model;
+			}
+			else if(mType == thermal) 
+			{
+				auto model = repo->load(Model::getHash(args,mType), new XXZLouiville(args));
+				if(model != nullptr) return model;
+				model = new XXZLouiville(args, latticeBuilder->build(args), siteBuilder->build(args));
+				if(args->getBool("squared")) model->squared();
+				repo->save(Model::getHash(args,mType), model);
+				return model;
+			}
+		}
+		if(modelName == "Dimer") 
+		{
+			if(mType == normal) 
+			{
+				auto model = repo->load(Model::getHash(args,mType), new Dimer(args));
+				if(model != nullptr) return model;
+				model = new Dimer(args, latticeBuilder->build(args), siteBuilder->build(args));
+				if(args->getBool("squared")) model->squared();
+				repo->save(Model::getHash(args,mType), model);
+				return model;
+			}
+			else if(mType == thermal) 
+			{
+				auto model = repo->load(Model::getHash(args,mType), new DimerLouiville(args));
+				if(model != nullptr) return model;
+				model = new DimerLouiville(args, latticeBuilder->build(args), siteBuilder->build(args));
 				if(args->getBool("squared")) model->squared();
 				repo->save(Model::getHash(args,mType), model);
 				return model;
