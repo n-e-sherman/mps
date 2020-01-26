@@ -7,6 +7,7 @@
 #include "repository/repository.h"
 #include "model/modelbuilder.h"
 #include "model/sitebuilder.h"
+#include <cmath>
 
 using namespace itensor;
 using namespace std;
@@ -20,13 +21,14 @@ protected:
 	{
 		calcPsii();
 		if(beta > 0) coolPsii();
+		else{ }
 	}
 	
 	void calcPsii() // Makes an infinite temperature state via purification.
 	{
 		auto sites = model->getSites();
 		state = MPS(sites);
-		state = removeQNs(state);
+		// state = removeQNs(state);
 		auto N = sites.length();
     	for(int n = 1; n <= N; n += 2)
         {
@@ -41,63 +43,153 @@ protected:
 	        svd(wf,state.Aref(n),D,state.Aref(n+1));
 	        state.Aref(n) *= D;
         }
-        state.orthogonalize();
-        state.normalize();
+        // state.orthogonalize();
+        // state.normalize();
 	}
 
 	void coolPsii()
 	{
-		/* Implement cooling */
-		/* TODO: Maybe implement a better cooling here
-		 * you are just creating expH from ampo, not ideal
-		 * may want some form of Trotter decomp or something
-		 * like this in the future.
-		 */
-
-		auto ampo = model->getAmpo();
 		auto tau = args->getReal("tau");
 		auto ttotal = beta/2.0;
 		auto eps = args->getReal("thermalEps");
     	int nt = int((ttotal/tau)*(1.0+eps));
-    	auto realStep = args->getBool("realStep");
     	auto maxDim = args->getInt("MaxDim");
     	args->add("MaxDim",args->getInt("thermalMaxDim"));
-    	auto tSoFar = 0.0;
     	if(fabs(nt*tau-ttotal) > eps)
     	{
     		nt += 1;
     		tau = ttotal/Real(nt);
     	}
-		Print(tau);
-		Print(nt);
+    	args->add("tau",tau);
+
+		auto type = args->getString("coolingType");
+		if(type == "Trotter") Trotter();
+		if(type == "MPO") MPOCool();
+        state.orthogonalize();
+        state.normalize();
+        args->add("MaxDim",maxDim);
+	}
+
+	void Trotter()
+	{
+		// NOTE: You are assuming that the state is just a chain with an ancilla
+		cout << "Starting Trotter. " << endl;
+		auto sites = model->getSites();
+		auto mgates = model->getGatesH();
+		auto gates = vector<BondGate>();
+		auto tau = args->getReal("tau");
+		auto theta = 1.0/(2.0 - pow(2.0,1.0/3.0));
+		for(auto x : mgates)
+		{
+			if(x.l == "even")
+			{	
+				cout << x.s1 << "," << x.s2 << endl;
+				Print(x.t);
+				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				gates.push_back(s1);
+				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta/2.0,x.t);
+				gates.push_back(g);
+				gates.push_back(s1);
+			}
+		}
+		for(auto x : mgates)
+		{
+			if(x.l == "odd")
+			{	
+				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				gates.push_back(s1);
+				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta,x.t);
+				gates.push_back(g);
+				gates.push_back(s1);
+			}
+		}
+		for(auto x : mgates)
+		{
+			if(x.l == "even")
+			{	
+				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				gates.push_back(s1);
+				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*(1.0-theta)/2.0,x.t);
+				gates.push_back(g);
+				gates.push_back(s1);
+			}
+		}
+		for(auto x : mgates)
+		{
+			if(x.l == "odd")
+			{	
+				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				gates.push_back(s1);
+				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*(1.0-2*theta),x.t);
+				gates.push_back(g);
+				gates.push_back(s1);
+			}
+		}
+		for(auto x : mgates)
+		{
+			if(x.l == "even")
+			{	
+				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				gates.push_back(s1);
+				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*(1.0-theta)/2.0,x.t);
+				gates.push_back(g);
+				gates.push_back(s1);
+			}
+		}
+		for(auto x : mgates)
+		{
+			if(x.l == "odd")
+			{	
+				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				gates.push_back(s1);
+				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta,x.t);
+				gates.push_back(g);
+				gates.push_back(s1);
+			}
+		}
+		for(auto x : mgates)
+		{
+			if(x.l == "even")
+			{	
+				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				gates.push_back(s1);
+				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta/2.0,x.t);
+				gates.push_back(g);
+				gates.push_back(s1);
+			}
+		}
+		cout << "Time evolving. " << endl;
+		Print(state);
+		gateTEvol(gates,beta/2.0,tau,state,*args);
+	}
+
+	void MPOCool()
+	{ 
+    	auto realStep = args->getBool("realStep");
+		auto tau = args->getReal("tau");
+		auto ttotal = beta/2.0;
+		auto eps = args->getReal("thermalEps");
+    	int nt = int((ttotal/tau)*(1.0+eps));
     	if(realStep)
     	{
-    		cout << "using real time steps." << endl;
-	        auto expH = toExpH(ampo,tau);
+	        auto expH = model->getExpH(tau);
 	        for(int tt = 1; tt <= nt; ++tt)
 	        {
 	        	state = noPrime(applyMPO(expH,state,*args));
-	        	tSoFar += tau;
 	        }
     	}
     	else
     	{
 	    	auto taua = tau/2.*(1.+1._i);
 	        auto taub = tau/2.*(1.-1._i);
-	        auto expHa = toExpH(ampo,taua);
-	        auto expHb = toExpH(ampo,taub);
+	        auto expHa = model->getExpH(taua);
+	        auto expHb = model->getExpH(taub);
 	        for(int tt = 1; tt <= nt; ++tt)
 	        {
 	        	state = noPrime(applyMPO(expHa,state));
 	        	state = noPrime(applyMPO(expHb,state));
-	        	tSoFar += tau;
 	        }
     	}
-    	Print(beta);
-    	Print(tSoFar);
-        state.orthogonalize();
-        state.normalize();
-        args->add("MaxDim",maxDim);
 	}
 
 public:

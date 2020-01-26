@@ -14,25 +14,107 @@ using namespace std;
 class XX : public Model
 {
 protected:
-	virtual void calcH()
+	
+	virtual void calcAmpoH()
 	{
+		ampoH = AutoMPO(sites);
         for(auto b : *lattice)
         {
         	if(b.t == Lattice::physical)
         	{
-	            ampo += 0.5,"S+",b.s1,"S-",b.s2;
-	            ampo += 0.5,"S-",b.s1,"S+",b.s2;
+	            *ampoH += 0.5,"S+",b.s1,"S-",b.s2;
+	            *ampoH += 0.5,"S-",b.s1,"S+",b.s2;
         	}
         }
 	}
+
+	virtual void calcAmpoL()
+	{
+		ampoL = AutoMPO(sites);
+        for(auto b : *lattice)
+        {
+        	if(b.t == Lattice::physical)
+        	{
+	            *ampoL += 0.5,"S+",b.s1,"S-",b.s2;
+	            *ampoL += 0.5,"S-",b.s1,"S+",b.s2;
+        	}
+        	if(b.t == Lattice::environment)
+        	{
+	            *ampoL += -0.5,"S+",b.s1,"S-",b.s2;
+	            *ampoL += -0.5,"S-",b.s1,"S+",b.s2;
+        	}
+        }
+    }
+
+	void calcGatesH()
+	{
+		for(auto b : *lattice)
+		{
+        	if(b.t == Lattice::physical)
+        	{
+        		if(b.z == 0) // Even
+        		{
+        			auto hterm = 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
+        			hterm +=     0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
+        			gatesH.push_back(gate{b.s1,b.s2,hterm,"even"});
+	        	}
+        		else // Odd
+        		{
+        			auto hterm = 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
+                    hterm +=     0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
+                    gatesH.push_back(gate{b.s1,b.s2,hterm,"odd"});
+	        	}
+        	}
+		}
+        cout << "gates calculated." << endl;
+	}
+
+	void calcGatesL()
+	{
+		for(auto b : *lattice)
+		{
+        	if(b.t == Lattice::physical)
+        	{
+
+        		if(b.z == 0) // Even
+        		{
+        			auto hterm = 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
+        			hterm +=     0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
+        			gatesL.push_back(gate{b.s1,b.s2,hterm,"even"});
+	        	}
+        		else // Odd
+        		{
+        			auto hterm = 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
+        			hterm +=     0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
+        			gatesL.push_back(gate{b.s1,b.s2,hterm,"odd"});
+	        	}
+        	}
+        	if(b.t == Lattice::environment)
+        	{
+
+        		if(b.z == 0) // Even
+        		{
+        			auto hterm = -0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
+        			hterm +=     -0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
+        			gatesL.push_back(gate{b.s1,b.s2,hterm,"even"});
+	        	}
+        		else // Odd
+        		{
+        			auto hterm = -0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
+        			hterm +=     -0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
+        			gatesL.push_back(gate{b.s1,b.s2,hterm,"odd"});
+	        	}
+        	}
+		}
+	}
+
+    /* Gates for H */
+    /* Gates for L */
+
 public:
 	XX(){}
 	XX(Args* a) : Model(a) {}
-	XX(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) 
-	{
-		calcH();
-        H = toMPO(ampo);
-	}
+	XX(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) {}
 	~XX(){}
 };
 #endif

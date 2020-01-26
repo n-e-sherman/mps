@@ -13,7 +13,6 @@ class Chebyshevp : public Chebyshev
 {
 protected:
 	vector<Real> res;
-	vector<Real> res2;
 	Real m0;
 
 public:
@@ -27,12 +26,9 @@ public:
 			t0 = MPS(psi);
 			m0 = inner(t0,t0);
 			res.push_back(m0); // May want to change inner to innerC if you get complex values at some point. 
-			res2.push_back(m0);
 			t1 = noPrime(applyMPO(H,t0,*args));
 			t2 = t1;
 			res.push_back(inner(t0,t1));
-			auto temp2 = inner(t1,t1);
-			res2.push_back(2*temp2 - m0);
 			H.position(1);
 			is = siteInds(t0);
 			iteration = 1;
@@ -49,8 +45,6 @@ public:
 			prepare(temp,t0,is);
 			t2 = sum(temp,-1*t0,*args);
 			res.push_back(inner(psi,t2));
-			auto temp2 = inner(t2,t2);
-			res2.push_back((2.0*temp2) - m0);
 			t0 = t1;
 			t1 = t2;
 		}
@@ -64,7 +58,6 @@ public:
 		results.clear();
 		auto mom = args->defined("qFactor");
 		labels.push_back("moment");
-		labels.push_back("moment2");
 		labels.push_back("qFactor");
 		labels.push_back("nChebyshev");
 		labels.push_back("MaxDim");
@@ -72,18 +65,15 @@ public:
 		labels.push_back("Lattice");
 		labels.push_back("Model");
 		labels.push_back("thermal");
+		if(args->getBool("thermal")) { labels.push_back("beta"); labels.push_back("tau"); }
 		labels.push_back("W");
 		labels.push_back("Wp");
-		labels.push_back("Method");
-		if(args->getString("Method")=="Fit") labels.push_back("Nsweep");
-		labels.push_back("squared");
+		for(auto& x : model->getParams()){ labels.push_back(x.first); }
 
 		for(auto i : range(res.size()))
 		{
 			auto temp = vector<StringReal>();
 			temp.push_back(res[i]);
-			if(i < res2.size()) temp.push_back(res2[i]);
-			else{temp.push_back(NAN); }
 			temp.push_back(args->getReal("qFactor"));
 			temp.push_back(args->getReal("nChebyshev"));
 			temp.push_back(args->getReal("MaxDim"));
@@ -91,11 +81,10 @@ public:
 			temp.push_back(args->getString("Lattice"));
 			temp.push_back(args->getString("Model"));
 			temp.push_back(args->getBool("thermal"));
+			if(args->getBool("thermal")) { temp.push_back(args->getReal("beta")); temp.push_back(args->getReal("tau")); }
 			temp.push_back(args->getReal("W"));
 			temp.push_back(args->getReal("Wp"));
-			temp.push_back(args->getString("Method"));
-			if(args->getString("Method")=="Fit") temp.push_back(args->getReal("Nsweep"));
-			temp.push_back(args->getBool("squared"));
+			for(auto& x : model->getParams()){ temp.push_back(x.second); }
 			results.push_back(temp);
 		}
 	}
@@ -104,7 +93,6 @@ public:
 	{
 		Chebyshev::load(f);
 		read(f,res);
-		read(f,res2);
 		read(f,m0);
 	}
 
@@ -112,7 +100,6 @@ public:
 	{
 		Chebyshev::save(f);
 		write(f,res);
-		write(f,res2);
 		write(f,m0);
 	}
 };

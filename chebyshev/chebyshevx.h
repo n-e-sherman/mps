@@ -123,8 +123,7 @@ public:
 		labels.push_back("W");
 		labels.push_back("Wp");
 		labels.push_back("Method");
-		if(args->getString("Method")=="Fit") labels.push_back("Nsweep");
-		labels.push_back("squared");
+		for(auto& x : model->getParams()){ labels.push_back(x.first); }
 
 		for(auto i : range(res.size()))
 		{
@@ -139,8 +138,7 @@ public:
 			temp.push_back(args->getReal("W"));
 			temp.push_back(args->getReal("Wp"));
 			temp.push_back(args->getString("Method"));
-			if(args->getString("Method")=="Fit") temp.push_back(args->getReal("Nsweep"));
-			temp.push_back(args->getBool("squared"));
+			for(auto& x : model->getParams()){ temp.push_back(x.second); }
 			results.push_back(temp);
 		}
 	}

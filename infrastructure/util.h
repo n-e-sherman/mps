@@ -104,7 +104,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("cwd","./");
     args->add("Method","DensityMatrix");
     args->add("MaxDim",500);
-    args->add("thermalMaxDim",1000);
+    args->add("thermalMaxDim",2000);
     args->add("Cutoff",1E-9);
     args->add("spectral");
     args->add("thermal",true);
@@ -115,6 +115,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("Delta",1);
     args->add("Je",1);
     args->add("Jo",1);
+    args->add("Jz",1);
     args->add("reorthogonalize");
     args->add("initial","AF");
     args->add("N",100);
@@ -137,6 +138,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("saveChebyshev",false);
     args->add("readFile",false);
     args->add("writeFile",false);
+    args->add("coolingType","Trotter");
 
     /* Sweeps for DMRG */
     args->add("nSweeps",5);

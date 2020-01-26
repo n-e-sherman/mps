@@ -34,14 +34,14 @@ public:
 	}
 	MPS& getState() { return state; }
 	Real getE0() {return E0; }
-	static string getHash(Args* args, int sType = 0)
+	static string getHash(Args* args, int sType = 2)
 	{	
 		Real s;
 		if(args->defined("qFactor")) s = args->getReal("qFactor");
 		else s = args->getReal("position");
-		int mType = 0;
-		if(args->getBool("thermal")) mType = ModelBuilder::thermal;
-		return Model::getHash(args,mType) + "_" + to_string(args->getInt("MaxDim")) + "_" + to_string(sType) + "_" + to_string(s); // Maybe add some specifications for how you get GS?
+		string sThermal = "";
+		if(args->getBool("thermal")) sThermal = to_string(args->getReal("beta"));
+		return Model::getHash(args) + "_" + to_string(args->getInt("MaxDim")) + "_" + to_string(sType) + "_" + to_string(s) + "_" + sThermal; // Maybe add some specifications for how you get GS?
 	}
 	virtual void load(ifstream & f)
 	{

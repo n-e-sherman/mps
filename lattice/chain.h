@@ -13,7 +13,7 @@ public:
 	Chain(){}
 	Chain(int L) : Lattice(L) 
 	{
-		for(auto i : range1(N-1)) bonds.push_back(bond{i,i+1,physical}); 
+		for(auto i : range1(N-1)) bonds.push_back(bond{i,i+1,physical,i%2}); 
 		for(auto i : range1(N)) sites.push_back(site{i,physical}); 
 	}
 };

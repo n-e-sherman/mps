@@ -16,56 +16,137 @@ class Dimer : public Model
 	Real Je;
 	Real Jo;
 protected:
-	virtual void calcH()
+
+	virtual void calcAmpoH()
 	{
-        for(auto b : *lattice)
-        {
-        	// TODO: May want to modify if 2D ever happens, you assume standard ordering. May need to add something to lattice struct.
+		ampoH = AutoMPO(sites);
+                for(auto b : *lattice)
+                {
+                	// TODO: May want to modify if 2D ever happens, you assume standard ordering. May need to add something to lattice struct.
+                	if(b.t == Lattice::physical)
+                	{
+                		if(b.z == 0) // Even
+                		{
+        		            *ampoH += 0.5*Je,"S+",b.s1,"S-",b.s2;
+        		            *ampoH += 0.5*Je,"S-",b.s1,"S+",b.s2;
+        		            *ampoH +=     Je,"Sz",b.s1,"Sz",b.s2;
+        	        	}
+                		else // Odd
+                		{
+        		            *ampoH += 0.5*Jo,"S+",b.s1,"S-",b.s2;
+        		            *ampoH += 0.5*Jo,"S-",b.s1,"S+",b.s2;
+        		            *ampoH +=     Jo,"Sz",b.s1,"Sz",b.s2;
+        	        	}
+                	}
+                }
+	}
+
+	virtual void calcAmpoL()
+	{
+	    ampoL = AutoMPO(sites);
+	    for(auto b : *lattice)
+	    {
+	    	// TODO: May want to modify if 2D ever happens, you assume standard ordering. May need to add something to lattice struct.
         	if(b.t == Lattice::physical)
         	{
-        		if((b.s1 % 2) == 0) // Even
+        		if(b.z == 0) // Even
         		{
-		            ampo += 0.5*Je,"S+",b.s1,"S-",b.s2;
-		            ampo += 0.5*Je,"S-",b.s1,"S+",b.s2;
-		            ampo +=     Je,"Sz",b.s1,"Sz",b.s2;
+		            *ampoL += 0.5*Je,"S+",b.s1,"S-",b.s2;
+		            *ampoL += 0.5*Je,"S-",b.s1,"S+",b.s2;
+		            *ampoL +=     Je,"Sz",b.s1,"Sz",b.s2;
 	        	}
         		else // Odd
         		{
-		            ampo += 0.5*Jo,"S+",b.s1,"S-",b.s2;
-		            ampo += 0.5*Jo,"S-",b.s1,"S+",b.s2;
-		            ampo +=     Jo,"Sz",b.s1,"Sz",b.s2;
+		            *ampoL += 0.5*Jo,"S+",b.s1,"S-",b.s2;
+		            *ampoL += 0.5*Jo,"S-",b.s1,"S+",b.s2;
+		            *ampoL +=     Jo,"Sz",b.s1,"Sz",b.s2;
 	        	}
         	}
-        }
+        	// TODO: May want to modify if 2D ever happens, you assume standard ordering. May need to add something to lattice struct.
+	    	if(b.t == Lattice::environment)
+        	{
+        		if(b.z == 0) // Even
+        		{
+		            *ampoL += -0.5*Je,"S+",b.s1,"S-",b.s2;
+		            *ampoL += -0.5*Je,"S-",b.s1,"S+",b.s2;
+		            *ampoL +=     -Je,"Sz",b.s1,"Sz",b.s2;
+	        	}
+        		else // Odd
+        		{
+		            *ampoL += -0.5*Jo,"S+",b.s1,"S-",b.s2;
+		            *ampoL += -0.5*Jo,"S-",b.s1,"S+",b.s2;
+		            *ampoL +=     -Jo,"Sz",b.s1,"Sz",b.s2;
+	        	}
+        	}
+	    }
 	}
 
-	void calcThermalGates()
+	void calcGatesH()
 	{
-		auto even = vector<ITensor>;
-		auto odd = vector<ITensor>;
 		for(auto b : *lattice)
 		{
-        	if(b.t == Lattice::physical)
-        	{
+                	if(b.t == Lattice::physical)
+                	{
 
-        		if((b.s1 % 2) == 0) // Even
-        		{
-        			auto hterm = Je*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s2);
-        			hterm += 0.5*Je*op(sites,"S+",b.s1)*op(sites,"S+",b.s2);
-        			hterm += 0.5*Je*op(sites,"S-",b.s1)*op(sites,"S-",b.s2);
-        			even.push_back(hterm);
-	        	}
-        		else // Odd
-        		{
-        			auto hterm = Jo*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s2);
-        			hterm += 0.5*Jo*op(sites,"S+",b.s1)*op(sites,"S+",b.s2);
-        			hterm += 0.5*Jo*op(sites,"S-",b.s1)*op(sites,"S-",b.s2);
-        			odd.push_back(hterm);
-	        	}
-        	}
+                		if(b.z == 0) // Even
+                		{
+                			auto hterm = Je*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s2);
+                			hterm += 0.5*Je*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
+                			hterm += 0.5*Je*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
+                			gatesH.push_back(gate{b.s1,b.s2,hterm,"even"});
+        	        	}
+                		else // Odd
+                		{
+                			auto hterm = Jo*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s2);
+                			hterm += 0.5*Jo*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
+                			hterm += 0.5*Jo*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
+                			gatesH.push_back(gate{b.s1,b.s2,hterm,"odd"});
+        	        	}
+                	}
 		}
-		
 	}
+
+	void calcGatesL()
+	{
+		for(auto b : *lattice)
+		{
+                	if(b.t == Lattice::physical)
+                	{
+                		if(b.z == 0) // Even
+                		{
+                			auto hterm = Je*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s2);
+                			hterm += 0.5*Je*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
+                			hterm += 0.5*Je*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
+                			gatesL.push_back(gate{b.s1,b.s2,hterm,"even"});
+        	        	}
+                		else // Odd
+                		{
+                			auto hterm = Jo*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s2);
+                			hterm += 0.5*Jo*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
+                			hterm += 0.5*Jo*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
+                			gatesL.push_back(gate{b.s1,b.s2,hterm,"odd"});
+        	        	}
+                	}
+                	if(b.t ==Lattice::environment)
+                	{
+                		if(b.z == 0) // Even
+                		{
+                			auto hterm = -Je*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s2);
+                			hterm += -0.5*Je*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
+                			hterm += -0.5*Je*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
+                			gatesL.push_back(gate{b.s1,b.s2,hterm,"even"});
+        	        	}
+                		else // Odd
+                		{
+                			auto hterm = -Jo*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s2);
+                			hterm += -0.5*Jo*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
+                			hterm += -0.5*Jo*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
+                			gatesL.push_back(gate{b.s1,b.s2,hterm,"odd"});
+        	        	}
+                	}
+		}
+	}
+
 
 public:
 	Dimer(){}
@@ -74,9 +155,9 @@ public:
 	{
 		Je = args->getReal("Je");
 		Jo = args->getReal("Je");
-		calcH();
-        H = toMPO(ampo);
-        calcThermalGates();
+		params["Je"] = Je;
+		params["Jo"] = Jo;
+
 	}
 	~Dimer(){}
 };

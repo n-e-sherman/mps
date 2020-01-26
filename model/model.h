@@ -10,25 +10,60 @@
 #include "model/modelbuilder.h"
 #include <cmath>
 #include <string>
- #include <typeinfo>
+#include <typeinfo>
+#include <optional>
 
 using namespace itensor;
 using namespace std;
 
 class Model
 {
+	Cplx tauEH;
+	Cplx tauEL;
+	Cplx tauGH;
+	Cplx tauGL;
 protected:
+
+	struct gate
+	{
+		int s1 = 0;
+		int s2 = 0;
+		ITensor t;
+		string l = "";
+	};
+
 	/* Inputs */
 	Args* args;
 	Lattice* lattice;
 
 	/* Outputs */
-	MPO H;
-	MPO expH;
 	SiteSet sites;
-	AutoMPO ampo;
-	vector<BondGate> thermalGates;
-	vector<BondGate> timeGates;
+	map<string, Real> params;
+
+	optional<AutoMPO> ampoH;
+	optional<MPO> H;
+	optional<MPO> expH;
+	vector<gate> gatesH;
+	// GateH
+
+	optional<AutoMPO> ampoL;
+	optional<MPO> L;
+	optional<MPO> expL;
+	vector<gate> gatesL;
+	// GateL
+
+
+	/* Methods */
+	virtual void calcH(){ if(!ampoH) calcAmpoH(); H = toMPO(*ampoH); }
+	virtual void calcExpH(Cplx tau){ if(!ampoH) calcAmpoH(); expH = toExpH(*ampoH,tau); }
+	virtual void calcAmpoH() {};
+	virtual void calcGatesH() {};
+
+	virtual void calcL(){ if(!ampoL) calcAmpoL(); L = toMPO(*ampoL); }
+	virtual void calcExpL(Cplx tau){ if(!ampoL) calcAmpoL(); expL = toExpH(*ampoL,tau);	}
+	virtual void calcAmpoL() {};
+	virtual void calcGatesL() {};
+
 
 public:
 	Model(){}
@@ -38,41 +73,57 @@ public:
 		args = a;
 		lattice = l;
 		sites = s;
-		ampo = AutoMPO(sites);
 	}
+
 	virtual ~Model(){}
-	MPO& getH() {return H; }
-	AutoMPO& getAmpo() {return ampo; }
-	SiteSet getSites() const {return sites;}
-	static string getHash(Args* args, int mType = 0)
+	MPO& getH() { if(!H) calcH(); return *H; }
+	MPO& getExpH(Cplx tau, bool force = false) { if(!expH || force) calcExpH(tau); tauEH = tau; return *expH; } // force ensures a new calculation.
+	AutoMPO& getAmpoH() {if(!ampoH) calcAmpoH(); return *ampoH; } // not needed?
+	vector<gate> getGatesH() {if(gatesH.size() == 0) calcGatesH(); return gatesH; }
+	/* Something for gates */
+
+	MPO& getL() { if(!L) calcL(); return *L; }
+	MPO& getExpL(Cplx tau, bool force = false) { if(!expL || force) calcExpL(tau); tauEL = tau; return *expL; } // force ensures a new calculation.
+	AutoMPO& getAmpoL() {if(!ampoL) calcAmpoL(); return *ampoL; }
+	vector<gate> getGatesL() {if(gatesL.size() == 0) calcGatesL(); return gatesL; }
+	/* Something for gates */
+
+
+
+	map<string, Real> getParams() {return params; }
+	SiteSet getSites() const {return sites; }
+
+	static string hashParams(Args* args)
 	{
-		string sSquared = "";
-		if(args->getBool("squared")) sSquared = "squared_";
-		return Lattice::getHash(args) + "_" + args->getString("Model") + "_" + sSquared + args->getString("SiteSet") + "_" + to_string(mType);
+		auto res = args->getString("Jz");
+		res += args->getString("Delta");
+		res += args->getString("Je");
+		res += args->getString("Jo");
+		return res;
 	}
 
-	virtual void load(ifstream & f)
+	static string getHash(Args* args)
 	{
-		read(f,H);
-		auto sType = args->getString("SiteSet");
-		if     (sType == "SpinHalf"){ auto rSites = SpinHalf(args->getInt("N")); rSites.read(f); sites = rSites; }
-		else if(sType == "SpinOne") { auto rSites = SpinOne(args->getInt("N")); rSites.read(f); sites = rSites;  }
-		else if(sType == "SpinTwo") { auto rSites = SpinTwo(args->getInt("N")); rSites.read(f); sites = rSites;  } 
-
-	}
-	virtual void save(ofstream & f)
-	{
-		write(f,H);
-		write(f,sites);
+		auto sParams = Model::hashParams(args);
+		return Lattice::getHash(args) + "_" + args->getString("Model") + "_" + args->getString("SiteSet") + "_" + sParams;
 	}
 
-	virtual void squared()
-	{
-		auto res = nmultMPO(H, prime(H));
-		res.mapPrime(2,1);
-		H=res;
-	}
+	// virtual void load(ifstream & f)
+	// {
+	// 	read(f,tauEH);
+	// 	read(f,tauEL);
+	// 	read(f,ampoH);
+	// 	auto sType = args->getString("SiteSet");
+	// 	if     (sType == "SpinHalf"){ auto rSites = SpinHalf(args->getInt("N")); rSites.read(f); sites = rSites; }
+	// 	else if(sType == "SpinOne") { auto rSites = SpinOne(args->getInt("N")); rSites.read(f); sites = rSites;  }
+	// 	else if(sType == "SpinTwo") { auto rSites = SpinTwo(args->getInt("N")); rSites.read(f); sites = rSites;  } 
 
+	// }
+	// virtual void save(ofstream & f)
+	// {
+	// 	write(f,H);
+	// 	write(f,sites);
+	// }
 
 };
 

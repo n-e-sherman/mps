@@ -22,6 +22,7 @@ protected:
 		int s1 = 0;
 		int s2 = 0;
 		type t = physical;
+		int z = 0; // site % 2.
 	};
 	struct site
 	{

@@ -15,9 +15,9 @@ APP= main
 #    will auto-detect if these headers have changed and recompile your app.
 INF_HEADERS= infrastructure/cache.h infrastructure/factory.h infrastructure/util.h
 LAT_HEADERS= lattice/chain.h lattice/lattice.h lattice/latticebuilder.h lattice/thermalchain.h 
-MOD_HEADERS= model/heisenberg.h model/heisenberglouiville.h model/model.h model/modelbuilder.h model/sitebuilder.h model/xx.h model/xxlouiville.h model/xxz.h model/xxzlouiville.h model/dimer.h model/dimerlouiville.h
+MOD_HEADERS= model/heisenberg.h model/model.h model/modelbuilder.h model/sitebuilder.h model/xx.h model/xxz.h model/dimer.h
 REP_HEADERS= repository/repository.h repository/repositorybuilder.h
-SRV_HEADERS= services/service.h services/spectralbroadening.h services/spectralweights.h services/moments.h
+SRV_HEADERS= services/service.h
 STT_HEADERS= state/groundstate.h state/spectralstate.h state/state.h state/statebuilder.h state/thermalstate.h
 CHB_HEADERS= chebyshev/chebyshev.h chebyshev/chebyshevx.h chebyshev/chebyshevp.h chebyshev/chebyshevbuilder.h chebyshev/chebyshevservice.h
 #LAN_HEADERS= lanczos/lanczos.h lanczos/lanczosbuilder.h lanczos/reorthogonalize.h
@@ -25,7 +25,7 @@ CHB_HEADERS= chebyshev/chebyshev.h chebyshev/chebyshevx.h chebyshev/chebyshevp.h
 # 5. For any additional .cc (source) files making up your project,
 #    add their full filenames here.
 CCFILES=$(APP).cc
-# CCCOM=g++-9 -std=c++17 -fPIC
+CCCOM=g++-9 -std=c++17 -fPIC
 #################################################################
 #################################################################
 #################################################################
