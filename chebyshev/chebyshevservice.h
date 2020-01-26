@@ -59,7 +59,7 @@ public:
 		auto [labels,results] = chebyshev->getResults();
 		string type = "x";
 		if(args->getBool("momentum")) type = "p";
-		repo->save(Chebyshev::getHash(args),"chebyshev"+type,labels,results);
+		repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results);
 	}
 
 

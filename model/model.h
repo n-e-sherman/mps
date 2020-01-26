@@ -95,10 +95,10 @@ public:
 
 	static string hashParams(Args* args)
 	{
-		auto res = args->getString("Jz");
-		res += args->getString("Delta");
-		res += args->getString("Je");
-		res += args->getString("Jo");
+		auto res = to_string(args->getReal("Jz"));
+		res += to_string(args->getReal("Delta"));
+		res += to_string(args->getReal("Je"));
+		res += to_string(args->getReal("Jo"));
 		return res;
 	}
 

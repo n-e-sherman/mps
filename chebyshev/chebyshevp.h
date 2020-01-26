@@ -68,7 +68,7 @@ public:
 		if(args->getBool("thermal")) { labels.push_back("beta"); labels.push_back("tau"); }
 		labels.push_back("W");
 		labels.push_back("Wp");
-		for(auto& x : model->getParams()){ labels.push_back(x.first); }
+		for(auto x : model->getParams()){ labels.push_back(x.first); }
 
 		for(auto i : range(res.size()))
 		{
@@ -84,7 +84,7 @@ public:
 			if(args->getBool("thermal")) { temp.push_back(args->getReal("beta")); temp.push_back(args->getReal("tau")); }
 			temp.push_back(args->getReal("W"));
 			temp.push_back(args->getReal("Wp"));
-			for(auto& x : model->getParams()){ temp.push_back(x.second); }
+			for(auto x : model->getParams()){ temp.push_back(x.second); }
 			results.push_back(temp);
 		}
 	}
