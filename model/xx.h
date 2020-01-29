@@ -54,15 +54,15 @@ protected:
         	{
         		if(b.z == 0) // Even
         		{
-        			auto hterm = 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
-        			hterm +=     0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
-        			gatesH.push_back(gate{b.s1,b.s2,hterm,"even"});
+        			auto hterm = 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        			hterm +=     0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        			gatesH.push_back(gate{b.s1,b.s1+1,hterm,"even"});
 	        	}
         		else // Odd
         		{
-        			auto hterm = 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
-                    hterm +=     0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
-                    gatesH.push_back(gate{b.s1,b.s2,hterm,"odd"});
+        			auto hterm = 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+                    hterm +=     0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+                    gatesH.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
 	        	}
         	}
 		}
@@ -78,15 +78,15 @@ protected:
 
         		if(b.z == 0) // Even
         		{
-        			auto hterm = 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
-        			hterm +=     0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
-        			gatesL.push_back(gate{b.s1,b.s2,hterm,"even"});
+        			auto hterm = 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        			hterm +=     0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"even"});
 	        	}
         		else // Odd
         		{
-        			auto hterm = 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
-        			hterm +=     0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
-        			gatesL.push_back(gate{b.s1,b.s2,hterm,"odd"});
+        			auto hterm = 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        			hterm +=     0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
 	        	}
         	}
         	if(b.t == Lattice::environment)
@@ -94,15 +94,15 @@ protected:
 
         		if(b.z == 0) // Even
         		{
-        			auto hterm = -0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
-        			hterm +=     -0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
-        			gatesL.push_back(gate{b.s1,b.s2,hterm,"even"});
+        			auto hterm = -0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        			hterm +=     -0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"even"});
 	        	}
         		else // Odd
         		{
-        			auto hterm = -0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s2);
-        			hterm +=     -0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s2);
-        			gatesL.push_back(gate{b.s1,b.s2,hterm,"odd"});
+        			auto hterm = -0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        			hterm +=     -0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
 	        	}
         	}
 		}

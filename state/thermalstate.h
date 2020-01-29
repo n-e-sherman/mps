@@ -65,7 +65,8 @@ protected:
 		auto type = args->getString("coolingType");
 		if(type == "Trotter") Trotter();
 		if(type == "MPO") MPOCool();
-        state.orthogonalize();
+		cout << "cooling done." << endl;
+        // state.orthogonalize();
         state.normalize();
         args->add("MaxDim",maxDim);
 	}
@@ -79,24 +80,39 @@ protected:
 		auto gates = vector<BondGate>();
 		auto tau = args->getReal("tau");
 		auto theta = 1.0/(2.0 - pow(2.0,1.0/3.0));
+		auto N = args->getInt("N");
+		// int eCut = 0;
+		// int oCut = 0;
+		// if(N%2 == 0) // even
+		// {
+		// 	eCut = 2*(N-1)-3;
+		// 	oCut = 2*N-3;
+		// }
+		// else
+		// {
+		// 	oCut = 2*(N-1)-3;
+		// 	eCut = 2*N-3;
+		// }
+		cout << "even" << endl;
 		for(auto x : mgates)
 		{
 			if(x.l == "even")
 			{	
-				cout << x.s1 << "," << x.s2 << endl;
-				Print(x.t);
-				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				cout << x.s1 << "," << x.s2 << "," << x.s2+1 << "," << sites.length() << endl;
+				auto s1 = BondGate(sites,x.s2,x.s2+1);
 				gates.push_back(s1);
 				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta/2.0,x.t);
 				gates.push_back(g);
 				gates.push_back(s1);
 			}
 		}
+		cout << "odd" << endl;
 		for(auto x : mgates)
 		{
 			if(x.l == "odd")
 			{	
-				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				cout << x.s1 << "," << x.s2 << "," << x.s2+1 << "," << sites.length() << endl;
+				auto s1 = BondGate(sites,x.s2,x.s2+1);
 				gates.push_back(s1);
 				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta,x.t);
 				gates.push_back(g);
@@ -107,7 +123,7 @@ protected:
 		{
 			if(x.l == "even")
 			{	
-				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				auto s1 = BondGate(sites,x.s2,x.s2+1);
 				gates.push_back(s1);
 				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*(1.0-theta)/2.0,x.t);
 				gates.push_back(g);
@@ -118,7 +134,7 @@ protected:
 		{
 			if(x.l == "odd")
 			{	
-				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				auto s1 = BondGate(sites,x.s2,x.s2+1);
 				gates.push_back(s1);
 				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*(1.0-2*theta),x.t);
 				gates.push_back(g);
@@ -129,7 +145,7 @@ protected:
 		{
 			if(x.l == "even")
 			{	
-				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				auto s1 = BondGate(sites,x.s2,x.s2+1);
 				gates.push_back(s1);
 				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*(1.0-theta)/2.0,x.t);
 				gates.push_back(g);
@@ -140,7 +156,7 @@ protected:
 		{
 			if(x.l == "odd")
 			{	
-				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				auto s1 = BondGate(sites,x.s2,x.s2+1);
 				gates.push_back(s1);
 				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta,x.t);
 				gates.push_back(g);
@@ -151,7 +167,7 @@ protected:
 		{
 			if(x.l == "even")
 			{	
-				auto s1 = BondGate(sites,x.s1+1,x.s2);
+				auto s1 = BondGate(sites,x.s2,x.s2+1);
 				gates.push_back(s1);
 				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta/2.0,x.t);
 				gates.push_back(g);
@@ -159,8 +175,11 @@ protected:
 			}
 		}
 		cout << "Time evolving. " << endl;
-		Print(state);
-		gateTEvol(gates,beta/2.0,tau,state,*args);
+
+		auto ttotal = beta/2.0;
+		auto eps = args->getReal("thermalEps");
+    	int nt = int((ttotal/tau)*(1.0+eps));
+    	for(int tt=1; tt <= nt; ++tt) gateTEvol(gates,tau,tau,state,*args);
 	}
 
 	void MPOCool()
