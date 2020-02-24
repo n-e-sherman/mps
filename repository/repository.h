@@ -15,17 +15,21 @@ class Repository
 {
 protected:
 	string cwd;
+	string dataDir;
+	string resultDir;
 	Cache* cache;
 	bool readFile = false;
 	bool writeFile = false;
 public:
 	Repository() {}
-	Repository(string c, bool rf = false, bool wf = false) : cwd(c) {cache = Cache::getInstance(); readFile = rf; writeFile = wf; }
+	Repository(string d, string r, bool rf = false, bool wf = false) : dataDir(d), resultDir(r) 
+		{cache = Cache::getInstance(); readFile = rf; writeFile = wf; }
 	virtual ~Repository(){}
 
 	template<class T> 
 	T* load(const std::string& hash, T* T_in, bool loadFile = true) 
 	{	
+		cwd = dataDir;
 		auto retC = (T*)cache->load(hash);
 		if(retC != nullptr) return retC;
 		if(loadFile & readFile)
@@ -42,6 +46,7 @@ public:
 	template<class T>
 	void save(const std::string& hash, T* t, bool saveFile = true) 
 	{ 
+		cwd = dataDir;
 		cache->save(hash,t);
 		if(saveFile)
 		{
@@ -58,6 +63,7 @@ public:
 		 * example: vector<vector<.>>. The outer iterable are
 		 * rows, and the inner iterable is a row.
 		 */
+		cwd = resultDir;
 		ofstream file;
 		file.open(cwd + ".results/" + folder + "/" + hash);
 		auto it = labels.begin();

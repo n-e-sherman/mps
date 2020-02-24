@@ -135,10 +135,13 @@ Args* getArgs(int argc, char* argv[])
     args->add("Nmoments",0);
     args->add("momentum",true);
     args->add("UseSVD",true);
-    args->add("saveChebyshev",false);
-    args->add("readFile",false);
-    args->add("writeFile",false);
+    args->add("saveChebyshev",true);
     args->add("coolingType","Trotter");
+    args->add("writeDirectory","");
+    args->add("cheReadFile",true);
+    args->add("cheWriteFile",true);
+    args->add("dataDir","./");
+    args->add("resDir","./");
 
     /* Sweeps for DMRG */
     args->add("nSweeps",5);

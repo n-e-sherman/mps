@@ -43,7 +43,10 @@ public:
 	void calculate(Args* a)
 	{
 		args = a;
-		repo = repoBuilder->build(args);
+
+		auto readFile = args->getBool("cheReadFile");
+		auto writeFile = args->getBool("cheWriteFile");
+		repo = repoBuilder->build(args,readFile,writeFile);
 		chebyshev = chebyshevBuilder->build(args);
     	auto save = args->getBool("saveChebyshev");
 		int nSave = args->getInt("nSave");

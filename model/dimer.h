@@ -154,7 +154,7 @@ public:
 	Dimer(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) 
 	{
 		Je = args->getReal("Je");
-		Jo = args->getReal("Je");
+		Jo = args->getReal("Jo");
 		params["Je"] = Je;
 		params["Jo"] = Jo;
 

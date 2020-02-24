@@ -33,7 +33,9 @@ public:
 	~ChebyshevBuilder(){}
 	Chebyshev* build(Args* args)
 	{
-		repo = repoBuilder->build(args);
+		auto readFile = args->getBool("cheReadFile");
+		auto writeFile = args->getBool("cheWriteFile");
+		repo = repoBuilder->build(args,readFile,writeFile);
 		auto momentum = args->getBool("momentum");
 		auto thermal = args->getBool("thermal");
 		auto save = args->getBool("saveChebyshev");

@@ -9,12 +9,11 @@ class RepositoryBuilder
 public:
 	RepositoryBuilder() {}
 	~RepositoryBuilder(){}
-	Repository* build(Args* args)
+	Repository* build(Args* args, bool rf = false, bool wf = false)
 	{
-		auto cwd = args->getString("cwd");
-		auto readFile = args->getBool("readFile");
-		auto writeFile = args->getBool("writeFile");
-		return new Repository(cwd,readFile,writeFile);
+		auto dataDir = args->getString("dataDir");
+		auto resDir = args->getString("resDir");
+		return new Repository(dataDir,resDir,rf, wf);
 	}
 };
 #endif
