@@ -99,6 +99,7 @@ public:
 		res += to_string(args->getReal("Delta"));
 		res += to_string(args->getReal("Je"));
 		res += to_string(args->getReal("Jo"));
+		res += to_string(args->getReal("Jxy"));
 		return res;
 	}
 

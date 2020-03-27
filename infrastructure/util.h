@@ -116,6 +116,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("Je",1);
     args->add("Jo",1);
     args->add("Jz",1);
+    args->add("Jxy",1);
     args->add("reorthogonalize");
     args->add("initial","AF");
     args->add("N",100);

@@ -6,13 +6,9 @@
 #include "lattice/latticebuilder.h"
 #include "model/model.h"
 #include "model/heisenberg.h"
-#include "model/heisenberglouiville.h"
 #include "model/xx.h"
-#include "model/xxlouiville.h"
 #include "model/xxz.h"
-#include "model/xxzlouiville.h"
 #include "model/dimer.h"
-#include "model/dimerlouiville.h"
 #include "model/sitebuilder.h"
 #include "repository/repositorybuilder.h"
 

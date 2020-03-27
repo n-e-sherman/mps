@@ -13,7 +13,7 @@ using namespace std;
 
 class XXZ : public Model
 {
-	Real Jz;
+	Real Jxy;
 	Real Delta;
 protected:
 
@@ -24,9 +24,9 @@ protected:
         {
         	if(b.t == Lattice::physical)
         	{
-	            *ampoH += 0.5*Delta,"S+",b.s1,"S-",b.s2;
-	            *ampoH += 0.5*Delta,"S-",b.s1,"S+",b.s2;
-	            *ampoH +=        Jz,"Sz",b.s1,"Sz",b.s2;
+	            *ampoH += 0.5*Jxy,"S+",b.s1,"S-",b.s2;
+	            *ampoH += 0.5*Jxy,"S-",b.s1,"S+",b.s2;
+	            *ampoH += Delta,"Sz",b.s1,"Sz",b.s2;
         	}
         }
 	}
@@ -38,15 +38,15 @@ protected:
 	    {
 	    	if(b.t == Lattice::physical)
 	    	{
-	            *ampoL += 0.5*Delta,"S+",b.s1,"S-",b.s2;
-	            *ampoL += 0.5*Delta,"S-",b.s1,"S+",b.s2;
-	            *ampoL +=    1.0*Jz,"Sz",b.s1,"Sz",b.s2;
+	            *ampoL += 0.5*Jxy,"S+",b.s1,"S-",b.s2;
+	            *ampoL += 0.5*Jxy,"S-",b.s1,"S+",b.s2;
+	            *ampoL +=    1.0*Delta,"Sz",b.s1,"Sz",b.s2;
 	    	}
 	    	if(b.t == Lattice::environment)
 	    	{
-	            *ampoL += -0.5*Delta,"S+",b.s1,"S-",b.s2;
-	            *ampoL += -0.5*Delta,"S-",b.s1,"S+",b.s2;
-	            *ampoL +=    -1.0*Jz,"Sz",b.s1,"Sz",b.s2;
+	            *ampoL += -0.5*Jxy,"S+",b.s1,"S-",b.s2;
+	            *ampoL += -0.5*Jxy,"S-",b.s1,"S+",b.s2;
+	            *ampoL +=    -1.0*Delta,"Sz",b.s1,"Sz",b.s2;
 	    	}
 	    }
 	}
@@ -60,16 +60,16 @@ protected:
 
         		if(b.z == 0) // Even
         		{
-        			auto hterm = Jz*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-        			hterm += 0.5*Delta*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-        			hterm += 0.5*Delta*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        			auto hterm = Delta*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
+        			hterm += 0.5*Jxy*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        			hterm += 0.5*Jxy*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
         			gatesH.push_back(gate{b.s1,b.s1+1,hterm,"even"});
 	        	}
         		else // Odd
         		{
-        			auto hterm = Jz*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-        			hterm += 0.5*Delta*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-        			hterm += 0.5*Delta*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        			auto hterm = Delta*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
+        			hterm += 0.5*Jxy*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        			hterm += 0.5*Jxy*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
         			gatesH.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
 	        	}
         	}
@@ -85,16 +85,16 @@ protected:
 
         		if(b.z == 0) // Even
         		{
-        			auto hterm = Jz*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-        			hterm += 0.5*Delta*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-        			hterm += 0.5*Delta*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        			auto hterm = Delta*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
+        			hterm += 0.5*Jxy*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        			hterm += 0.5*Jxy*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
         			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"even"});
 	        	}
         		else // Odd
         		{
-        			auto hterm = Jz*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-        			hterm += 0.5*Delta*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-        			hterm += 0.5*Delta*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        			auto hterm = Delta*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
+        			hterm += 0.5*Jxy*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        			hterm += 0.5*Jxy*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
         			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
 	        	}
         	}
@@ -103,16 +103,16 @@ protected:
 
         		if(b.z == 0) // Even
         		{
-        			auto hterm = -Jz*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-        			hterm += -0.5*Delta*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-        			hterm += -0.5*Delta*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        			auto hterm = -Delta*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
+        			hterm += -0.5*Jxy*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        			hterm += -0.5*Jxy*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
         			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"even"});
 	        	}
         		else // Odd
         		{
-        			auto hterm = -Jz*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-        			hterm += -0.5*Delta*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-        			hterm += -0.5*Delta*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        			auto hterm = -Delta*op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
+        			hterm += -0.5*Jxy*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        			hterm += -0.5*Jxy*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
         			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
 	        	}
         	}
@@ -124,9 +124,9 @@ public:
 	XXZ(Args* a) : Model(a) {}
 	XXZ(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) 
 	{
-		Jz = args->getReal("Jz");
+		Jxy = args->getReal("Jxy");
 		Delta = args->getReal("Delta");
-		params["Jz"] = Jz;
+		params["Jxy"] = Jxy;
 		params["Delta"] = Delta;
 	}
 	~XXZ(){}
