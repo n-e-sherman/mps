@@ -18,7 +18,6 @@ protected:
 public:
 
 	Chebyshevp(Args* a) : Chebyshev(a){}
-	Chebyshevp(Args* a, Model* m) : Chebyshev(a,m){}
 	Chebyshevp(Args* a, Model* m, State *s) : Chebyshev(a,m,s)
 	{ 
 			 /* May want to make this general, might have another thing in mind for the initial state. */
@@ -70,6 +69,7 @@ public:
 		labels.push_back("W");
 		labels.push_back("Wp");
 		for(auto x : model->getParams()){ labels.push_back(x.first); }
+
 		for(auto i : range(res.size()))
 		{
 			auto temp = vector<StringReal>();

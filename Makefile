@@ -35,7 +35,7 @@ CCCOM=g++-9 -std=c++17 -fPIC
 include $(LIBRARY_DIR)/this_dir.mk
 include $(LIBRARY_DIR)/options.mk
 
-TENSOR_HEADERS=$(LIBRARY_DIR)/itensor/core.h $(LIBRARY_DIR)/itensor/all.h 
+TENSOR_HEADERS=$(LIBRARY_DIR)/itensor/core.h
 
 #Mappings --------------
 OBJECTS=$(patsubst %.cc,%.o, $(CCFILES))
