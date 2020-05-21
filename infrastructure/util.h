@@ -112,11 +112,11 @@ Args* getArgs(int argc, char* argv[])
     args->add("realStep",true);
     args->add("beta",0);
     args->add("tau",0.1);
-    args->add("Delta",1);
-    args->add("Je",1);
-    args->add("Jo",1);
-    args->add("Jz",1);
-    args->add("Jxy",1);
+    args->add("Delta",1.0);
+    args->add("Je",1.0);
+    args->add("Jo",1.0);
+    args->add("Jz",1.0);
+    args->add("Jxy",1.0);
     args->add("reorthogonalize");
     args->add("initial","AF");
     args->add("N",100);

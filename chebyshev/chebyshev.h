@@ -35,6 +35,7 @@ protected:
 public:
 
 	Chebyshev(Args* a) {args = a;}
+	Chebyshev(Args* a, Model* m){args = a; model = m;}
 	Chebyshev(Args* a, Model* m, State *s)
 	{ 
 		args = a;
@@ -72,7 +73,7 @@ public:
 
 	static string getHash(Args* args)
 	{ /* This needs some love to be a hash function inline with what you had before, maybe different for saving results? that can prob be in service. */
-		return State::getHash(args) + "_" + to_string(args->getReal("W")) + "_Chebyshev" + "_" + to_string(args->getBool("momentum"));
+		return State::getHash(args) + "_" + to_string(args->getReal("W")) + "_Chebyshev" + "_" + to_string(args->getBool("momentum")) + "_" + to_string(args->getReal("W"));
 	}
 
 	virtual void load(ifstream & f)

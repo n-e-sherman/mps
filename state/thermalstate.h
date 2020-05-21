@@ -43,8 +43,8 @@ protected:
 	        svd(wf,state.Aref(n),D,state.Aref(n+1));
 	        state.Aref(n) *= D;
         }
-        // state.orthogonalize();
-        // state.normalize();
+        state.orthogonalize();
+        state.normalize();
 	}
 
 	void coolPsii()

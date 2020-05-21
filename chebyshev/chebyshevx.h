@@ -4,6 +4,7 @@
 #include <string>
 #include "itensor/all.h"
 #include "chebyshev/chebyshev.h"
+#include "itensor/util/print_macro.h"
 
 
 using namespace std;
@@ -23,6 +24,7 @@ protected:
 public:
 
 	Chebyshevx(Args* a) : Chebyshev(a){}
+	Chebyshevx(Args* a, Model* m) : Chebyshev(a,m){}
 	Chebyshevx(Args* a, Model* m, State *s, Lattice* l) : Chebyshev(a,m,s)
 	{
 		lattice = l;
@@ -34,10 +36,12 @@ public:
 		t0 = MPS(psi);
 		psidag = dag(psi);
 		N = args->getInt("N");
-		auto c = N/2;
+		int c = N/2;
+		Print(c);
 
 		t0.position(P[c]);
-		auto temp = noPrime(t0(P[c]) * op(sites,"Sz",P[c]));
+		auto temp = t0(P[c]) * op(sites,"Sz",P[c]);
+		temp.noPrime();
 		t0.set(P[c],temp);
 		t0.position(1);
 
