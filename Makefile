@@ -25,7 +25,7 @@ CHB_HEADERS= chebyshev/chebyshev.h chebyshev/chebyshevx.h chebyshev/chebyshevp.h
 # 5. For any additional .cc (source) files making up your project,
 #    add their full filenames here.
 CCFILES=$(APP).cc
-CCCOM=g++-9 -std=c++17 -fPIC
+# CCCOM=g++ -std=c++17 -fPIC
 #################################################################
 #################################################################
 #################################################################
