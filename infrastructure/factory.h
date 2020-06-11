@@ -13,6 +13,7 @@
 #include "chebyshev/chebyshevbuilder.h"
 #include "chebyshev/chebyshevservice.h"
 #include "services/moments.h"
+#include "sweeper/sweeperbuilder.h"
 
 /* Memory manage the new pointers. */
 LatticeBuilder* latticeFactory() {return new LatticeBuilder(); }
@@ -20,7 +21,8 @@ RepositoryBuilder* repositoryFactory() {return new RepositoryBuilder(); }
 SiteBuilder* siteFactory() {return new SiteBuilder(); }
 ModelBuilder* modelFactory() {return new ModelBuilder(latticeFactory(), siteFactory(), repositoryFactory()); }
 StateBuilder* stateFactory() {return new StateBuilder(modelFactory(), latticeFactory(), repositoryFactory()); }
-ChebyshevBuilder* chebyshevBuilderFactory() {return new ChebyshevBuilder(modelFactory(), stateFactory(), latticeFactory(), repositoryFactory()); }
+SweeperBuilder* SweeperFactory() {return new SweeperBuilder(); }
+ChebyshevBuilder* chebyshevBuilderFactory() {return new ChebyshevBuilder(modelFactory(), stateFactory(), latticeFactory(), repositoryFactory(), SweeperFactory()); }
 ChebyshevService* chebyshevServiceFactory() {return new ChebyshevService(chebyshevBuilderFactory(), repositoryFactory()); }
 // LanczosBuilder* lanczosFactory() {return new LanczosBuilder(modelFactory(), stateFactory(), repositoryFactory()); }
 // SpectralWeights* spectralWeightsFactory() {return new SpectralWeights(modelFactory(), lanczosFactory(), repositoryFactory()); }

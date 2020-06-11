@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 #include "itensor/all.h"
+#include "chebyshev/chebyshevbuilder.h"
+#include "sweeper/sweeper.h"
 
 
 using namespace std;
@@ -14,6 +16,7 @@ protected:
 	Args* args;
 	Model* model;
 	State* state;
+	Sweeper* sweeper;
 	MPO H;
 	bool thermal;
 	int nChebyshev;
@@ -27,21 +30,30 @@ protected:
 	MPS t2;
 	IndexSet is;
 	int iteration;
+	bool sweep = false;
 
 	/* Outputs */
 	vector<string> labels;
 	vector<vector<StringReal>> results;	
+	vector<vector<Real>> details;
+	vector<string> detail_labels;
 
 public:
 
 	Chebyshev(Args* a) {args = a;}
-	Chebyshev(Args* a, Model* m){args = a; model = m;}
-	Chebyshev(Args* a, Model* m, State *s)
+	Chebyshev(Args* a, Model* m, Sweeper* swp){args = a; model = m; sweeper = swp; }
+	Chebyshev(Args* a, Model* m, State *s, Sweeper* swp)
 	{ 
 		args = a;
 		model = m;
 		state = s;
-		args = a;
+		sweeper = swp;
+		if(args->getBool("details")) 
+		{
+			details.push_back(sweeper->get_details()); 
+			details.push_back(sweeper->get_details());
+			detail_labels = sweeper->get_labels(); 
+		}
 		thermal = args->getBool("thermal");
 		W = args->getReal("W");
 		Wp = args->getReal("Wp");
@@ -72,8 +84,14 @@ public:
 
 
 	static string getHash(Args* args)
-	{ /* This needs some love to be a hash function inline with what you had before, maybe different for saving results? that can prob be in service. */
-		return State::getHash(args) + "_" + to_string(args->getReal("W")) + "_Chebyshev" + "_" + to_string(args->getBool("momentum")) + "_" + to_string(args->getReal("W"));
+	{ 
+		string sProj = args->getString("sweeperType");
+		if(sProj == "exact") sProj = "-" + sProj + "-" + to_string(args->getReal("Ep")) + "-" + to_string(args->getInt("sweeperCount"));
+		else
+		if(sProj == "projection") sProj = "-" + sProj + "-" + to_string(args->getReal("Ep")) + "-" + to_string(args->getInt("sweeperCount")) + "-" + to_string(args->getInt("MaxIter"));
+		else
+			sProj = "";
+		return State::getHash(args) + "_" + to_string(args->getReal("W")) + "_Chebyshev" + "_" + to_string(args->getBool("momentum")) + "_" + to_string(args->getReal("W")) + sProj;
 	}
 
 	virtual void load(ifstream & f)
@@ -87,6 +105,8 @@ public:
 		read(f,Wp);
 		read(f,thermal);
 		read(f,iteration);
+		read(f,details);
+		read(f,detail_labels);
 		psi.position(1);
 		t0.position(1);
 		t1.position(1);
@@ -106,6 +126,8 @@ public:
 		write(f,Wp);
 		write(f,thermal);
 		write(f,iteration);
+		write(f,details);
+		write(f,detail_labels);
 	}
 
 

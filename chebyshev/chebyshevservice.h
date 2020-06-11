@@ -59,14 +59,12 @@ public:
 			remaining = nChebyshev - chebyshev->getIteration();
 			repo->save(Chebyshev::getHash(args),chebyshev,save);
 			auto [labels,results] = chebyshev->getResults();
-			string type = "x";
-			if(args->getBool("momentum")) type = "p";
+			string type = (args->getBool("momentum") ? "p" : "x");
 			repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results);
 
 		}
 		auto [labels,results] = chebyshev->getResults();
-		string type = "x";
-		if(args->getBool("momentum")) type = "p";
+		string type = (args->getBool("momentum") ? "p" : "x");
 		repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results);
 	}
 

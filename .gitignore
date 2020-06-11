@@ -1,5 +1,7 @@
 .data/
 .data-old/
+.ipynb_checkpoints/
+.vscode/
 .results/
 .old/
 .debug_objs/
@@ -7,9 +9,10 @@
 .vscode/
 jupyter/
 old_code.cc
-TODO
+TODO.txt
 trash
 trash.txt
+trash.py
 main
 main-g
 main.o

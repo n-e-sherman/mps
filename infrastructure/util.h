@@ -90,67 +90,100 @@ Args* getArgs(int argc, char* argv[])
 {
     Args* args = new Args();
 
-    /* Default values */
-    /* Model types */
-    args->add("Lattice","Chain");
-    args->add("Model","Heisenberg");
-    args->add("SiteSet","SpinHalf");
+    /********************************
+     ******** Default values ********
+     ********************************/
+
+    /* Calculation parameters. */
     args->add("Weights",false);
     args->add("Chevyshev",true);
+    args->add("Sweeper",false);
     args->add("Broadening",false);
     args->add("Moments",false);
 
-    /* Code parameters */
+    /* IO */
     args->add("cwd","./");
-    args->add("Method","DensityMatrix");
-    args->add("MaxDim",500);
-    args->add("thermalMaxDim",2000);
-    args->add("Cutoff",1E-9);
-    args->add("spectral");
+    args->add("dataDir","./");
+    args->add("resDir","./");
+
+
+    /* Global parameters */
     args->add("thermal",true);
-    args->add("squared",false);
+    args->add("N",100);
+    args->add("SiteSet","SpinHalf");
+
+    /* State parameters. */
+    args->add("thermalMaxDim",2000);
     args->add("realStep",true);
     args->add("beta",0);
     args->add("tau",0.1);
+    args->add("thermalEps",1E-9);
+    args->add("coolingType","Trotter");
+
+    /* Model parameters. */
+    args->add("Lattice","Chain");
+    args->add("Model","Heisenberg");
     args->add("Delta",1.0);
     args->add("Je",1.0);
     args->add("Jo",1.0);
     args->add("Jz",1.0);
     args->add("Jxy",1.0);
-    args->add("reorthogonalize");
-    args->add("initial","AF");
-    args->add("N",100);
-    args->add("c",1);
-    args->add("nLanczos",40);
-    args->add("thermalEps",1E-9);
-    args->add("eps",0.0001);
-    args->add("wi",0);
-    args->add("wf",4);
-    args->add("nw",201);
-    args->add("etas","0.1,0.2");
+
+    /* Chebyshev parameters. */    
     args->add("W",8);
     args->add("Wp",0.9875);
     args->add("nChebyshev",100);
-    args->add("nSave",INT_MAX);
-    args->add("Nsweep",3);
-    args->add("Nmoments",0);
-    args->add("momentum",true);
-    args->add("UseSVD",true);
+    args->add("nSave",1); // Chebyshev iteration saving won't occur by default.
+    args->add("momentum",false);
     args->add("saveChebyshev",true);
-    args->add("coolingType","Trotter");
-    args->add("writeDirectory","");
+    args->add("loadChebyshev",true);
     args->add("cheReadFile",true);
     args->add("cheWriteFile",true);
-    args->add("dataDir","./");
-    args->add("resDir","./");
 
-    /* Sweeps for DMRG */
+    
+    /* Sweeper parameters. */
+    args->add("sweeperType","identity");
+    args->add("sweeperCount",10);
+    args->add("phiThreshold",1E-12);
+    args->add("MaxIter",30);
+    args->add("Ep",1.0);
+    args->add("NumCenter",2); // Also ITensor parameter.
+    args->add("NormCutoff",1e-10); // Also ITensor parameter.
+    args->add("difThreshold",1e-8);
+    args->add("details",true);
+    args->add("errorMPOProd",true);
+
+    /* ITensor parameters. */
     args->add("nSweeps",5);
     args->add("sweeps_maxdim","80,100,150,150,200");
     args->add("sweeps_mindim","20,20,10,10,10");
     args->add("sweeps_cutoff","1E-6,1E-8,1E-10,1E-12,1E-12");
     args->add("sweeps_niter","4,3,2,2,2");
     args->add("sweeps_noise","1E-7,1E-8,1E-10,0,0");
+    args->add("initial","AF");
+    args->add("UseSVD",true);
+    args->add("MaxIter",30);
+    args->add("NormCutoff",1e-7); // Also Sweeper parameter.
+    args->add("numCenter",1); // Also Sweeper parameter.
+    args->add("ConserveQNs",true);
+    args->add("MaxDim",500);
+    args->add("Method","DensityMatrix");
+    args->add("Nsweep",3);
+    
+
+    /* Artifacts */
+    args->add("Nmoments",0);
+    args->add("wi",0);
+    args->add("wf",4);
+    args->add("nw",201);
+    args->add("etas","0.1,0.2");
+    args->add("eps",0.0001);
+    args->add("c",1);
+    args->add("nLanczos",40);
+    args->add("reorthogonalize",false);
+    args->add("spectral");
+    args->add("squared",false);
+    args->add("writeDirectory",""); // Potentially irrelevant...
 
 
 
