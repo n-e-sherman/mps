@@ -96,7 +96,7 @@ Args* getArgs(int argc, char* argv[])
 
     /* Calculation parameters. */
     args->add("Weights",false);
-    args->add("Chevyshev",true);
+    args->add("Chebyshev",true);
     args->add("Sweeper",false);
     args->add("Broadening",false);
     args->add("Moments",false);
