@@ -19,12 +19,19 @@ protected:
 	vector<int> P;
 	vector<int> A;
 	int N;
+	vector<Real> errorMPO;
 
 public:
 
 	Chebyshevx(Args* a) : Chebyshev(a){}
+<<<<<<< HEAD
 	Chebyshevx(Args* a, Model* m, State *s, Lattice* l) : Chebyshev(a,m,s)
+=======
+	Chebyshevx(Args* a, Model* m, Sweeper* swp) : Chebyshev(a,m,swp){}
+	Chebyshevx(Args* a, Model* m, State *s, Lattice* l, Sweeper* swp) : Chebyshev(a,m,s,swp)
+>>>>>>> temp-branch
 	{
+		if(args->getBool("errorMPOProd")) errorMPO = vector<Real>({0,0});
 		lattice = l;
 		processSites();
 		sites = model->getSites();	
@@ -34,14 +41,17 @@ public:
 		t0 = MPS(psi);
 		psidag = dag(psi);
 		N = args->getInt("N");
+<<<<<<< HEAD
 		auto c = N/2;
 
+=======
+		int c = N/2;
+>>>>>>> temp-branch
 		t0.position(P[c]);
 		auto temp = noPrime(t0(P[c]) * op(sites,"Sz",P[c]));
 		t0.set(P[c],temp);
 		t0.position(1);
-
-		res.push_back(calcMoments(t0)); // May want to change inner to innerC if you get complex values at some point. 
+		res.push_back(calcMoments(t0));
 		t1 = noPrime(applyMPO(H,t0,*args));
 		t2 = t1;
 		res.push_back(calcMoments(t1));
@@ -56,10 +66,13 @@ public:
 		for(auto i : range1(iterations))
 		{
 			cout << iteration + i << endl;
-			auto temp = applyMPO(H,t1,*args);
+			auto temp = noPrime(applyMPO(H,t1,*args));
+			if(args->getBool("errorMPOProd")) errorMPO.push_back(errorMPOProd(temp,H,t1));
 			temp *= 2;
 			prepare(temp,t0,is);
 			t2 = sum(temp,-1*t0,*args);
+			sweeper->sweep(H,t2);
+			if(args->getBool("details")) details.push_back(sweeper->get_details());
 			res.push_back(calcMoments(t2));
 			t0 = t1;
 			t1 = t2;
@@ -120,10 +133,15 @@ public:
 		labels.push_back("Lattice");
 		labels.push_back("Model");
 		labels.push_back("thermal");
+		if(args->getBool("thermal")) { labels.push_back("beta"); labels.push_back("tau"); }
 		labels.push_back("W");
 		labels.push_back("Wp");
-		labels.push_back("Method");
+		labels.push_back("sweeperType");
+		labels.push_back("sweeperCount");
+		labels.push_back("MaxIter");
 		for(auto& x : model->getParams()){ labels.push_back(x.first); }
+		for(auto& x : detail_labels){ labels.push_back(x); }
+		if(args->getBool("errorMPOProd")){ labels.push_back("errorMPOProd"); }
 
 		for(auto i : range(res.size()))
 		{
@@ -135,10 +153,19 @@ public:
 			temp.push_back(args->getString("Lattice"));
 			temp.push_back(args->getString("Model"));
 			temp.push_back(args->getBool("thermal"));
+			if(args->getBool("thermal")) { temp.push_back(args->getReal("beta")); temp.push_back(args->getReal("tau")); }
 			temp.push_back(args->getReal("W"));
 			temp.push_back(args->getReal("Wp"));
-			temp.push_back(args->getString("Method"));
+			string sProj = args->getString("sweeperType");
+			temp.push_back(sProj);
+			if(sProj == "identity"){ temp.push_back(0.0); temp.push_back(0.0); }
+			else
+			if(sProj == "exact"){ temp.push_back(args->getReal("sweeperCount")); temp.push_back(0.0); }
+			else
+			if(sProj == "projection"){ temp.push_back(args->getReal("sweeperCount")); temp.push_back(args->getReal("MaxIter")); }
 			for(auto& x : model->getParams()){ temp.push_back(x.second); }
+			for(auto& x : details[i]){temp.push_back(x); }
+			if(args->getBool("errorMPOProd")) temp.push_back(errorMPO[i]);
 			results.push_back(temp);
 		}
 	}
@@ -150,6 +177,7 @@ public:
 		read(f,N);
 		read(f,P);
 		read(f,A);
+		read(f,errorMPO);
 		psidag.position(1);
 		auto sType = args->getString("SiteSet");
 		if     (sType == "SpinHalf"){ auto rSites = SpinHalf(args->getInt("N")); rSites.read(f); sites = rSites; }
@@ -165,6 +193,7 @@ public:
 		write(f,N);
 		write(f,P);
 		write(f,A);
+		write(f,errorMPO);
 		write(f,sites);
 	}
 

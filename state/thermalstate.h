@@ -63,12 +63,12 @@ protected:
     	args->add("tau",tau);
 
 		auto type = args->getString("coolingType");
+		cout << "MaxDim before cooling = " << maxLinkDim(state) << endl;
 		if(type == "Trotter") Trotter();
 		if(type == "MPO") MPOCool();
-		cout << "cooling done." << endl;
-        // state.orthogonalize();
+		args->add("MaxDim",maxDim);
+        state.orthogonalize(*args);
         state.normalize();
-        args->add("MaxDim",maxDim);
 	}
 
 	void Trotter()
@@ -81,24 +81,10 @@ protected:
 		auto tau = args->getReal("tau");
 		auto theta = 1.0/(2.0 - pow(2.0,1.0/3.0));
 		auto N = args->getInt("N");
-		// int eCut = 0;
-		// int oCut = 0;
-		// if(N%2 == 0) // even
-		// {
-		// 	eCut = 2*(N-1)-3;
-		// 	oCut = 2*N-3;
-		// }
-		// else
-		// {
-		// 	oCut = 2*(N-1)-3;
-		// 	eCut = 2*N-3;
-		// }
-		cout << "even" << endl;
 		for(auto x : mgates)
 		{
 			if(x.l == "even")
 			{	
-				cout << x.s1 << "," << x.s2 << "," << x.s2+1 << "," << sites.length() << endl;
 				auto s1 = BondGate(sites,x.s2,x.s2+1);
 				gates.push_back(s1);
 				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta/2.0,x.t);
@@ -106,12 +92,10 @@ protected:
 				gates.push_back(s1);
 			}
 		}
-		cout << "odd" << endl;
 		for(auto x : mgates)
 		{
 			if(x.l == "odd")
 			{	
-				cout << x.s1 << "," << x.s2 << "," << x.s2+1 << "," << sites.length() << endl;
 				auto s1 = BondGate(sites,x.s2,x.s2+1);
 				gates.push_back(s1);
 				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta,x.t);

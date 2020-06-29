@@ -6,6 +6,15 @@
 #include "chebyshev/chebyshev.h"
 
 
+/*******************
+ *
+ *
+ * I want sweeping 
+ *
+ *
+ *******************/
+
+
 using namespace std;
 using namespace itensor;
 
@@ -18,7 +27,12 @@ protected:
 public:
 
 	Chebyshevp(Args* a) : Chebyshev(a){}
+<<<<<<< HEAD
 	Chebyshevp(Args* a, Model* m, State *s) : Chebyshev(a,m,s)
+=======
+	Chebyshevp(Args* a, Model* m, Sweeper* swp) : Chebyshev(a,m,swp){}
+	Chebyshevp(Args* a, Model* m, State *s, Sweeper* swp) : Chebyshev(a,m,s,swp)
+>>>>>>> temp-branch
 	{ 
 			 /* May want to make this general, might have another thing in mind for the initial state. */
 			psi = state->getState();
@@ -32,6 +46,13 @@ public:
 			H.position(1);
 			is = siteInds(t0);
 			iteration = 1;
+
+			//****************************//
+			t0 = removeQNs(t0);
+			t1 = removeQNs(t1);
+			t2 = removeQNs(t2);
+			H = removeQNs(H);
+			//****************************//
 	}
 	
 	~Chebyshevp(){}
@@ -40,10 +61,12 @@ public:
 		for(auto i : range1(iterations))
 		{
 			cout << iteration + i << endl;
-			auto temp = applyMPO(H,t1,*args);
+			if((iteration + i) >= args->getInt("SweeperStart",20)) sweep = true;
+			auto temp = noPrime(applyMPO(H,t1,*args));
 			temp *= 2;
 			prepare(temp,t0,is);
 			t2 = sum(temp,-1*t0,*args);
+			if(sweep) sweeper->sweep(H,temp);
 			res.push_back(inner(psi,t2));
 			t0 = t1;
 			t1 = t2;
@@ -68,6 +91,9 @@ public:
 		if(args->getBool("thermal")) { labels.push_back("beta"); labels.push_back("tau"); }
 		labels.push_back("W");
 		labels.push_back("Wp");
+		labels.push_back("sweeperType");
+		labels.push_back("sweeperCount");
+		labels.push_back("MaxIter");
 		for(auto x : model->getParams()){ labels.push_back(x.first); }
 
 		for(auto i : range(res.size()))
@@ -84,6 +110,13 @@ public:
 			if(args->getBool("thermal")) { temp.push_back(args->getReal("beta")); temp.push_back(args->getReal("tau")); }
 			temp.push_back(args->getReal("W"));
 			temp.push_back(args->getReal("Wp"));
+			string sProj = args->getString("sweeperType");
+			temp.push_back(sProj);
+			if(sProj == "identity"){ temp.push_back(0.0); temp.push_back(0.0); }
+			else
+			if(sProj == "exact"){ temp.push_back(args->getReal("sweeperCount")); temp.push_back(0.0); }
+			else
+			if(sProj == "projection"){ temp.push_back(args->getReal("sweeperCount")); temp.push_back(args->getReal("MaxIter")); }
 			for(auto x : model->getParams()){ temp.push_back(x.second); }
 			results.push_back(temp);
 		}

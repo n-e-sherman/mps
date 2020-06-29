@@ -58,10 +58,16 @@ public:
 			chebyshev->calculate(min(remaining,nSave));
 			remaining = nChebyshev - chebyshev->getIteration();
 			repo->save(Chebyshev::getHash(args),chebyshev,save);
+<<<<<<< HEAD
+=======
+			auto [labels,results] = chebyshev->getResults();
+			string type = (args->getBool("momentum") ? "p" : "x");
+			repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results);
+
+>>>>>>> temp-branch
 		}
 		auto [labels,results] = chebyshev->getResults();
-		string type = "x";
-		if(args->getBool("momentum")) type = "p";
+		string type = (args->getBool("momentum") ? "p" : "x");
 		repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results);
 	}
 
