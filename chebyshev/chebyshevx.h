@@ -4,6 +4,7 @@
 #include <string>
 #include "itensor/all.h"
 #include "chebyshev/chebyshev.h"
+#include "itensor/util/print_macro.h"
 
 
 using namespace std;
@@ -19,17 +20,12 @@ protected:
 	vector<int> P;
 	vector<int> A;
 	int N;
-	vector<Real> errorMPO;
 
 public:
 
 	Chebyshevx(Args* a) : Chebyshev(a){}
-<<<<<<< HEAD
-	Chebyshevx(Args* a, Model* m, State *s, Lattice* l) : Chebyshev(a,m,s)
-=======
 	Chebyshevx(Args* a, Model* m, Sweeper* swp) : Chebyshev(a,m,swp){}
 	Chebyshevx(Args* a, Model* m, State *s, Lattice* l, Sweeper* swp) : Chebyshev(a,m,s,swp)
->>>>>>> temp-branch
 	{
 		if(args->getBool("errorMPOProd")) errorMPO = vector<Real>({0,0});
 		lattice = l;
@@ -41,14 +37,10 @@ public:
 		t0 = MPS(psi);
 		psidag = dag(psi);
 		N = args->getInt("N");
-<<<<<<< HEAD
-		auto c = N/2;
-
-=======
 		int c = N/2;
->>>>>>> temp-branch
 		t0.position(P[c]);
-		auto temp = noPrime(t0(P[c]) * op(sites,"Sz",P[c]));
+		auto temp = t0(P[c]) * op(sites,"Sz",P[c]);
+		temp.noPrime();
 		t0.set(P[c],temp);
 		t0.position(1);
 		res.push_back(calcMoments(t0));

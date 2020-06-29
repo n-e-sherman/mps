@@ -43,8 +43,8 @@ protected:
 	        svd(wf,state.Aref(n),D,state.Aref(n+1));
 	        state.Aref(n) *= D;
         }
-        // state.orthogonalize();
-        // state.normalize();
+        state.orthogonalize();
+        state.normalize();
 	}
 
 	void coolPsii()
@@ -63,10 +63,11 @@ protected:
     	args->add("tau",tau);
 
 		auto type = args->getString("coolingType");
-		cout << "MaxDim before cooling = " << maxLinkDim(state) << endl;
 		if(type == "Trotter") Trotter();
 		if(type == "MPO") MPOCool();
+		cout << "cooling done." << endl;
 		args->add("MaxDim",maxDim);
+		cout << "MaxDim after cooling = " << maxLinkDim(state) << endl;
         state.orthogonalize(*args);
         state.normalize();
 	}
@@ -163,7 +164,7 @@ protected:
 		auto ttotal = beta/2.0;
 		auto eps = args->getReal("thermalEps");
     	int nt = int((ttotal/tau)*(1.0+eps));
-    	for(int tt=1; tt <= nt; ++tt) gateTEvol(gates,tau,tau,state,*args);
+    	for(int tt=1; tt <= nt; ++tt) {gateTEvol(gates,tau,tau,state,*args); cout << tt << "/" << nt << endl;}
 	}
 
 	void MPOCool()

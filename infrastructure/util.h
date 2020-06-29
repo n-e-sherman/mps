@@ -117,24 +117,6 @@ Args* getArgs(int argc, char* argv[])
     args->add("realStep",true);
     args->add("beta",0);
     args->add("tau",0.1);
-<<<<<<< HEAD
-    args->add("Delta",1);
-    args->add("Je",1);
-    args->add("Jo",1);
-    args->add("Jz",1);
-    args->add("Jxy",1);
-    args->add("reorthogonalize");
-    args->add("initial","AF");
-    args->add("N",100);
-    args->add("c",1);
-    args->add("nLanczos",40);
-    args->add("thermalEps",1E-9);
-    args->add("eps",0.0001);
-    args->add("wi",0);
-    args->add("wf",4);
-    args->add("nw",201);
-    args->add("etas","0.1,0.2");
-=======
     args->add("thermalEps",1E-9);
     args->add("coolingType","Trotter");
 
@@ -148,7 +130,6 @@ Args* getArgs(int argc, char* argv[])
     args->add("Jxy",1.0);
 
     /* Chebyshev parameters. */    
->>>>>>> temp-branch
     args->add("W",8);
     args->add("Wp",0.9875);
     args->add("nChebyshev",100);

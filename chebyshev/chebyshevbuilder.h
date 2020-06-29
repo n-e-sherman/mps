@@ -45,11 +45,7 @@ public:
 		auto load = args->getBool("loadChebyshev");
 		if(momentum) 
 		{
-<<<<<<< HEAD
-				auto chebyshev = repo->load(Chebyshev::getHash(args), new Chebyshevp(args));
-=======
 				auto chebyshev = repo->load(Chebyshev::getHash(args), new Chebyshevp(args, modelBuilder->build(args), sweeperBuilder->build(args)), load);
->>>>>>> temp-branch
 				if(chebyshev != nullptr) return chebyshev;
 				chebyshev = new Chebyshevp(args, modelBuilder->build(args),stateBuilder->build(args,StateBuilder::spectral), sweeperBuilder->build(args));
 				repo->save(Chebyshev::getHash(args), chebyshev, save);
@@ -57,11 +53,7 @@ public:
 		}
 		else
 		{
-<<<<<<< HEAD
-				auto chebyshev = repo->load(Chebyshev::getHash(args), new Chebyshevx(args));
-=======
 				auto chebyshev = repo->load(Chebyshev::getHash(args), new Chebyshevx(args, modelBuilder->build(args), sweeperBuilder->build(args)), load);
->>>>>>> temp-branch
 				if(chebyshev != nullptr) return chebyshev;
 				if(thermal) chebyshev = new Chebyshevx(args, modelBuilder->build(args),stateBuilder->build(args,StateBuilder::thermal),latticeBuilder->build(args), sweeperBuilder->build(args));
 				else {chebyshev = new Chebyshevx(args, modelBuilder->build(args),stateBuilder->build(args,StateBuilder::ground),latticeBuilder->build(args), sweeperBuilder->build(args));}

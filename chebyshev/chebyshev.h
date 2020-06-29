@@ -37,16 +37,13 @@ protected:
 	vector<vector<StringReal>> results;	
 	vector<vector<Real>> details;
 	vector<string> detail_labels;
+	vector<Real> errorMPO;
 
 public:
 
 	Chebyshev(Args* a) {args = a;}
-<<<<<<< HEAD
-	Chebyshev(Args* a, Model* m, State *s)
-=======
 	Chebyshev(Args* a, Model* m, Sweeper* swp){args = a; model = m; sweeper = swp; }
 	Chebyshev(Args* a, Model* m, State *s, Sweeper* swp)
->>>>>>> temp-branch
 	{ 
 		args = a;
 		model = m;
@@ -88,10 +85,6 @@ public:
 
 
 	static string getHash(Args* args)
-<<<<<<< HEAD
-	{ /* This needs some love to be a hash function inline with what you had before, maybe different for saving results? that can prob be in service. */
-		return State::getHash(args) + "_" + to_string(args->getReal("W")) + "_Chebyshev" + "_" + to_string(args->getBool("momentum"));
-=======
 	{ 
 		string sProj = args->getString("sweeperType");
 		if(sProj == "exact") sProj = "-" + sProj + "-" + to_string(args->getReal("Ep")) + "-" + to_string(args->getInt("sweeperCount"));
@@ -100,7 +93,6 @@ public:
 		else
 			sProj = "";
 		return State::getHash(args) + "_" + to_string(args->getReal("W")) + "_Chebyshev" + "_" + to_string(args->getBool("momentum")) + "_" + to_string(args->getReal("W")) + sProj;
->>>>>>> temp-branch
 	}
 
 	virtual void load(ifstream & f)
