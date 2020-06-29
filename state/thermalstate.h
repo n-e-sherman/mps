@@ -66,9 +66,7 @@ protected:
 		cout << "MaxDim before cooling = " << maxLinkDim(state) << endl;
 		if(type == "Trotter") Trotter();
 		if(type == "MPO") MPOCool();
-		cout << "cooling done." << endl;
 		args->add("MaxDim",maxDim);
-		cout << "MaxDim after cooling = " << maxLinkDim(state) << endl;
         state.orthogonalize(*args);
         state.normalize();
 	}
@@ -83,18 +81,6 @@ protected:
 		auto tau = args->getReal("tau");
 		auto theta = 1.0/(2.0 - pow(2.0,1.0/3.0));
 		auto N = args->getInt("N");
-		// int eCut = 0;
-		// int oCut = 0;
-		// if(N%2 == 0) // even
-		// {
-		// 	eCut = 2*(N-1)-3;
-		// 	oCut = 2*N-3;
-		// }
-		// else
-		// {
-		// 	oCut = 2*(N-1)-3;
-		// 	eCut = 2*N-3;
-		// }
 		for(auto x : mgates)
 		{
 			if(x.l == "even")
@@ -177,11 +163,7 @@ protected:
 		auto ttotal = beta/2.0;
 		auto eps = args->getReal("thermalEps");
     	int nt = int((ttotal/tau)*(1.0+eps));
-    	for(int tt=1; tt <= nt; ++tt) 
-    		{
-    			gateTEvol(gates,tau,tau,state,*args);
-    			cout << "MaxDim after step " << tt << "of " << nt << " = " << maxLinkDim(state) << endl;
-    		}
+    	for(int tt=1; tt <= nt; ++tt) gateTEvol(gates,tau,tau,state,*args);
 	}
 
 	void MPOCool()
