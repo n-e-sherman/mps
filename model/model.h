@@ -95,6 +95,17 @@ public:
 
 	static string hashParams(Args* args)
 	{
+		/* May want to wait on this change, as it will not load old hashing, but this new method is better */
+		/***************************************************************************************************/
+		// string res = "";
+		// auto sModel = args->getString("Model");
+		// if(sModel == "XXZ")
+		// 	res = to_string(args->getReal("Jxy")) + to_string(args->getReal("Delta"));
+		// if(sModel == "Dimer")
+		// 	res = to_string(args->getReal("Je")) + to_string(args->getReal("Jo"));
+		/***************************************************************************************************/
+		/* May want to wait on this change, as it will not load old hashing, but this new method is better */
+
 		auto res = to_string(args->getReal("Jz"));
 		res += to_string(args->getReal("Delta"));
 		res += to_string(args->getReal("Je"));

@@ -63,12 +63,14 @@ protected:
     	args->add("tau",tau);
 
 		auto type = args->getString("coolingType");
+		cout << "MaxDim before cooling = " << maxLinkDim(state) << endl;
 		if(type == "Trotter") Trotter();
 		if(type == "MPO") MPOCool();
 		cout << "cooling done." << endl;
-        // state.orthogonalize();
+		args->add("MaxDim",maxDim);
+		cout << "MaxDim after cooling = " << maxLinkDim(state) << endl;
+        state.orthogonalize(*args);
         state.normalize();
-        args->add("MaxDim",maxDim);
 	}
 
 	void Trotter()
@@ -93,12 +95,10 @@ protected:
 		// 	oCut = 2*(N-1)-3;
 		// 	eCut = 2*N-3;
 		// }
-		cout << "even" << endl;
 		for(auto x : mgates)
 		{
 			if(x.l == "even")
 			{	
-				cout << x.s1 << "," << x.s2 << "," << x.s2+1 << "," << sites.length() << endl;
 				auto s1 = BondGate(sites,x.s2,x.s2+1);
 				gates.push_back(s1);
 				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta/2.0,x.t);
@@ -106,12 +106,10 @@ protected:
 				gates.push_back(s1);
 			}
 		}
-		cout << "odd" << endl;
 		for(auto x : mgates)
 		{
 			if(x.l == "odd")
 			{	
-				cout << x.s1 << "," << x.s2 << "," << x.s2+1 << "," << sites.length() << endl;
 				auto s1 = BondGate(sites,x.s2,x.s2+1);
 				gates.push_back(s1);
 				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta,x.t);
@@ -179,7 +177,11 @@ protected:
 		auto ttotal = beta/2.0;
 		auto eps = args->getReal("thermalEps");
     	int nt = int((ttotal/tau)*(1.0+eps));
-    	for(int tt=1; tt <= nt; ++tt) gateTEvol(gates,tau,tau,state,*args);
+    	for(int tt=1; tt <= nt; ++tt) 
+    		{
+    			gateTEvol(gates,tau,tau,state,*args);
+    			cout << "MaxDim after step " << tt << "of " << nt << " = " << maxLinkDim(state) << endl;
+    		}
 	}
 
 	void MPOCool()
