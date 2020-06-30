@@ -139,6 +139,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("loadChebyshev",true);
     args->add("cheReadFile",true);
     args->add("cheWriteFile",true);
+    args->add("OpName","Sz");
 
     
     /* Sweeper parameters. */

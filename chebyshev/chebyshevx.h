@@ -6,6 +6,8 @@
 #include "chebyshev/chebyshev.h"
 #include "itensor/util/print_macro.h"
 
+#include <chrono>
+
 
 using namespace std;
 using namespace itensor;
@@ -29,13 +31,13 @@ public:
 	{
 		if(args->getBool("errorMPOProd")) errorMPO = vector<Real>({0,0});
 		lattice = l;
-		processSites();
 		sites = model->getSites();	
 		psi = state->getState();
 		psi.position(1);
 		H.position(1);
 		t0 = MPS(psi);
 		psidag = dag(psi);
+		processSites();
 		N = args->getInt("N");
 		int c = N/2;
 		t0.position(P[c]);
@@ -77,26 +79,37 @@ public:
 		/******************************************
 		 * I AM ASSUMING THE MOMENTS WILL BE REAL *
 		 ******************************************/
-
 		psidag.replaceSiteInds(siteInds(in));
     	psidag.replaceLinkInds(sim(linkInds(psidag)));
-
 		auto L = vector<ITensor>(N+1);
 		auto R = vector<ITensor>(N+1);
-		auto result = vector<Real>(N+1);
-		L[1] = ( psidag(P[1])*in(P[1]) ) * ( psidag(A[1]) * in(A[1]) );
-		R[N] = psidag(A[N])*in(A[N]);
+		auto O = vector<ITensor>(N+1);
+		auto result = vector<Real>(); // need auto
+
+
+		L[1] = in(P[1]) * psidag(P[1]);
+		L[1] = L[1] * in(A[1]) * psidag(A[1]);
+		R[N] = in(A[N]) * psidag(A[N]);
 		for(auto i : range1(2,N))
 		{
 			auto I = N-i+1;
-			L[i] = L[i-1] * ( ( psidag(P[i])*in(P[i]) ) * ( psidag(A[i]) *in(A[i]) ) );
-			R[I] = R[I+1] * ( ( psidag(P[I+1])*in(P[I+1]) ) * ( psidag(A[I]) *in(A[I]) ) );
+			L[i] = L[i-1] * in(P[i]) * psidag(P[i]);
+			L[i] = L[i] * in(A[i]) * psidag(A[i]);
+			R[I] = R[I+1] * in(P[I+1]) * psidag(P[I+1]);
+			R[I] = R[I] * in(A[I]) * psidag(A[I]);
 		}
-		auto temp = psidag(P[1]) * noPrime(in(P[1]) * op(sites,"Sz",P[1])) * R[1];
+
+		auto temp = in(P[1]) * op(sites,"Sz",P[1]);
+		temp.noPrime();
+		temp = temp * R[1];
+		temp = temp * psidag(P[1]);
 		result.push_back(elt(temp));
 		for(auto i : range1(2,N))
 		{
-			auto temp = L[i-1] * psidag(P[i]) * noPrime(in(P[i]) * op(sites,"Sz",P[i])) * R[i];
+			auto temp = L[i-1]*psidag(P[i]);
+			auto temp2 = noPrime(in(P[i]) * op(sites,"Sz",P[i]));
+			temp = temp * temp2;
+			temp = temp * R[i];
 			result.push_back(elt(temp));
 		}
 		return result;
@@ -108,7 +121,10 @@ public:
 		A.push_back(0);
 		for(auto x : lattice->getSites())
 		{
-			if(x.t == Lattice::physical) P.push_back(x.s);
+			if(x.t == Lattice::physical) 
+			{
+				P.push_back(x.s);
+			}
 			else{ A.push_back(x.s); }
 		}
 	}

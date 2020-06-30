@@ -17,7 +17,7 @@ protected:
 	Args* args;
 public:
 
-	Identity(Args* a) {args = a; }
+	Identity(Args* a) : Sweeper(a) {}
 	Identity(){}
 	~Identity(){}
 

@@ -92,7 +92,7 @@ public:
 		if(sProj == "projection") sProj = "-" + sProj + "-" + to_string(args->getReal("Ep")) + "-" + to_string(args->getInt("sweeperCount")) + "-" + to_string(args->getInt("MaxIter"));
 		else
 			sProj = "";
-		return State::getHash(args) + "_" + to_string(args->getReal("W")) + "_Chebyshev" + "_" + to_string(args->getBool("momentum")) + "_" + to_string(args->getReal("W")) + sProj;
+		return State::getHash(args) + "_Chebyshev" + "_" + to_string(args->getBool("momentum")) + "_" + to_string(args->getReal("W")) + sProj;
 	}
 
 	virtual void load(ifstream & f)

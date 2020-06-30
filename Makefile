@@ -20,7 +20,7 @@ REP_HEADERS= repository/repository.h repository/repositorybuilder.h
 SRV_HEADERS= services/service.h
 STT_HEADERS= state/groundstate.h state/spectralstate.h state/state.h state/statebuilder.h state/thermalstate.h
 CHB_HEADERS= chebyshev/chebyshev.h chebyshev/chebyshevx.h chebyshev/chebyshevp.h chebyshev/chebyshevbuilder.h chebyshev/chebyshevservice.h
-SWP_HEADERS= sweeper/sweeper.h sweeper/sweeperbuilder.h sweeper/krylov.h sweeper/projection.h sweeper/exact.h
+SWP_HEADERS= sweeper/sweeper.h sweeper/sweeperbuilder.h sweeper/krylov.h sweeper/projection.h sweeper/exact.h sweeper/identity.h
 #LAN_HEADERS= lanczos/lanczos.h lanczos/lanczosbuilder.h lanczos/reorthogonalize.h
 #chain.h factory.h groundstatecalculator.h heisenberg.h lattice.h latticebuilder.h model.h modelbuilder.h service.h sitebuilder.h thermalchain.h validator.h cache.h repository.h repositorybuilder.h
 # 5. For any additional .cc (source) files making up your project,

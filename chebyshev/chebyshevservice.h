@@ -52,6 +52,8 @@ public:
 		int nSave = args->getInt("nSave");
 		int nChebyshev = args->getInt("nChebyshev");
 		int remaining = nChebyshev - chebyshev->getIteration();
+		string type = (args->getBool("momentum") ? "p" : "x");
+		repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results);
 		while(remaining > 0)
 		{
 			cout << "remaining: " << remaining << endl;
@@ -59,12 +61,10 @@ public:
 			remaining = nChebyshev - chebyshev->getIteration();
 			repo->save(Chebyshev::getHash(args),chebyshev,save);
 			auto [labels,results] = chebyshev->getResults();
-			string type = (args->getBool("momentum") ? "p" : "x");
 			repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results);
 
 		}
 		auto [labels,results] = chebyshev->getResults();
-		string type = (args->getBool("momentum") ? "p" : "x");
 		repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results);
 	}
 
