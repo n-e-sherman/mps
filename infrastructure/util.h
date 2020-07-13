@@ -168,6 +168,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("numCenter",1); // Also Sweeper parameter.
     args->add("ConserveQNs",true);
     args->add("MaxDim",500);
+    args->add("MinDim",50);
     args->add("Method","DensityMatrix");
     args->add("Nsweep",3);
     

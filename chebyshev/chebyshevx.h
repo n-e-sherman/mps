@@ -46,7 +46,8 @@ public:
 		t0.set(P[c],temp);
 		t0.position(1);
 		res.push_back(calcMoments(t0));
-		t1 = noPrime(applyMPO(H,t0,*args));
+		t1 = noPrime(applyMPO(H,t0));
+		// t1 = noPrime(applyMPO(H,t0,*args));
 		t2 = t1;
 		res.push_back(calcMoments(t1));
 		H.position(1);
@@ -60,7 +61,8 @@ public:
 		for(auto i : range1(iterations))
 		{
 			cout << iteration + i << endl;
-			auto temp = noPrime(applyMPO(H,t1,*args));
+			auto temp = noPrime(applyMPO(H,t1));
+			// auto temp = noPrime(applyMPO(H,t1,*args));
 			if(args->getBool("errorMPOProd")) errorMPO.push_back(errorMPOProd(temp,H,t1));
 			temp *= 2;
 			prepare(temp,t0,is);
@@ -83,8 +85,8 @@ public:
     	psidag.replaceLinkInds(sim(linkInds(psidag)));
 		auto L = vector<ITensor>(N+1);
 		auto R = vector<ITensor>(N+1);
-		auto O = vector<ITensor>(N+1);
-		auto result = vector<Real>(); // need auto
+		// auto O = vector<ITensor>(N+1);
+		auto result = vector<Real>();
 
 
 		L[1] = in(P[1]) * psidag(P[1]);
