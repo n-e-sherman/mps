@@ -11,24 +11,23 @@ using namespace itensor;
 class Chebyshevp : public Chebyshev
 {
 protected:
-	vector<Real> res;
-	Real m0;
+	vector<StringReal> res;
 
 public:
 
 	Chebyshevp(Args* a) : Chebyshev(a){}
 	Chebyshevp(Args* a, Model* m, Sweeper* swp) : Chebyshev(a,m,swp){}
-	Chebyshevp(Args* a, Model* m, State *s, Sweeper* swp) : Chebyshev(a,m,s,swp)
+	Chebyshevp(Args* a, Model* m, State *s, Sweeper* swp, Operator* O) : Chebyshev(a,m,s,swp)
 	{ 
-			 /* May want to make this general, might have another thing in mind for the initial state. */
 			psi = state->getState();
-			psi.position(1);
+			auto op_q = O->build(args->getReal("qFactor"));
+			psi = noPrime(applyMPO(op_q,psi));
 			t0 = MPS(psi);
-			m0 = inner(t0,t0);
-			res.push_back(m0); // May want to change inner to innerC if you get complex values at some point. 
-			t1 = noPrime(applyMPO(H,t0,*args));
+			t0.position(1);
+			res.push_back(innerC(psi,t0)); // May want to change inner to innerC if you get complex values at some point. 
+			t1 = noPrime(applyMPO(H,t0));
 			t2 = t1;
-			res.push_back(inner(t0,t1));
+			res.push_back(innerC(t0,t1));
 			H.position(1);
 			is = siteInds(t0);
 			iteration = 1;
@@ -40,13 +39,14 @@ public:
 		for(auto i : range1(iterations))
 		{
 			cout << iteration + i << endl;
-			auto temp = noPrime(applyMPO(H,t1,*args));
+			auto temp = noPrime(applyMPO(H,t1));
 			if(args->getBool("errorMPOProd")) errorMPO.push_back(errorMPOProd(temp,H,t1));
 			temp *= 2;
 			prepare(temp,t0,is);
 			t2 = sum(temp,-1*t0,*args);
 			sweeper->sweep(H,t2);
-			res.push_back(inner(psi,t2));
+			// if(args->getBool("details")) details.push_back(sweeper->get_details());
+			res.push_back(innerC(psi,t2));
 			t0 = t1;
 			t1 = t2;
 		}
@@ -59,6 +59,7 @@ public:
 		results.clear();
 		auto mom = args->defined("qFactor");
 		labels.push_back("moment");
+		if(args->getBool("imaginary")) labels.push_back("Imoment");
 		labels.push_back("qFactor");
 		labels.push_back("nChebyshev");
 		labels.push_back("MaxDim");
@@ -69,16 +70,12 @@ public:
 		if(args->getBool("thermal")) { labels.push_back("beta"); labels.push_back("tau"); }
 		labels.push_back("W");
 		labels.push_back("Wp");
-		labels.push_back("sweeperType");
-		labels.push_back("sweeperCount");
-		labels.push_back("MaxIter");
 		for(auto x : model->getParams()){ labels.push_back(x.first); }
-		for(auto& x : detail_labels){ labels.push_back(x); }
-		if(args->getBool("errorMPOProd")){ labels.push_back("errorMPOProd"); }
 		for(auto i : range(res.size()))
 		{
 			auto temp = vector<StringReal>();
-			temp.push_back(res[i]);
+			temp.push_back(res[i].real());
+			if(args->getBool("imaginary")) temp.push_back(res[i].imag());
 			temp.push_back(args->getReal("qFactor"));
 			temp.push_back(args->getReal("nChebyshev"));
 			temp.push_back(args->getReal("MaxDim"));
@@ -89,32 +86,21 @@ public:
 			if(args->getBool("thermal")) { temp.push_back(args->getReal("beta")); temp.push_back(args->getReal("tau")); }
 			temp.push_back(args->getReal("W"));
 			temp.push_back(args->getReal("Wp"));
-			string sProj = args->getString("sweeperType");
-			temp.push_back(sProj);
-			if(sProj == "identity"){ temp.push_back(0.0); temp.push_back(0.0); }
-			else
-			if(sProj == "exact"){ temp.push_back(args->getReal("sweeperCount")); temp.push_back(0.0); }
-			else
-			if(sProj == "projection"){ temp.push_back(args->getReal("sweeperCount")); temp.push_back(args->getReal("MaxIter")); }
 			for(auto x : model->getParams()){ temp.push_back(x.second); }
-			for(auto& x : details[i]){temp.push_back(x); }
-			if(args->getBool("errorMPOProd")) temp.push_back(errorMPO[i]);
 			results.push_back(temp);
 		}
 	}
 
-	virtual void load(ifstream & f)
+	virtual void load(ifstream& f)
 	{
 		Chebyshev::load(f);
 		read(f,res);
-		read(f,m0);
 	}
 
-	virtual void save(ofstream & f)
+	virtual void save(ofstream& f)
 	{
 		Chebyshev::save(f);
 		write(f,res);
-		write(f,m0);
 	}
 };
 

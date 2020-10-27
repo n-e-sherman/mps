@@ -15,7 +15,17 @@ using namespace std;
 
 class GroundState : public State
 {
-protected:
+public:
+
+	GroundState() : State() {}
+	GroundState(Args* a,Model* m) : State(a,m)
+	{
+		buildInitialState();
+		calcGroundState();
+	}
+	~GroundState() {}
+
+private:
 
 	void calcGroundState()
 	{
@@ -26,15 +36,32 @@ protected:
         state=psiout;
 	}
 
-public:
-
-	GroundState() : State() {}
-	GroundState(Args* a,Model* m, const MPS& in) : State(a,m)
+	void buildInitialState()
 	{
-		state = in;
-		calcGroundState();
+		auto init = args->getString("initial");
+		if (init == "AF")
+		{
+			auto N = args->getInt("N");
+			auto _state = InitState(sites);
+	        for(auto i : range1(N))
+	            {
+	            if(i%2 == 1) _state.set(i,"Up");
+	            else         _state.set(i,"Dn");
+	            }
+	        state = MPS(_state);
+    	}
+    	else // (init == "F")
+    	{
+    		auto N = args->getInt("N");
+			auto _state = InitState(sites);
+	        for(auto i : range1(N))
+	            {
+		            _state.set(i,"Up");
+	            }
+	        state = MPS(_state);	
+    	}
+    	/* Include other initial states with an else if.*/
 	}
-	~GroundState() {}
 
 	Sweeps getSweeps()
 	{

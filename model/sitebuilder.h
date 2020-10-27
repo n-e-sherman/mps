@@ -31,9 +31,9 @@ public:
 			/* Add other SiteSet. */
 			return *(SiteSet*)cache->load(SiteBuilder::getHash(args));
 		}
-		if     (sType == "SpinHalf"){ sites = SpinHalf(N); }
-		else if(sType == "SpinOne") { sites = SpinOne(N);  }
-		else if(sType == "SpinTwo") { sites = SpinTwo(N);  } 
+		if     (sType == "SpinHalf"){ sites = SpinHalf(N,*args); }
+		else if(sType == "SpinOne") { sites = SpinOne(N,*args);  }
+		else if(sType == "SpinTwo") { sites = SpinTwo(N,*args);  } 
 			/* Add other SiteSet. */
 		cache->save(SiteBuilder::getHash(args), &sites);
 		return sites;

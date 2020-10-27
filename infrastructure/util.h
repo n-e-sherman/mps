@@ -4,7 +4,8 @@
 #include <sstream> 
 #include <sys/stat.h>
 #include "itensor/all.h"
-#include<bits/stdc++.h> 
+#include "itensor/util/print_macro.h"
+#include <bits/stdc++.h> 
 
 using namespace itensor;
 using namespace std;
@@ -95,11 +96,13 @@ Args* getArgs(int argc, char* argv[])
      ********************************/
 
     /* Calculation parameters. */
-    args->add("Weights",false);
-    args->add("Chebyshev",true);
-    args->add("Sweeper",false);
-    args->add("Broadening",false);
-    args->add("Moments",false);
+    
+    args->add("Chebyshev",false);
+    args->add("Correlation",false);
+    // args->add("Measure",false);
+    // args->add("Broadening",false);
+    // args->add("Moments",false);
+    // args->add("Weights",false);
 
     /* IO */
     args->add("cwd","./");
@@ -111,6 +114,13 @@ Args* getArgs(int argc, char* argv[])
     args->add("thermal",true);
     args->add("N",100);
     args->add("SiteSet","SpinHalf");
+    args->add("ConserveSz",true);
+    args->add("ConserveQNs",true);
+    args->add("imaginary",true);
+    args->add("Normalize",false);
+    args->add("read",true);
+    args->add("write",true);
+
 
     /* State parameters. */
     args->add("thermalMaxDim",2000);
@@ -120,6 +130,13 @@ Args* getArgs(int argc, char* argv[])
     args->add("thermalEps",1E-9);
     args->add("coolingType","Trotter");
 
+    /* Operator parameters. */
+    args->add("Operator","Momentum");
+    args->add("localOperator","Sz");
+
+    /* Measurement parameters. */
+    args->add("Measurement","Connected");
+
     /* Model parameters. */
     args->add("Lattice","Chain");
     args->add("Model","Heisenberg");
@@ -128,8 +145,15 @@ Args* getArgs(int argc, char* argv[])
     args->add("Jo",1.0);
     args->add("Jz",1.0);
     args->add("Jxy",1.0);
+    args->add("B",1.0);
 
-    /* Chebyshev parameters. */    
+    /* Evolver parameters. */
+    args->add("Evolver","Trotter");
+    args->add("tau",0.1);
+    args->add("beta",0);
+    args->add("time",0);
+
+    /* Chebyshev parameters. */
     args->add("W",8);
     args->add("Wp",0.9875);
     args->add("nChebyshev",100);
@@ -140,9 +164,10 @@ Args* getArgs(int argc, char* argv[])
     args->add("cheReadFile",true);
     args->add("cheWriteFile",true);
     args->add("OpName","Sz");
+    args->add("measureAll",false);
 
-    
     /* Sweeper parameters. */
+    args->add("Sweeper",false);
     args->add("sweeperType","identity");
     args->add("sweeperCount",10);
     args->add("phiThreshold",1E-12);
@@ -172,7 +197,6 @@ Args* getArgs(int argc, char* argv[])
     args->add("Method","DensityMatrix");
     args->add("Nsweep",3);
     
-
     /* Artifacts */
     args->add("Nmoments",0);
     args->add("wi",0);
@@ -297,42 +321,92 @@ struct StringReal
 {
     enum type
     {
-        Numeric = 0,
-        String = 1
+        tReal = 0,
+        tString = 1,
+        tCplx = 2
     };
     string s = "";
     Real r = NAN;
-    type t = Numeric;
+    Cplx c = NAN;
+    type t = tReal;
+    StringReal(){}
+    StringReal(Cplx in)
+    {
+        t = tCplx;
+        c = in;
+    }
     StringReal(Real in)
     {
-        t = Numeric;
+        t = tReal;
         r = in;
     }
     StringReal(char* in)
     {
-        t = String;
+        t = tString;
         s = string(in);
     }
     StringReal(string in)
     {
-        t = String;
+        t = tString;
         s = in;
     }
+
+    Real real()
+    {
+        if(t == tReal) return r;
+        else
+        if(t == tCplx) return c.real();
+        else
+                       return NAN;
+
+    }
+
+    Real imag()
+    {
+        if(t == tReal) return 0;
+        else
+        if(t == tCplx) return c.imag();
+        else
+                       return NAN;
+
+    }
+
     template<class T>
     StringReal operator=(const T& t) {return StringReal(t);}
 
     template<class T>
     bool operator==(T& t_in)
     {
-        if((*this).t == Numeric){return ((*this).r == t_in); }
-        else{return (*this).s == t_in; }
+        if((*this).t == tReal) {return ((*this).r == t_in); }
+        else
+        if((*this).t == tCplx) {return ((*this).c == t_in); }
+        else
+        if((*this).t == tString) {return (*this).s == t_in; }
     }
     friend std::ostream& operator<<( ostream& os, const StringReal& sr) 
     {
-        if (sr.t == Numeric) os << sr.r;
-        else os << sr.s;
+        if(sr.t == tReal){ os << sr.r; }
+        else
+        if(sr.t == tCplx){ os << sr.c; }
+        else
+        if(sr.t == tString){ os << sr.s; }
         return os; 
     }
+    void read(istream& is)
+    {
+        itensor::read(is,t);
+        itensor::read(is,s);
+        itensor::read(is,r);
+        itensor::read(is,c);
+    }
+    void write(ostream& os) const
+    {
+        itensor::write(os,t);
+        itensor::write(os,s);
+        itensor::write(os,r);
+        itensor::write(os,c);
+    }
+
 };
 
 

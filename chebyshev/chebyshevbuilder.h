@@ -11,53 +11,68 @@
 #include "lattice/latticebuilder.h"
 #include "state/statebuilder.h"
 #include "sweeper/sweeperbuilder.h"
+#include "measurement/measurementbuilder.h"
+#include "operator/operatorbuilder.h"
 
 
 class ChebyshevBuilder
 {
 protected:
+
 	ModelBuilder* modelBuilder;
 	StateBuilder* stateBuilder;
 	LatticeBuilder* latticeBuilder;
 	RepositoryBuilder* repoBuilder;
 	SweeperBuilder* sweeperBuilder;
+	MeasurementBuilder* measurementBuilder;
+	OperatorBuilder* operatorBuilder;
 	Repository* repo;
 
 public:
-	ChebyshevBuilder(){}
-	ChebyshevBuilder(ModelBuilder* mb, StateBuilder* sb, LatticeBuilder* lb, RepositoryBuilder* rb, SweeperBuilder* swpb)
-	{
-		modelBuilder = mb;
-		stateBuilder = sb;
-		latticeBuilder = lb;
-		repoBuilder = rb;
-		sweeperBuilder = swpb;
-	}
-	~ChebyshevBuilder(){}
+
+	ChebyshevBuilder(ModelBuilder* mb, StateBuilder* sb, LatticeBuilder* lb, RepositoryBuilder* rb, SweeperBuilder* swpb, MeasurementBuilder* msb, OperatorBuilder* ob) :
+					 modelBuilder(mb), stateBuilder(sb), latticeBuilder(lb), repoBuilder(rb),       sweeperBuilder(swpb), measurementBuilder(msb), operatorBuilder(ob) {}
 	Chebyshev* build(Args* args)
 	{
-		auto readFile = args->getBool("cheReadFile");
-		auto writeFile = args->getBool("cheWriteFile");
-		repo = repoBuilder->build(args,readFile,writeFile);
+		repo = repoBuilder->build(args);
+
 		auto momentum = args->getBool("momentum");
 		auto thermal = args->getBool("thermal");
 		auto save = args->getBool("saveChebyshev");
 		auto load = args->getBool("loadChebyshev");
 		if(momentum) 
 		{
-				auto chebyshev = repo->load(Chebyshev::getHash(args), new Chebyshevp(args, modelBuilder->build(args), sweeperBuilder->build(args)), load);
+				auto chebyshev = repo->load(Chebyshev::getHash(args), 
+					new Chebyshevp(args, 
+								   modelBuilder->build(args), 
+								   sweeperBuilder->build(args)), load);
 				if(chebyshev != nullptr) return chebyshev;
-				chebyshev = new Chebyshevp(args, modelBuilder->build(args),stateBuilder->build(args,StateBuilder::spectral), sweeperBuilder->build(args));
+				chebyshev = new Chebyshevp(args, 
+										   modelBuilder->build(args),
+										   stateBuilder->build(args), 
+										   sweeperBuilder->build(args),
+										   operatorBuilder->build(args));
 				repo->save(Chebyshev::getHash(args), chebyshev, save);
 				return chebyshev;
 		}
 		else
 		{
-				auto chebyshev = repo->load(Chebyshev::getHash(args), new Chebyshevx(args, modelBuilder->build(args), sweeperBuilder->build(args)), load);
+				auto chebyshev = repo->load(Chebyshev::getHash(args), 
+					new Chebyshevx(args, 
+								   modelBuilder->build(args), 
+								   latticeBuilder->build(args), 
+								   sweeperBuilder->build(args),
+								   measurementBuilder->build(args), 
+								   repo), load);
 				if(chebyshev != nullptr) return chebyshev;
-				if(thermal) chebyshev = new Chebyshevx(args, modelBuilder->build(args),stateBuilder->build(args,StateBuilder::thermal),latticeBuilder->build(args), sweeperBuilder->build(args));
-				else {chebyshev = new Chebyshevx(args, modelBuilder->build(args),stateBuilder->build(args,StateBuilder::ground),latticeBuilder->build(args), sweeperBuilder->build(args));}
-				repo->save(Chebyshev::getHash(args), chebyshev,save);
+				chebyshev = new Chebyshevx(args, 
+										   modelBuilder->build(args),
+										   stateBuilder->build(args),
+										   latticeBuilder->build(args), 
+										   sweeperBuilder->build(args), 
+										   measurementBuilder->build(args), 
+										   repo);
+				repo->save(Chebyshev::getHash(args), chebyshev, save);
 				return chebyshev;
 		}
 	}

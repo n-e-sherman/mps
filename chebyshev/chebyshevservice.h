@@ -13,7 +13,7 @@
 using namespace itensor;
 using namespace std;
 
-class ChebyshevService : public Service
+class ChebyshevService
 {
 private:
 	/* Inputs */
@@ -31,22 +31,14 @@ private:
 
 
 public:
-	ChebyshevService() : Service(){}
-	ChebyshevService(ChebyshevBuilder* cb, RepositoryBuilder* rb) : Service()
-	{ 
-		chebyshevBuilder = cb;
-		repoBuilder = rb;
-	}
-	
+	ChebyshevService(){}
+	ChebyshevService(ChebyshevBuilder* cb, RepositoryBuilder* rb) {	chebyshevBuilder = cb; repoBuilder = rb; }
 	~ChebyshevService(){}
 
 	void calculate(Args* a)
 	{
 		args = a;
-
-		auto readFile = args->getBool("cheReadFile");
-		auto writeFile = args->getBool("cheWriteFile");
-		repo = repoBuilder->build(args,readFile,writeFile);
+		repo = repoBuilder->build(args);
 		chebyshev = chebyshevBuilder->build(args);
     	auto save = args->getBool("saveChebyshev");
 		int nSave = args->getInt("nSave");
@@ -66,50 +58,6 @@ public:
 		}
 		auto [labels,results] = chebyshev->getResults();
 		repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results);
-	}
-
-
-
-
-
-	void processResults()
-	{
-		/* res in formalt [moment], want to add settings to labels and results */
-		auto mom = args->defined("qFactor");
-		labels.push_back("moment");
-		if(mom) labels.push_back("qFactor");
-		else labels.push_back("position");
-		labels.push_back("nChebyshev");
-		labels.push_back("MaxDim");
-		labels.push_back("N");
-		labels.push_back("Lattice");
-		labels.push_back("Model");
-		labels.push_back("thermal");
-		labels.push_back("W");
-		labels.push_back("Wp");
-		labels.push_back("Method");
-		if(args->getString("Method")=="Fit") labels.push_back("Nsweep");
-		labels.push_back("squared");
-
-		for(auto i : range(res.size()))
-		{
-			auto temp = vector<StringReal>();
-			temp.push_back(res[i]);
-			if(mom) {temp.push_back(args->getReal("qFactor")); }
-			else {temp.push_back(args->getReal("position")); }
-			temp.push_back(args->getReal("nChebyshev"));
-			temp.push_back(args->getReal("MaxDim"));
-			temp.push_back(args->getReal("N"));
-			temp.push_back(args->getString("Lattice"));
-			temp.push_back(args->getString("Model"));
-			temp.push_back(args->getBool("thermal"));
-			temp.push_back(args->getReal("W"));
-			temp.push_back(args->getReal("Wp"));
-			temp.push_back(args->getString("Method"));
-			if(args->getString("Method")=="Fit") temp.push_back(args->getReal("Nsweep"));
-			temp.push_back(args->getBool("squared"));
-			results.push_back(temp);
-		}
 	}
 };
 

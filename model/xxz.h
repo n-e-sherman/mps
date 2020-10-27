@@ -121,9 +121,10 @@ protected:
 
 public:
 	XXZ(){}
-	XXZ(Args* a) : Model(a) {}
-	XXZ(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) 
-	{
+	XXZ(Args* a, Lattice* l) : Model(a,l) { setParams(); }
+	XXZ(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) { setParams(); }
+    virtual void setParams() 
+    {
 		Jxy = args->getReal("Jxy");
 		Delta = args->getReal("Delta");
 		params["Jxy"] = Jxy;

@@ -7,26 +7,32 @@
 #include "model/sitebuilder.h"
 #include "model/modelbuilder.h"
 #include "state/statebuilder.h"
-#include "lanczos/lanczosbuilder.h"
-#include "services/spectralbroadening.h"
-#include "services/spectralweights.h"
+#include "sweeper/sweeperbuilder.h"
+#include "evolver/evolverbuilder.h"
+
 #include "chebyshev/chebyshevbuilder.h"
 #include "chebyshev/chebyshevservice.h"
-#include "services/moments.h"
-#include "sweeper/sweeperbuilder.h"
+#include "correlation/correlationbuilder.h"
+#include "correlation/correlationservice.h"
+#include "measurement/measurementbuilder.h"
+#include "measurement/measurementservice.h"
+
 
 /* Memory manage the new pointers. */
-LatticeBuilder* latticeFactory() {return new LatticeBuilder(); }
-RepositoryBuilder* repositoryFactory() {return new RepositoryBuilder(); }
-SiteBuilder* siteFactory() {return new SiteBuilder(); }
-ModelBuilder* modelFactory() {return new ModelBuilder(latticeFactory(), siteFactory(), repositoryFactory()); }
-StateBuilder* stateFactory() {return new StateBuilder(modelFactory(), latticeFactory(), repositoryFactory()); }
-SweeperBuilder* SweeperFactory() {return new SweeperBuilder(); }
-ChebyshevBuilder* chebyshevBuilderFactory() {return new ChebyshevBuilder(modelFactory(), stateFactory(), latticeFactory(), repositoryFactory(), SweeperFactory()); }
-ChebyshevService* chebyshevServiceFactory() {return new ChebyshevService(chebyshevBuilderFactory(), repositoryFactory()); }
-// LanczosBuilder* lanczosFactory() {return new LanczosBuilder(modelFactory(), stateFactory(), repositoryFactory()); }
-// SpectralWeights* spectralWeightsFactory() {return new SpectralWeights(modelFactory(), lanczosFactory(), repositoryFactory()); }
-// SpectralBroadening* spectralBroadeningFactory() {return new SpectralBroadening(modelFactory(), lanczosFactory(), repositoryFactory()); }
-// Moments* momentsFactory() {return new Moments(modelFactory(), stateFactory(), latticeFactory(), repositoryFactory()); }
+LatticeBuilder* latticeFactory() { return new LatticeBuilder(); }
+RepositoryBuilder* repositoryFactory() { return new RepositoryBuilder(); }
+SiteBuilder* siteFactory() { return new SiteBuilder(); }
+ModelBuilder* modelFactory() { return new ModelBuilder(latticeFactory(), siteFactory(), repositoryFactory()); }
+OperatorBuilder* operatorFactory() { return new OperatorBuilder(modelFactory(), latticeFactory(), repositoryFactory()); }
+SweeperBuilder* sweeperFactory() { return new SweeperBuilder(); }
+EvolverBuilder* evolverFactory() { return new EvolverBuilder(modelFactory()); }
+StateBuilder* stateFactory() { return new StateBuilder(modelFactory(), latticeFactory(), repositoryFactory(), evolverFactory()); }
+MeasurementBuilder* measurementFactory() { return new MeasurementBuilder(modelFactory(), latticeFactory(), operatorFactory(), repositoryFactory()); }
+
+ChebyshevBuilder* chebyshevBuilderFactory() { return new ChebyshevBuilder(modelFactory(), stateFactory(), latticeFactory(), repositoryFactory(), sweeperFactory(), measurementFactory(), operatorFactory()); }
+ChebyshevService* chebyshevServiceFactory() { return new ChebyshevService(chebyshevBuilderFactory(), repositoryFactory()); }
+
+CorrelationBuilder* correlationBuilderFactory() { return new CorrelationBuilder(stateFactory(), evolverFactory(), modelFactory(), repositoryFactory(), measurementFactory(), operatorFactory()); }
+CorrelationService* correlationServiceFactory() { return new CorrelationService(correlationBuilderFactory(), repositoryFactory()); }
 
 #endif

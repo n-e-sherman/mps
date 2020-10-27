@@ -18,12 +18,7 @@ using namespace std;
 
 class Model
 {
-	Cplx tauEH;
-	Cplx tauEL;
-	Cplx tauGH;
-	Cplx tauGL;
-protected:
-
+public:
 	struct gate
 	{
 		int s1 = 0;
@@ -31,10 +26,15 @@ protected:
 		ITensor t;
 		string l = "";
 	};
+protected:
 
 	/* Inputs */
 	Args* args;
 	Lattice* lattice;
+
+	/* Helpers */
+	Cplx tauEH;
+	Cplx tauEL;
 
 	/* Outputs */
 	SiteSet sites;
@@ -65,28 +65,24 @@ protected:
 	virtual void calcGatesL() {};
 
 
+
 public:
+
 	Model(){}
-	Model(Args* a){args = a; }
-	Model(Args* a, Lattice* l, SiteSet s) 
-	{ 
-		args = a;
-		lattice = l;
-		sites = s;
-	}
+	Model(Args* a, Lattice* l) : args(a), lattice(l) {}
+	Model(Args* a, Lattice* l, SiteSet s) : args(a), lattice(l), sites(s) {}
 
 	virtual ~Model(){}
+	
 	MPO& getH() { if(!H) calcH(); return *H; }
 	MPO& getExpH(Cplx tau, bool force = false) { if(!expH || force) calcExpH(tau); tauEH = tau; return *expH; } // force ensures a new calculation.
 	AutoMPO& getAmpoH() {if(!ampoH) calcAmpoH(); return *ampoH; } // not needed?
 	vector<gate> getGatesH() {if(gatesH.size() == 0) calcGatesH(); return gatesH; }
-	/* Something for gates */
 
 	MPO& getL() { if(!L) calcL(); return *L; }
 	MPO& getExpL(Cplx tau, bool force = false) { if(!expL || force) calcExpL(tau); tauEL = tau; return *expL; } // force ensures a new calculation.
 	AutoMPO& getAmpoL() {if(!ampoL) calcAmpoL(); return *ampoL; }
 	vector<gate> getGatesL() {if(gatesL.size() == 0) calcGatesL(); return gatesL; }
-	/* Something for gates */
 
 
 
@@ -103,14 +99,10 @@ public:
 			res = to_string(args->getReal("Jxy")) + to_string(args->getReal("Delta"));
 		if(sModel == "Dimer")
 			res = to_string(args->getReal("Je")) + to_string(args->getReal("Jo"));
+		if(sModel == "HeisenbergField")
+			res = to_string(args->getReal("B"));
 		/***************************************************************************************************/
 		/* May want to wait on this change, as it will not load old hashing, but this new method is better */
-
-		// auto res = to_string(args->getReal("Jz"));
-		// res += to_string(args->getReal("Delta"));
-		// res += to_string(args->getReal("Je"));
-		// res += to_string(args->getReal("Jo"));
-		// res += to_string(args->getReal("Jxy"));
 		return res;
 	}
 
@@ -120,23 +112,19 @@ public:
 		return Lattice::getHash(args) + "_" + args->getString("Model") + "_" + args->getString("SiteSet") + "_" + sParams;
 	}
 
-	// virtual void load(ifstream & f)
-	// {
-	// 	read(f,tauEH);
-	// 	read(f,tauEL);
-	// 	read(f,ampoH);
-	// 	auto sType = args->getString("SiteSet");
-	// 	if     (sType == "SpinHalf"){ auto rSites = SpinHalf(args->getInt("N")); rSites.read(f); sites = rSites; }
-	// 	else if(sType == "SpinOne") { auto rSites = SpinOne(args->getInt("N")); rSites.read(f); sites = rSites;  }
-	// 	else if(sType == "SpinTwo") { auto rSites = SpinTwo(args->getInt("N")); rSites.read(f); sites = rSites;  } 
+	virtual void load(ifstream & f)
+	{
+		auto sType = args->getString("SiteSet");
+		if     (sType == "SpinHalf"){ auto rSites = SpinHalf(args->getInt("N")); rSites.read(f); sites = rSites; }
+		else if(sType == "SpinOne") { auto rSites = SpinOne(args->getInt("N")); rSites.read(f); sites = rSites;  }
+		else if(sType == "SpinTwo") { auto rSites = SpinTwo(args->getInt("N")); rSites.read(f); sites = rSites;  } 
+	}
+	virtual void save(ofstream & f)
+	{
+		write(f,sites);
+	}
 
-	// }
-	// virtual void save(ofstream & f)
-	// {
-	// 	write(f,H);
-	// 	write(f,sites);
-	// }
-
+	
 };
 
 #endif

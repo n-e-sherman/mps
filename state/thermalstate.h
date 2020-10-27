@@ -5,6 +5,7 @@
 #include "infrastructure/util.h"
 #include "repository/repositorybuilder.h"
 #include "repository/repository.h"
+#include "evolver/evolverbuilder.h"
 #include "model/modelbuilder.h"
 #include "model/sitebuilder.h"
 #include <cmath>
@@ -15,20 +16,29 @@ using namespace std;
 class ThermalState : public State
 {
 protected:
-	Real beta;
 
-	void calcThermalState()
+	Real beta;
+	Evolver* evolver;
+
+public:
+
+	ThermalState(){}
+	ThermalState(Args* a, Model* m, Evolver* e) : State(a,m), evolver(e)
 	{
-		calcPsii();
-		if(beta > 0) coolPsii();
-		else{ }
+		beta = args->getReal("beta");
+		calcInitialState();
+		if(beta > 0) coolState();
+		state.orthogonalize();
+        state.normalize();
 	}
+	~ThermalState() {}	
+
+private:
 	
-	void calcPsii() // Makes an infinite temperature state via purification.
+	void calcInitialState() // Makes an infinite temperature state via purification.
 	{
 		auto sites = model->getSites();
 		state = MPS(sites);
-		// state = removeQNs(state);
 		auto N = sites.length();
     	for(int n = 1; n <= N; n += 2)
         {
@@ -43,167 +53,18 @@ protected:
 	        svd(wf,state.Aref(n),D,state.Aref(n+1));
 	        state.Aref(n) *= D;
         }
-        state.orthogonalize();
-        state.normalize();
+        
 	}
 
-	void coolPsii()
+	void coolState()
 	{
 		auto tau = args->getReal("tau");
 		auto ttotal = beta/2.0;
 		auto eps = args->getReal("thermalEps");
     	int nt = int((ttotal/tau)*(1.0+eps));
-    	auto maxDim = args->getInt("MaxDim");
-    	args->add("MaxDim",args->getInt("thermalMaxDim"));
-    	if(fabs(nt*tau-ttotal) > eps)
-    	{
-    		nt += 1;
-    		tau = ttotal/Real(nt);
-    	}
-    	args->add("tau",tau);
-
-		auto type = args->getString("coolingType");
-		if(type == "Trotter") Trotter();
-		if(type == "MPO") MPOCool();
-		cout << "cooling done." << endl;
-		args->add("MaxDim",maxDim);
-		cout << "MaxDim after cooling = " << maxLinkDim(state) << endl;
-        state.orthogonalize(*args);
-        state.normalize();
+    	if(fabs(nt*tau-ttotal) > eps) { nt += 1; tau = ttotal/Real(nt); } // Adjust tau to evenly divide beta/2
+    	evolver->setup(BondGate::tImag, tau);
+    	for(int tt=1; tt <= nt; ++tt) {evolver->evolve(state); } // cool state down.
 	}
-
-	void Trotter()
-	{
-		// NOTE: You are assuming that the state is just a chain with an ancilla
-		cout << "Starting Trotter. " << endl;
-		auto sites = model->getSites();
-		auto mgates = model->getGatesH();
-		auto gates = vector<BondGate>();
-		auto tau = args->getReal("tau");
-		auto theta = 1.0/(2.0 - pow(2.0,1.0/3.0));
-		auto N = args->getInt("N");
-		for(auto x : mgates)
-		{
-			if(x.l == "even")
-			{	
-				auto s1 = BondGate(sites,x.s2,x.s2+1);
-				gates.push_back(s1);
-				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta/2.0,x.t);
-				gates.push_back(g);
-				gates.push_back(s1);
-			}
-		}
-		for(auto x : mgates)
-		{
-			if(x.l == "odd")
-			{	
-				auto s1 = BondGate(sites,x.s2,x.s2+1);
-				gates.push_back(s1);
-				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta,x.t);
-				gates.push_back(g);
-				gates.push_back(s1);
-			}
-		}
-		for(auto x : mgates)
-		{
-			if(x.l == "even")
-			{	
-				auto s1 = BondGate(sites,x.s2,x.s2+1);
-				gates.push_back(s1);
-				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*(1.0-theta)/2.0,x.t);
-				gates.push_back(g);
-				gates.push_back(s1);
-			}
-		}
-		for(auto x : mgates)
-		{
-			if(x.l == "odd")
-			{	
-				auto s1 = BondGate(sites,x.s2,x.s2+1);
-				gates.push_back(s1);
-				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*(1.0-2*theta),x.t);
-				gates.push_back(g);
-				gates.push_back(s1);
-			}
-		}
-		for(auto x : mgates)
-		{
-			if(x.l == "even")
-			{	
-				auto s1 = BondGate(sites,x.s2,x.s2+1);
-				gates.push_back(s1);
-				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*(1.0-theta)/2.0,x.t);
-				gates.push_back(g);
-				gates.push_back(s1);
-			}
-		}
-		for(auto x : mgates)
-		{
-			if(x.l == "odd")
-			{	
-				auto s1 = BondGate(sites,x.s2,x.s2+1);
-				gates.push_back(s1);
-				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta,x.t);
-				gates.push_back(g);
-				gates.push_back(s1);
-			}
-		}
-		for(auto x : mgates)
-		{
-			if(x.l == "even")
-			{	
-				auto s1 = BondGate(sites,x.s2,x.s2+1);
-				gates.push_back(s1);
-				auto g = BondGate(sites,x.s1,x.s2,BondGate::tImag,tau*theta/2.0,x.t);
-				gates.push_back(g);
-				gates.push_back(s1);
-			}
-		}
-		cout << "Time evolving. " << endl;
-
-		auto ttotal = beta/2.0;
-		auto eps = args->getReal("thermalEps");
-    	int nt = int((ttotal/tau)*(1.0+eps));
-    	for(int tt=1; tt <= nt; ++tt) {gateTEvol(gates,tau,tau,state,*args); cout << tt << "/" << nt << endl;}
-	}
-
-	void MPOCool()
-	{ 
-    	auto realStep = args->getBool("realStep");
-		auto tau = args->getReal("tau");
-		auto ttotal = beta/2.0;
-		auto eps = args->getReal("thermalEps");
-    	int nt = int((ttotal/tau)*(1.0+eps));
-    	if(realStep)
-    	{
-	        auto expH = model->getExpH(tau);
-	        for(int tt = 1; tt <= nt; ++tt)
-	        {
-	        	state = noPrime(applyMPO(expH,state,*args));
-	        }
-    	}
-    	else
-    	{
-	    	auto taua = tau/2.*(1.+1._i);
-	        auto taub = tau/2.*(1.-1._i);
-	        auto expHa = model->getExpH(taua);
-	        auto expHb = model->getExpH(taub);
-	        for(int tt = 1; tt <= nt; ++tt)
-	        {
-	        	state = noPrime(applyMPO(expHa,state));
-	        	state = noPrime(applyMPO(expHb,state));
-	        }
-    	}
-	}
-
-public:
-
-	ThermalState(){}
-	ThermalState(Args* a, Model* m) : State(a,m)
-	{
-		beta = args->getReal("beta");
-		calcThermalState();
-	}
-	~ThermalState() {}	
 };
 #endif

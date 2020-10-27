@@ -22,26 +22,20 @@ protected:
 
 	/* Outputs */
 	Real E0;
-	MPS state = MPS();
+	MPS state;
 
 public:
 	State(){}
-	State(Args* a, Model* m) 
-	{
-		model = m;
-		args = a;
-		E0 = 0;
-	}
+	State(Args* a, Model* m) : args(a), model(m), E0(0) {}
 	MPS& getState() { return state; }
 	Real getE0() {return E0; }
-	static string getHash(Args* args, int sType = 2)
+	static string getHash(Args* args)
 	{	
-		Real s;
-		if(args->defined("qFactor")) s = args->getReal("qFactor");
-		else s = args->getReal("position");
+		Real s = 0;
+		if(args->getBool("momentum")) s = args->getReal("qFactor");
 		string sThermal = "";
 		if(args->getBool("thermal")) sThermal = to_string(args->getReal("beta"));
-		return Model::getHash(args) + "_" + to_string(args->getInt("MaxDim")) + "_" + to_string(sType) + "_" + to_string(s) + "_" + sThermal; // Maybe add some specifications for how you get GS?
+		return Model::getHash(args) + "_" + to_string(args->getInt("MaxDim")) + "_" + to_string(s) + "_" + to_string(args->getBool("thermal"))  + "_" + sThermal; // Maybe add some specifications for how you get GS?
 	}
 	virtual void load(ifstream & f)
 	{

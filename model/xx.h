@@ -113,7 +113,7 @@ protected:
 
 public:
 	XX(){}
-	XX(Args* a) : Model(a) {}
+	XX(Args* a, Lattice* l) : Model(a,l) {}
 	XX(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) {}
 	~XX(){}
 };

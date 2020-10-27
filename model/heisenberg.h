@@ -18,20 +18,20 @@ protected:
 	virtual void calcAmpoH()
 	{
 		ampoH = AutoMPO(sites);
-                for(auto b : *lattice)
-                {
-                	if(b.t == Lattice::physical)
-                	{
-        	            *ampoH += 0.5,"S+",b.s1,"S-",b.s2;
-        	            *ampoH += 0.5,"S-",b.s1,"S+",b.s2;
-        	            *ampoH +=     "Sz",b.s1,"Sz",b.s2;
-                	}
-                }
+        for(auto b : *lattice)
+        {
+        	if(b.t == Lattice::physical)
+        	{
+	            *ampoH += 0.5,"S+",b.s1,"S-",b.s2;
+	            *ampoH += 0.5,"S-",b.s1,"S+",b.s2;
+	            *ampoH +=     "Sz",b.s1,"Sz",b.s2;
+        	}
+        }
 	}
 	
 	virtual void calcAmpoL()
 	{
-            ampoL = AutoMPO(sites);
+        ampoL = AutoMPO(sites);
 	    for(auto b : *lattice)
 	    {
 	    	if(b.t == Lattice::physical)
@@ -119,7 +119,7 @@ protected:
 
 public:
 	Heisenberg(){}
-	Heisenberg(Args* a) : Model(a) {}
+	Heisenberg(Args* a, Lattice* l) : Model(a,l) {}
 	Heisenberg(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) {}
 	~Heisenberg(){}
 };

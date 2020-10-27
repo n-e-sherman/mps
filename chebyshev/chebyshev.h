@@ -5,6 +5,7 @@
 #include "itensor/all.h"
 #include "chebyshev/chebyshevbuilder.h"
 #include "sweeper/sweeper.h"
+#include "itensor/util/print_macro.h"
 
 
 using namespace std;

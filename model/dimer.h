@@ -150,15 +150,15 @@ protected:
 
 public:
 	Dimer(){}
-	Dimer(Args* a) : Model(a) {}
-	Dimer(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) 
-	{
-		Je = args->getReal("Je");
-		Jo = args->getReal("Jo");
-		params["Je"] = Je;
-		params["Jo"] = Jo;
-
-	}
+	Dimer(Args* a, Lattice* l) : Model(a, l) { setParams(); }
+	Dimer(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) { setParams(); }
+        virtual void setParams()
+        {
+                Je = args->getReal("Je");
+                Jo = args->getReal("Jo");
+                params["Je"] = Je;
+                params["Jo"] = Jo;
+        }
 	~Dimer(){}
 };
 #endif
