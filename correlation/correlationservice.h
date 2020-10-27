@@ -49,14 +49,8 @@ public:
 			auto [labels,results] = correlation->getResults();
 			repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results);
 		}
-		/* 
-		 - Loop over time steps needed
-		 - For each time step
-		 	. calculate correlation
-		 	. save correlation
-		 	. Save results
-		 */
-
+		auto [labels,results] = correlation->getResults();
+		repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results);
 	}
 };
 

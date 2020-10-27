@@ -61,7 +61,8 @@ public:
 		Wp = args->getReal("Wp");
 		if(thermal) 
 		{
-			H = model->getL();
+			if(args->getBool("Skip",false)){ model->setSkip(); }
+			H = model->getL(true);
 			H *= (2.0*Wp/W);
 		}
 		else 

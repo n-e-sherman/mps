@@ -28,7 +28,7 @@ public:
 	~ModelBuilder(){}
 	Model* build(Args* a)
 	{
-		cout << "building model: ";
+		cout << "building model " << endl;
 		args = a;
 		repo = repoBuilder->build(args);
 		auto modelName = args->getString("Model");

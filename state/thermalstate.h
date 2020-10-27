@@ -28,7 +28,7 @@ public:
 		beta = args->getReal("beta");
 		calcInitialState();
 		if(beta > 0) coolState();
-		state.orthogonalize();
+		state.orthogonalize(); // <---- Issue here.
         state.normalize();
 	}
 	~ThermalState() {}	
@@ -38,7 +38,7 @@ private:
 	void calcInitialState() // Makes an infinite temperature state via purification.
 	{
 		auto sites = model->getSites();
-		state = MPS(sites);
+		state = MPS(sites,1);
 		auto N = sites.length();
     	for(int n = 1; n <= N; n += 2)
         {
@@ -48,10 +48,10 @@ private:
 	        wf.set(s1(1),s2(2), ISqrt2);
 	        wf.set(s1(2),s2(1), -ISqrt2);
 	        ITensor D;
-	        state.Aref(n) = ITensor(s1);
-	        state.Aref(n+1) = ITensor(s2);
-	        svd(wf,state.Aref(n),D,state.Aref(n+1));
-	        state.Aref(n) *= D;
+	        state.ref(n) = ITensor(s1);
+	        state.ref(n+1) = ITensor(s2);
+	        svd(wf,state.ref(n),D,state.ref(n+1));
+	        state.ref(n) *= D;
         }
         
 	}

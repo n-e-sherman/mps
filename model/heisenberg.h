@@ -17,21 +17,21 @@ protected:
 
 	virtual void calcAmpoH()
 	{
-		ampoH = AutoMPO(sites);
-        for(auto b : *lattice)
-        {
+	    ampoH = AutoMPO(sites);
+            for(auto b : *lattice)
+            {
         	if(b.t == Lattice::physical)
         	{
-	            *ampoH += 0.5,"S+",b.s1,"S-",b.s2;
-	            *ampoH += 0.5,"S-",b.s1,"S+",b.s2;
-	            *ampoH +=     "Sz",b.s1,"Sz",b.s2;
+                    *ampoH += 0.5,"S+",b.s1,"S-",b.s2;
+                    *ampoH += 0.5,"S-",b.s1,"S+",b.s2;
+                    *ampoH +=     "Sz",b.s1,"Sz",b.s2;
         	}
-        }
+            }
 	}
 	
 	virtual void calcAmpoL()
 	{
-        ampoL = AutoMPO(sites);
+            ampoL = AutoMPO(sites);
 	    for(auto b : *lattice)
 	    {
 	    	if(b.t == Lattice::physical)
@@ -51,70 +51,69 @@ protected:
 
 	void calcGatesH()
 	{
-		for(auto b : *lattice)
-		{
-                	if(b.t == Lattice::physical)
-                	{
-
-                		if(b.z == 0) // Even
-                		{
-                			auto hterm = op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-                			hterm += 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-                			hterm += 0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
-                			gatesH.push_back(gate{b.s1,b.s1+1,hterm,"even"});
-        	        	}
-                		else // Odd
-                		{
-                			auto hterm = op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-                			hterm += 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-                			hterm += 0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
-                			gatesH.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
-        	        	}
-                	}
-		}
+	    for(auto b : *lattice)
+	    {
+                if(b.t == Lattice::physical)
+                {
+                    if(b.z == 0) // Even
+                    {
+			auto hterm = op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
+			hterm += 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+			hterm += 0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+			gatesH.push_back(gate{b.s1,b.s1+1,hterm,"even"});
+        	    }
+                    else // Odd
+                    {
+			auto hterm = op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
+			hterm += 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+			hterm += 0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+			gatesH.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
+        	    }
+                }
+	    }
 	}
 
 	void calcGatesL()
 	{
-		for(auto b : *lattice)
-		{
-                	if(b.t == Lattice::physical)
-                	{
+            for(auto b : *lattice)
+            {
+        	if(b.t == Lattice::physical)
+        	{
 
-                		if(b.z == 0) // Even
-                		{
-                			auto hterm = op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-                			hterm += 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-                			hterm += 0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
-                			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"even"});
-        	        	}
-                		else // Odd
-                		{
-                			auto hterm = op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-                			hterm += 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-                			hterm += 0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
-                			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
-        	        	}
-                	}
-                	if(b.t == Lattice::environment)
-                	{
+        	    if(b.z == 0) // Even
+        	    {
+        		auto hterm = op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
+        		hterm += 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        		hterm += 0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        		gatesL.push_back(gate{b.s1,b.s1+1,hterm,"even"});
+	            }
+        	    else // Odd
+        	    {
+        		auto hterm = op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
+        		hterm += 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        		hterm += 0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        		gatesL.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
+	            }
+        	}
+        	if(b.t == Lattice::environment)
+        	{
 
-                		if(b.z == 0) // Even
-                		{
-                			auto hterm = -op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-                			hterm += -0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-                			hterm += -0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
-                			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"even"});
-        	        	}
-                		else // Odd
-                		{
-                			auto hterm = -op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-                			hterm += -0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-                			hterm += -0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
-                			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
-        	        	}
-                	}
-		}
+        	    if(b.z == 0) // Even
+        	    {
+        		auto hterm = -op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
+        		hterm += -0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        		hterm += -0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        		gatesL.push_back(gate{b.s1,b.s1+1,hterm,"even"});
+	            }
+        	    else // Odd
+        	    {
+        		auto hterm = -op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
+        		hterm += -0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
+        		hterm += -0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
+        		gatesL.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
+	            }
+        	}
+            }
 	}
 
 public:

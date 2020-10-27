@@ -35,6 +35,7 @@ protected:
 	/* Helpers */
 	Cplx tauEH;
 	Cplx tauEL;
+	bool skip = false;
 
 	/* Outputs */
 	SiteSet sites;
@@ -54,12 +55,12 @@ protected:
 
 
 	/* Methods */
-	virtual void calcH(){ if(!ampoH) calcAmpoH(); H = toMPO(*ampoH); }
+	virtual void calcH(bool force = false){ if(!ampoH || force) calcAmpoH(); H = toMPO(*ampoH); }
 	virtual void calcExpH(Cplx tau){ if(!ampoH) calcAmpoH(); expH = toExpH(*ampoH,tau); }
 	virtual void calcAmpoH() {};
 	virtual void calcGatesH() {};
 
-	virtual void calcL(){ if(!ampoL) calcAmpoL(); L = toMPO(*ampoL); }
+	virtual void calcL(bool force = false){ if(!ampoL || force) calcAmpoL(); L = toMPO(*ampoL); }
 	virtual void calcExpL(Cplx tau){ if(!ampoL) calcAmpoL(); expL = toExpH(*ampoL,tau);	}
 	virtual void calcAmpoL() {};
 	virtual void calcGatesL() {};
@@ -74,20 +75,21 @@ public:
 
 	virtual ~Model(){}
 	
-	MPO& getH() { if(!H) calcH(); return *H; }
+	MPO& getH(bool force = false) { if(!H || force) calcH(force); return *H; }
 	MPO& getExpH(Cplx tau, bool force = false) { if(!expH || force) calcExpH(tau); tauEH = tau; return *expH; } // force ensures a new calculation.
 	AutoMPO& getAmpoH() {if(!ampoH) calcAmpoH(); return *ampoH; } // not needed?
 	vector<gate> getGatesH() {if(gatesH.size() == 0) calcGatesH(); return gatesH; }
 
-	MPO& getL() { if(!L) calcL(); return *L; }
+	MPO& getL(bool force = false) { if(!L || force) calcL(force); return *L; }
 	MPO& getExpL(Cplx tau, bool force = false) { if(!expL || force) calcExpL(tau); tauEL = tau; return *expL; } // force ensures a new calculation.
 	AutoMPO& getAmpoL() {if(!ampoL) calcAmpoL(); return *ampoL; }
 	vector<gate> getGatesL() {if(gatesL.size() == 0) calcGatesL(); return gatesL; }
 
 
-
+	void setSkip(bool s = true){ skip = s; }
 	map<string, Real> getParams() {return params; }
 	SiteSet getSites() const {return sites; }
+
 
 	static string hashParams(Args* args)
 	{

@@ -29,13 +29,15 @@ protected:
         	}
         }
 
-        for(auto s : lattice->getSites())
+        if(!skip)
         {
-            if(s.t == Lattice::physical)
+            for(auto s : lattice->getSites())
             {
-                *ampoH +=   B,"Sz",s.s;    
+                if(s.t == Lattice::physical)
+                {
+                    *ampoH +=   B,"Sz",s.s;    
+                }    
             }
-            
         }
 	}
 	
@@ -58,15 +60,18 @@ protected:
 	    	}
 	    }
 
-        for(auto s : lattice->getSites())
+        if(!skip)
         {
-            if(s.t == Lattice::physical)
+            for(auto s : lattice->getSites())
             {
-                *ampoL +=   B,"Sz",s.s;    
-            }
-            if(s.t == Lattice::environment)
-            {
-                *ampoL +=   -B,"Sz",s.s;    
+                if(s.t == Lattice::physical)
+                {
+                    *ampoL +=   B,"Sz",s.s;    
+                }
+                if(s.t == Lattice::environment)
+                {
+                    *ampoL +=   -B,"Sz",s.s;    
+                }
             }
         }
 	}
