@@ -8,6 +8,9 @@
 .inputs/
 .vscode/
 jupyter/
+scripts/
+bandwidth
+bandwidth.cc
 old_code.cc
 TODO.txt
 trash

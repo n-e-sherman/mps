@@ -165,6 +165,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("cheWriteFile",true);
     args->add("OpName","Sz");
     args->add("measureAll",false);
+    args->add("Skip",true);
 
     /* Sweeper parameters. */
     args->add("Sweeper",false);
