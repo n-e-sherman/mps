@@ -29,12 +29,6 @@ public:
 
 	void  calculate()
 	{
-		if(args->getBool("printStuff",false))
-		{
-			Print(siteInds(psi));
-			Print(siteInds(psiB));
-			Print(siteInds(model->getSites()));
-		}
 		evolver->evolve(psi);
 		evolver->evolve(psiB);
 		res.push_back(measurement->calculate(psi,psiB));

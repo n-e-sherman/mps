@@ -38,7 +38,7 @@ private:
 	void calcInitialState() // Makes an infinite temperature state via purification.
 	{
 		auto sites = model->getSites();
-		state = MPS(sites,1);
+		state = MPS(sites);
 		auto N = sites.length();
     	for(int n = 1; n <= N; n += 2)
         {

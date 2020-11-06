@@ -22,6 +22,7 @@ protected:
 	vector<vector<StringReal>> res; // [iteration][site], site starts 0 NOT 1
 	vector<vector<StringReal>> resP;
 	vector<vector<StringReal>> resA;
+	vector<StringReal> connected;
 	vector<int> P;
 	vector<int> A;
 	vector<Real> chis;
@@ -41,6 +42,7 @@ public:
 		psi.position(1);
 		H.position(1);
 		t0 = MPS(psi);
+		connected = measurement->calculate(psi,psi); proccessConnected();
 		if (args->getBool("measureAll")) { measureAll(psi); }
 		N = args->getInt("N");
 		int c = N/2;
@@ -87,7 +89,7 @@ public:
 		resA.push_back(_resA);
 		chis.push_back(maxLinkDim(psi_in));
 		proccesResultsAP(resP,1);
-		repo->save("Physical"+Chebyshev::getHash(args),args->getString("localOperator")+"x"+"/"+args->getString("Model"),labels,results);
+		repo->save(Chebyshev::getHash(args),args->getString("localOperator")+"x"+"/"+args->getString("Model"),labels,results);
 		proccesResultsAP(resA,0);
 		repo->save("Ancilla"+Chebyshev::getHash(args),args->getString("localOperator")+"x"+"/"+args->getString("Model"),labels,results);
 	}
@@ -132,7 +134,7 @@ public:
 			for(auto& x : detail_labels){ labels.push_back(x); }
 		}
 		
-		for(auto i : range(res.size()))
+		for(int i : range(res.size()))
 		{
 			auto temp = vector<StringReal>();
 			for(auto j : range(res[i].size())) temp.push_back(res[i][j].real());
@@ -161,6 +163,19 @@ public:
 			}
 			results.push_back(temp);
 		}
+	}
+
+	void proccessConnected()
+	{
+		auto _labels = vector<StringReal>();
+		auto _results = vector<vector<StringReal>>();
+		for(auto i : range1(args->getInt("N"))) _labels.push_back(to_string(i));
+		if(args->getBool("imaginary")) for(auto i : range1(args->getInt("N"))) labels.push_back("I" + to_string(i));
+		auto temp = vector<StringReal>();
+		for(auto j : range(connected.size())) temp.push_back(connected[j].real());
+		if(args->getBool("imaginary")) for(auto j : range(connected.size())) temp.push_back(connected[j].imag());
+		_results.push_back(temp);
+		repo->save(Chebyshev::getHash(args),"chebyshevx/"+args->getString("Model")+"/connected",_labels,_results);
 	}
 
 	void proccesResultsAP(vector<vector<StringReal>> resAP, int physical)
@@ -205,6 +220,7 @@ public:
         read(f,P);
         read(f,A);
         read(f,errorMPO);
+        read(f,connected);
     }
 
 	virtual void save(ofstream & f)
@@ -217,6 +233,7 @@ public:
 		write(f,P);
 		write(f,A);
 		write(f,errorMPO);
+		write(f,connected);
 	}
 
 };
