@@ -46,8 +46,17 @@ public:
 		if (args->getBool("measureAll")) { measureAll(psi); }
 		N = args->getInt("N");
 		int c = N/2;
+		auto lOp_E = connected[c].real(); // may want to generalize
+		auto lOp = op(sites,args->getString("localOperator"),P[c]);
+
+		auto _s = sites(P[c]);
+	    auto sP = prime(_s);
+	    auto Up = _s(1); auto UpP = sP(1); auto Dn = _s(2); auto DnP = sP(2);
+	    auto lOp_c = ITensor(dag(_s),sP); lOp_c.set(Up,UpP,lOp_E); lOp_c.set(Dn,DnP,lOp_E);
+	    auto lOp_T = lOp-lOp_c;
+
 		t0.position(P[c]);
-		auto temp = t0(P[c]) * op(sites,args->getString("localOperator"),P[c]);
+		auto temp = t0(P[c]) * lOp_T;
 		temp.noPrime();
 		t0.set(P[c],temp);
 		t0.position(1);
@@ -167,15 +176,31 @@ public:
 
 	void proccessConnected()
 	{
-		auto _labels = vector<StringReal>();
-		auto _results = vector<vector<StringReal>>();
-		for(auto i : range1(args->getInt("N"))) _labels.push_back(to_string(i));
-		if(args->getBool("imaginary")) for(auto i : range1(args->getInt("N"))) labels.push_back("I" + to_string(i));
+		labels.clear();
+		results.clear();
+
+		for(auto i : range1(args->getInt("N"))) labels.push_back(to_string(i));
+		if(args->getBool("imaginary")) {for(auto i : range1(args->getInt("N"))) labels.push_back("I" + to_string(i));}
+		labels.push_back("MaxDim");
+		labels.push_back("N");
+		labels.push_back("Lattice");
+		labels.push_back("Model");
+		labels.push_back("thermal");
+		if(args->getBool("thermal")) { labels.push_back("beta"); labels.push_back("tau"); }
+		for(auto& x : model->getParams()){ labels.push_back(x.first); }
+
 		auto temp = vector<StringReal>();
 		for(auto j : range(connected.size())) temp.push_back(connected[j].real());
 		if(args->getBool("imaginary")) for(auto j : range(connected.size())) temp.push_back(connected[j].imag());
-		_results.push_back(temp);
-		repo->save(Chebyshev::getHash(args),"chebyshevx/"+args->getString("Model")+"/connected",_labels,_results);
+		temp.push_back(args->getReal("MaxDim"));
+		temp.push_back(args->getReal("N"));
+		temp.push_back(args->getString("Lattice"));
+		temp.push_back(args->getString("Model"));
+		temp.push_back(args->getBool("thermal"));
+		if(args->getBool("thermal")) { temp.push_back(args->getReal("beta")); temp.push_back(args->getReal("tau")); }
+		for(auto& x : model->getParams()){ temp.push_back(x.second); }
+		results.push_back(temp);
+		repo->save(Chebyshev::getHash(args),"chebyshevx/"+args->getString("Model")+"/connected",labels,results);
 	}
 
 	void proccesResultsAP(vector<vector<StringReal>> resAP, int physical)

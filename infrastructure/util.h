@@ -352,6 +352,15 @@ struct StringReal
         s = in;
     }
 
+     Cplx Complex()
+    {
+        if(t == tReal) return Cplx(r);
+        else
+        if(t == tCplx) return c;
+        else
+                       return NAN;
+    }
+
     Real real()
     {
         if(t == tReal) return r;
