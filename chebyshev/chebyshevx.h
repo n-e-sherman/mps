@@ -34,40 +34,47 @@ public:
 	Chebyshevx(Args* a) : Chebyshev(a){}
 	Chebyshevx(Args* a, Model* m, Lattice* l, Sweeper* swp, Measurement* ms, Repository* r) : Chebyshev(a,m,swp), lattice(l), measurement(ms), repo(r)  {}
 	Chebyshevx(Args* a, Model* m, State *s, Lattice* l, Sweeper* swp, Measurement* ms, Repository* r) : Chebyshev(a,m,s,swp), lattice(l), measurement(ms), repo(r)
-	{
-		if(args->getBool("errorMPOProd")) errorMPO = vector<Real>({0,0});
-		auto sites = model->getSites();	
+	{	
+		/* Same. */
 		psi = state->getState();
-		processSites();
 		psi.position(1);
 		H.position(1);
+		
+
+		/* x specific. */
 		t0 = MPS(psi);
-		connected = measurement->calculate(psi,psi); proccessConnected();
-		if (args->getBool("measureAll")) { measureAll(psi); }
+		_processSites();
+		auto sites = model->getSites();
 		N = args->getInt("N");
 		int c = N/2;
 		auto lOp_E = connected[c].real(); // may want to generalize
 		auto lOp = op(sites,args->getString("localOperator"),P[c]);
-
 		auto _s = sites(P[c]);
 	    auto sP = prime(_s);
 	    auto Up = _s(1); auto UpP = sP(1); auto Dn = _s(2); auto DnP = sP(2);
 	    auto lOp_c = ITensor(dag(_s),sP); lOp_c.set(Up,UpP,lOp_E); lOp_c.set(Dn,DnP,lOp_E);
 	    auto lOp_T = lOp-lOp_c;
-
 		t0.position(P[c]);
 		auto temp = t0(P[c]) * lOp_T;
 		temp.noPrime();
 		t0.set(P[c],temp);
 		t0.position(1);
-		res.push_back(measurement->calculate(psi,t0));
-		if (args->getBool("measureAll")) { measureAll(t0); }
+
+		/* Same. */
 		t1 = noPrime(applyMPO(H,t0));
 		t2 = t1;
-		res.push_back(measurement->calculate(psi,t1));
-		if(args->getBool("measureAll"))	{ measureAll(t1); }
 		is = siteInds(t0);
 		iteration = 1;
+
+		/* x specific */
+		res.push_back(measurement->calculate(psi,t0));
+		res.push_back(measurement->calculate(psi,t1));
+
+		/* Extras */
+		// connected = measurement->calculate(psi,psi); proccessConnected();
+		// if (args->getBool("measureAll")) { measureAll(psi); }
+		// if (args->getBool("measureAll")) { measureAll(t0); }
+		// if(args->getBool("measureAll"))	{ measureAll(t1); }
 	}
 	
 	~Chebyshevx(){}
@@ -77,45 +84,32 @@ public:
 		{
 			cout << iteration + i << endl;
 			auto temp = noPrime(applyMPO(H,t1));
-			if(args->getBool("errorMPOProd")) errorMPO.push_back(errorMPOProd(temp,H,t1));
 			temp *= 2;
 			prepare(temp,t0,is);
 			t2 = sum(temp,-1*t0,*args);
-			sweeper->sweep(H,t2);
-			if(args->getBool("details")) details.push_back(sweeper->get_details());
-			res.push_back(measurement->calculate(psi,t2));
-			if(args->getBool("measureAll"))	{ measureAll(t2); }
+
+			// sweeper->sweep(H,t2);
+			// if(args->getBool("details")) details.push_back(sweeper->get_details());
+			// if(args->getBool("measureAll"))	{ measureAll(t2); }
 			t0 = t1;
 			t1 = t2;
+			res.push_back(measurement->calculate(psi,t2));
 		}
 		iteration += iterations;
 	}
 
-	void measureAll(MPS & psi_in)
-	{
-		auto [_resP,_resA] = measurement->calculateAll(psi_in);
-		resP.push_back(_resP);
-		resA.push_back(_resA);
-		chis.push_back(maxLinkDim(psi_in));
-		proccesResultsAP(resP,1);
-		repo->save(Chebyshev::getHash(args),args->getString("localOperator")+"x"+"/"+args->getString("Model"),labels,results);
-		proccesResultsAP(resA,0);
-		repo->save("Ancilla"+Chebyshev::getHash(args),args->getString("localOperator")+"x"+"/"+args->getString("Model"),labels,results);
-	}
-
-	void processSites()
-	{	
-		P.push_back(0);
-		A.push_back(0);
-		for(auto x : lattice->getSites())
-		{
-			if(x.t == Lattice::physical) 
-			{
-				P.push_back(x.s);
-			}
-			else{ A.push_back(x.s); }
-		}
-	}
+	/* Extras */
+	// void measureAll(MPS & psi_in)
+	// {
+	// 	auto [_resP,_resA] = measurement->calculateAll(psi_in);
+	// 	resP.push_back(_resP);
+	// 	resA.push_back(_resA);
+	// 	chis.push_back(maxLinkDim(psi_in));
+	// 	proccesResultsAP(resP,1);
+	// 	repo->save(Chebyshev::getHash(args),args->getString("localOperator")+"x"+"/"+args->getString("Model"),labels,results);
+	// 	proccesResultsAP(resA,0);
+	// 	repo->save("Ancilla"+Chebyshev::getHash(args),args->getString("localOperator")+"x"+"/"+args->getString("Model"),labels,results);
+	// }
 
 	void processResults()
 	{
@@ -134,7 +128,6 @@ public:
 		labels.push_back("W");
 		labels.push_back("Wp");
 		for(auto& x : model->getParams()){ labels.push_back(x.first); }
-		if(args->getBool("errorMPOProd")){ labels.push_back("errorMPOProd"); }
 		if ((args->getString("sweeperType") == "exact") || (args->getString("sweeperType") == "projection"))
 		{
 			labels.push_back("sweeperType");
@@ -158,7 +151,6 @@ public:
 			temp.push_back(args->getReal("W"));
 			temp.push_back(args->getReal("Wp"));
 			for(auto& x : model->getParams()){ temp.push_back(x.second); }
-			if(args->getBool("errorMPOProd")) temp.push_back(errorMPO[i]);
 			if ((args->getString("sweeperType") == "exact") || (args->getString("sweeperType") == "projection"))
 			{	
 				auto sProj = args->getString("sweeperType");
@@ -174,66 +166,68 @@ public:
 		}
 	}
 
-	void proccessConnected()
-	{
-		labels.clear();
-		results.clear();
+	/* Extras */
+	// void proccessConnected()
+	// {
+	// 	labels.clear();
+	// 	results.clear();
 
-		for(auto i : range1(args->getInt("N"))) labels.push_back(to_string(i));
-		if(args->getBool("imaginary")) {for(auto i : range1(args->getInt("N"))) labels.push_back("I" + to_string(i));}
-		labels.push_back("MaxDim");
-		labels.push_back("N");
-		labels.push_back("Lattice");
-		labels.push_back("Model");
-		labels.push_back("thermal");
-		if(args->getBool("thermal")) { labels.push_back("beta"); labels.push_back("tau"); }
-		for(auto& x : model->getParams()){ labels.push_back(x.first); }
+	// 	for(auto i : range1(args->getInt("N"))) labels.push_back(to_string(i));
+	// 	if(args->getBool("imaginary")) {for(auto i : range1(args->getInt("N"))) labels.push_back("I" + to_string(i));}
+	// 	labels.push_back("MaxDim");
+	// 	labels.push_back("N");
+	// 	labels.push_back("Lattice");
+	// 	labels.push_back("Model");
+	// 	labels.push_back("thermal");
+	// 	if(args->getBool("thermal")) { labels.push_back("beta"); labels.push_back("tau"); }
+	// 	for(auto& x : model->getParams()){ labels.push_back(x.first); }
 
-		auto temp = vector<StringReal>();
-		for(auto j : range(connected.size())) temp.push_back(connected[j].real());
-		if(args->getBool("imaginary")) for(auto j : range(connected.size())) temp.push_back(connected[j].imag());
-		temp.push_back(args->getReal("MaxDim"));
-		temp.push_back(args->getReal("N"));
-		temp.push_back(args->getString("Lattice"));
-		temp.push_back(args->getString("Model"));
-		temp.push_back(args->getBool("thermal"));
-		if(args->getBool("thermal")) { temp.push_back(args->getReal("beta")); temp.push_back(args->getReal("tau")); }
-		for(auto& x : model->getParams()){ temp.push_back(x.second); }
-		results.push_back(temp);
-		repo->save(Chebyshev::getHash(args),"chebyshevx/"+args->getString("Model")+"/connected",labels,results);
-	}
+	// 	auto temp = vector<StringReal>();
+	// 	for(auto j : range(connected.size())) temp.push_back(connected[j].real());
+	// 	if(args->getBool("imaginary")) for(auto j : range(connected.size())) temp.push_back(connected[j].imag());
+	// 	temp.push_back(args->getReal("MaxDim"));
+	// 	temp.push_back(args->getReal("N"));
+	// 	temp.push_back(args->getString("Lattice"));
+	// 	temp.push_back(args->getString("Model"));
+	// 	temp.push_back(args->getBool("thermal"));
+	// 	if(args->getBool("thermal")) { temp.push_back(args->getReal("beta")); temp.push_back(args->getReal("tau")); }
+	// 	for(auto& x : model->getParams()){ temp.push_back(x.second); }
+	// 	results.push_back(temp);
+	// 	repo->save(Chebyshev::getHash(args),"chebyshevx/"+args->getString("Model")+"/connected",labels,results);
+	// }
 
-	void proccesResultsAP(vector<vector<StringReal>> resAP, int physical)
-	{
-		labels.clear();
-		results.clear();
-		for(auto i : range1(args->getInt("N"))) labels.push_back(to_string(i));
-		if(args->getBool("imaginary")) for(auto i : range1(args->getInt("N"))) labels.push_back("I" + to_string(i));
-		labels.push_back("MaxDim");
-		labels.push_back("N");
-		labels.push_back("Lattice");
-		labels.push_back("Model");
-		labels.push_back("thermal");
-		labels.push_back("physical");
-		labels.push_back("chi");
-		for(auto& x : model->getParams()){ labels.push_back(x.first); }
+	/* Extras */
+	// void proccesResultsAP(vector<vector<StringReal>> resAP, int physical)
+	// {
+	// 	labels.clear();
+	// 	results.clear();
+	// 	for(auto i : range1(args->getInt("N"))) labels.push_back(to_string(i));
+	// 	if(args->getBool("imaginary")) for(auto i : range1(args->getInt("N"))) labels.push_back("I" + to_string(i));
+	// 	labels.push_back("MaxDim");
+	// 	labels.push_back("N");
+	// 	labels.push_back("Lattice");
+	// 	labels.push_back("Model");
+	// 	labels.push_back("thermal");
+	// 	labels.push_back("physical");
+	// 	labels.push_back("chi");
+	// 	for(auto& x : model->getParams()){ labels.push_back(x.first); }
 
-		for(auto i : range(resAP.size()))
-		{
-			auto temp = vector<StringReal>();
-			for(auto j : range(resAP[i].size())) temp.push_back(resAP[i][j].real());
-			if(args->getBool("imaginary")) for(auto j : range(resAP[i].size())) temp.push_back(resAP[i][j].imag());
-			temp.push_back(args->getReal("MaxDim"));
-			temp.push_back(args->getReal("N"));
-			temp.push_back(args->getString("Lattice"));
-			temp.push_back(args->getString("Model"));
-			temp.push_back(args->getBool("thermal"));
-			temp.push_back(physical);
-			for(auto& x : model->getParams()){ temp.push_back(x.second); }
-			temp.push_back(chis[i]);
-			results.push_back(temp);
-		}
-	}
+	// 	for(auto i : range(resAP.size()))
+	// 	{
+	// 		auto temp = vector<StringReal>();
+	// 		for(auto j : range(resAP[i].size())) temp.push_back(resAP[i][j].real());
+	// 		if(args->getBool("imaginary")) for(auto j : range(resAP[i].size())) temp.push_back(resAP[i][j].imag());
+	// 		temp.push_back(args->getReal("MaxDim"));
+	// 		temp.push_back(args->getReal("N"));
+	// 		temp.push_back(args->getString("Lattice"));
+	// 		temp.push_back(args->getString("Model"));
+	// 		temp.push_back(args->getBool("thermal"));
+	// 		temp.push_back(physical);
+	// 		for(auto& x : model->getParams()){ temp.push_back(x.second); }
+	// 		temp.push_back(chis[i]);
+	// 		results.push_back(temp);
+	// 	}
+	// }
 
 	virtual void load(ifstream & f)
     {
@@ -259,6 +253,21 @@ public:
 		write(f,A);
 		write(f,errorMPO);
 		write(f,connected);
+	}
+
+private:
+	void _processSites()
+	{	
+		P.push_back(0);
+		A.push_back(0);
+		for(auto x : lattice->getSites())
+		{
+			if(x.t == Lattice::physical) 
+			{
+				P.push_back(x.s);
+			}
+			else{ A.push_back(x.s); }
+		}
 	}
 
 };

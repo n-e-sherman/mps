@@ -75,13 +75,13 @@ public:
 	
 	~Chebyshev(){}
 	virtual void calculate(int iterations) = 0;
-	virtual tuple<vector<string>, vector<vector<StringReal>> > getResults()
+	virtual tuple<vector<string>, vector<vector<StringReal>> > getResults() // Could be made a part of a "service" which is inherited by this and Correlation
 	{
 		processResults();
 		return tuple<vector<string>, vector<vector<StringReal>> >(labels,results);
 	}
 	virtual int getIteration(){ return iteration; }
-	virtual void processResults() = 0;
+	virtual void processResults() = 0; // protected?
 
 
 

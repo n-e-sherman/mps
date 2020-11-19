@@ -178,7 +178,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("NormCutoff",1e-10); // Also ITensor parameter.
     args->add("difThreshold",1e-8);
     args->add("details",true);
-    args->add("errorMPOProd",true);
+    args->add("errorMPOProd",false);
 
     /* ITensor parameters. */
     args->add("nSweeps",5);

@@ -19,18 +19,25 @@ public:
 	Chebyshevp(Args* a, Model* m, Sweeper* swp) : Chebyshev(a,m,swp){}
 	Chebyshevp(Args* a, Model* m, State *s, Sweeper* swp, Operator* O) : Chebyshev(a,m,s,swp)
 	{ 
-			psi = state->getState();
-			auto op_q = O->build(args->getReal("qFactor"));
-			psi = noPrime(applyMPO(op_q,psi));
-			t0 = MPS(psi);
-			t0.position(1);
-			res.push_back(innerC(psi,t0)); // May want to change inner to innerC if you get complex values at some point. 
-			t1 = noPrime(applyMPO(H,t0));
-			t2 = t1;
-			res.push_back(innerC(t0,t1));
-			H.position(1);
-			is = siteInds(t0);
-			iteration = 1;
+		/* Same. */
+		psi = state->getState();
+		psi.position(1);
+		H.position(1);
+
+		/* p specific */
+		auto op_q = O->build(args->getReal("qFactor"));
+		psi = noPrime(applyMPO(op_q,psi));
+		t0 = MPS(psi);
+		
+		/* Same. */
+		t1 = noPrime(applyMPO(H,t0));
+		t2 = t1;
+		is = siteInds(t0);
+		iteration = 1;
+
+		/* p specific */
+		res.push_back(innerC(psi,t0));
+		res.push_back(innerC(psi,t1));
 	}
 	
 	~Chebyshevp(){}
@@ -40,15 +47,15 @@ public:
 		{
 			cout << iteration + i << endl;
 			auto temp = noPrime(applyMPO(H,t1));
-			if(args->getBool("errorMPOProd")) errorMPO.push_back(errorMPOProd(temp,H,t1));
 			temp *= 2;
 			prepare(temp,t0,is);
 			t2 = sum(temp,-1*t0,*args);
-			sweeper->sweep(H,t2);
+			// sweeper->sweep(H,t2);
 			// if(args->getBool("details")) details.push_back(sweeper->get_details());
-			res.push_back(innerC(psi,t2));
+			
 			t0 = t1;
 			t1 = t2;
+			res.push_back(innerC(psi,t2));
 		}
 		iteration += iterations;
 	}
