@@ -9,24 +9,18 @@ using namespace std;
 class ExpMPO : public Evolver
 {
 protected:
-	/* Inputs */
-	Args* args;
-	SiteSet sites;
-	Model* model;
 
-	/* Helpers */
 	MPO expH;
-
-	/* Outputs */
-
 
 public:
 	ExpMPO(){}
-	ExpMPO(Args* a, Model* m) : args(a), model(m) {}
-	void evolve(MPS & psi)
+	ExpMPO(Args* a, Model* m) : Evolver(a,m) {}
+
+	virtual void evolve(State& s)
 	{
-		psi = noPrime(applyMPO(expH,psi));
+		s.setState(noPrime(applyMPO(model->getO(),s.getState())));
 	}
+	
 	void setup(BondGate::Type type, Real tau, string op = "H")
 	{
 		auto _tau = Cplx(tau);
@@ -34,21 +28,8 @@ public:
 		{
 			_tau *= Complex_i;
 		}
-		if(op == "H"){ expH = model->getExpH(_tau,true); }
-		else 		 {expH = model->getExpL(_tau,true);}
-		/**********************************************
-		 * This may make things more accurace somehow *
-		 **********************************************/
-
-		// auto taua = tau/2.*(1.+1._i);
-  		// auto taub = tau/2.*(1.-1._i);
-  		// auto expHa = model->getExpH(taua);
-  		// auto expHb = model->getExpH(taub);
-  		// for(int tt = 1; tt <= nt; ++tt)
-  		// {
-  		// 	state = noPrime(applyMPO(expHa,state));
-  		// 	state = noPrime(applyMPO(expHb,state));
-  		// }
+		if(op == "H"){ model->calcExpH(_tau); expH = model->getO(); }
+		else 		 {model->calcExpL(_tau); expH = model->getO(); }
 	}
 };
 #endif

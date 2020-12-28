@@ -5,7 +5,9 @@
 #include <sys/stat.h>
 #include "itensor/all.h"
 #include "itensor/util/print_macro.h"
+#include "infrastructure/cache.h"
 #include <bits/stdc++.h> 
+#include "model/model.h"
 
 using namespace itensor;
 using namespace std;
@@ -120,13 +122,14 @@ Args* getArgs(int argc, char* argv[])
     args->add("Normalize",false);
     args->add("read",true);
     args->add("write",true);
+    args->add("qFactor",1.0);
 
 
     /* State parameters. */
     args->add("thermalMaxDim",2000);
     args->add("realStep",true);
     args->add("beta",0);
-    args->add("tau",0.1);
+    args->add("beta-tau",0.1);
     args->add("thermalEps",1E-9);
     args->add("coolingType","Trotter");
 
@@ -149,7 +152,7 @@ Args* getArgs(int argc, char* argv[])
 
     /* Evolver parameters. */
     args->add("Evolver","Trotter");
-    args->add("tau",0.1);
+    args->add("time-tau",0.1);
     args->add("beta",0);
     args->add("time",0);
 
@@ -205,7 +208,6 @@ Args* getArgs(int argc, char* argv[])
     args->add("nw",201);
     args->add("etas","0.1,0.2");
     args->add("eps",0.0001);
-    args->add("c",1);
     args->add("nLanczos",40);
     args->add("reorthogonalize",false);
     args->add("spectral");
@@ -313,10 +315,38 @@ Args* getArgs(int argc, char* argv[])
 
 
     } 
-    if(!args->defined("position"))
-        if(!args->defined("qFactor")) args->add("qFactor",1.0);
+    auto cache = Cache::getInstance();
+    cache->save("args",args);
     return args;
 }
+
+    string _hash_string(string name, Args* args)
+    {
+        auto h = args->getString(name); // will be NAN if a string.
+        if(name == "Model") return "_" + args->getString(name) + "_" + Model::hashParams(args);
+        return "_" + h;
+    }
+    string hash_string(vector<string> hashes, Args* args)
+    {
+        string hash = "";
+        for(auto &name : hashes) hash += _hash_string(name,args);   
+        return hash;
+    }
+
+
+    string _hash_real(string name, Args* args)
+    {
+        auto h = args->getReal(name); // will be NAN if a string.
+        if((name == "beta")) { if(args->getBool("thermal")) return "_" + to_string(h); else {return "";} }
+        return "_" + to_string(h);
+    }
+    string hash_real(vector<string> hashes, Args* args)
+    {
+        string hash = "";
+        for(auto &name : hashes) hash += _hash_real(name,args);   
+        return hash;
+    }
+
 
 struct StringReal
 {
@@ -391,7 +421,7 @@ struct StringReal
         else
         if((*this).t == tCplx) {return ((*this).c == t_in); }
         else
-        if((*this).t == tString) {return (*this).s == t_in; }
+        if((*this).t == tString) {return ((*this).s == t_in); }
     }
     friend std::ostream& operator<<( ostream& os, const StringReal& sr) 
     {
@@ -418,6 +448,9 @@ struct StringReal
     }
 
 };
+
+
+
 
 
 

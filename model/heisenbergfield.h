@@ -1,31 +1,25 @@
 #ifndef __HEISENBERGFIELD_H_
 #define __HEISENBERGFIELD_H_
 
-#include <string>
-#include <iostream>
-#include "itensor/all.h"
 #include "model/model.h"
-#include "infrastructure/util.h"
-#include <cmath>
 
 using namespace itensor;
 using namespace std;
 
 class HeisenbergField : public Model
 {
-    Real B;
 protected:
-
-	virtual void calcAmpoH()
+    Real B;
+	virtual AutoMPO calcAmpoH(bool skip = false, Real shift = 0)
 	{
-		ampoH = AutoMPO(sites);
+		auto ampo = AutoMPO(sites->getSites());
         for(auto b : *lattice)
         {
         	if(b.t == Lattice::physical)
         	{
-	            *ampoH += 0.5,"S+",b.s1,"S-",b.s2;
-	            *ampoH += 0.5,"S-",b.s1,"S+",b.s2;
-	            *ampoH +=     "Sz",b.s1,"Sz",b.s2;
+	            ampo += 0.5,"S+",b.s1,"S-",b.s2;
+	            ampo += 0.5,"S-",b.s1,"S+",b.s2;
+	            ampo +=     "Sz",b.s1,"Sz",b.s2;
         	}
         }
 
@@ -35,28 +29,30 @@ protected:
             {
                 if(s.t == Lattice::physical)
                 {
-                    *ampoH +=   B,"Sz",s.s;    
+                    ampo +=   B,"Sz",s.s;    
                 }    
             }
         }
+        if(shift != 0) calcAmpoShift(ampo, shift);
+        return ampo;
 	}
 	
-	virtual void calcAmpoL()
+	virtual AutoMPO calcAmpoL(bool skip = false, Real shift = 0)
 	{
-        ampoL = AutoMPO(sites);
+        auto ampo = AutoMPO(sites->getSites());
 	    for(auto b : *lattice)
 	    {
 	    	if(b.t == Lattice::physical)
 	    	{
-	            *ampoL += 0.5,"S+",b.s1,"S-",b.s2;
-	            *ampoL += 0.5,"S-",b.s1,"S+",b.s2;
-	            *ampoL += 1.0,"Sz",b.s1,"Sz",b.s2;
+	            ampo += 0.5,"S+",b.s1,"S-",b.s2;
+	            ampo += 0.5,"S-",b.s1,"S+",b.s2;
+	            ampo += 1.0,"Sz",b.s1,"Sz",b.s2;
 	    	}
 	    	if(b.t == Lattice::environment)
 	    	{
-	            *ampoL += -0.5,"S+",b.s1,"S-",b.s2;
-	            *ampoL += -0.5,"S-",b.s1,"S+",b.s2;
-	            *ampoL += -1.0,"Sz",b.s1,"Sz",b.s2;
+	            ampo += -0.5,"S+",b.s1,"S-",b.s2;
+	            ampo += -0.5,"S-",b.s1,"S+",b.s2;
+	            ampo += -1.0,"Sz",b.s1,"Sz",b.s2;
 	    	}
 	    }
 
@@ -66,54 +62,60 @@ protected:
             {
                 if(s.t == Lattice::physical)
                 {
-                    *ampoL +=   B,"Sz",s.s;    
+                    ampo +=   B,"Sz",s.s;    
                 }
                 if(s.t == Lattice::environment)
                 {
-                    *ampoL +=   -B,"Sz",s.s;    
+                    ampo +=   -B,"Sz",s.s;    
                 }
             }
         }
+        if(shift != 0) calcAmpoShift(ampo, shift);
+        return ampo;
 	}
 
-	void calcGatesH()
-	{
+    vector<gate> calcGatesH()
+    {
+        vector<gate> gates;
 		for(auto b : *lattice)
 		{
         	if(b.t == Lattice::physical)
         	{
-                auto C1 = (4.0/3.0)*B;
-                auto C2 = (4.0/3.0)*B;
+                auto C1 = B;
+                auto C2 = B;
                 if(b.s1 == 1) C1 *= 2;
                 if(b.s2 == (2*args->getInt("N") - 1) ) C2 *= 2;
         		if(b.z == 0) // Even
         		{
-        			auto hterm = op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-        			hterm += 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-        			hterm += 0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
-                    hterm +=  C1*op(sites,"Sz",b.s1)*op(sites,"S2",b.s1+1);
-                    hterm +=  C2*op(sites,"S2",b.s1)*op(sites,"Sz",b.s1+1);
-        			gatesH.push_back(gate{b.s1,b.s1+1,hterm,"even"});
+        			auto hterm = op(sites->getSites(),"Sz",b.s1)*op(sites->getSites(),"Sz",b.s1+1);
+        			hterm += 0.5*op(sites->getSites(),"S+",b.s1)*op(sites->getSites(),"S-",b.s1+1);
+        			hterm += 0.5*op(sites->getSites(),"S-",b.s1)*op(sites->getSites(),"S+",b.s1+1);
+                    hterm +=  C1*op(sites->getSites(),"Sz",b.s1)*op(sites->getSites(),"Id",b.s1+1);
+                    hterm +=  C2*op(sites->getSites(),"Id",b.s1)*op(sites->getSites(),"Sz",b.s1+1);
+        			gates.push_back(gate{b.s1,b.s1+1,hterm,"even"});
 	        	}
         		else // Odd
         		{
-        			auto hterm = op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-        			hterm += 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-        			hterm += 0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
-                    hterm +=  C1*op(sites,"Sz",b.s1)*op(sites,"S2",b.s1+1);
-                    hterm +=  C2*op(sites,"S2",b.s1)*op(sites,"Sz",b.s1+1);
-        			gatesH.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
+        			auto hterm = op(sites->getSites(),"Sz",b.s1)*op(sites->getSites(),"Sz",b.s1+1);
+        			hterm += 0.5*op(sites->getSites(),"S+",b.s1)*op(sites->getSites(),"S-",b.s1+1);
+        			hterm += 0.5*op(sites->getSites(),"S-",b.s1)*op(sites->getSites(),"S+",b.s1+1);
+                    hterm +=  C1*op(sites->getSites(),"Sz",b.s1)*op(sites->getSites(),"Id",b.s1+1);
+                    hterm +=  C2*op(sites->getSites(),"Id",b.s1)*op(sites->getSites(),"Sz",b.s1+1);
+        			gates.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
+                    
 	        	}
         	}
 		}
+        return gates;
 	}
 
-	void calcGatesL()
-	{
+    vector<gate> calcGatesL()
+    {
+        vector<gate> gates;
 		for(auto b : *lattice)
 		{
-            auto C1 = (4.0/3.0)*B;
-            auto C2 = (4.0/3.0)*B;
+            auto C1 = B;
+            auto C2 = B;
             if(b.s1 <= 2) C1 *= 2;
             if(b.s2 >= (2*args->getInt("N") - 1)) C2 *= 2;
         	if(b.t == Lattice::physical)
@@ -121,21 +123,21 @@ protected:
                 
         		if(b.z == 0) // Even
         		{
-        			auto hterm = op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-        			hterm += 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-        			hterm += 0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
-                    hterm +=  C1*op(sites,"Sz",b.s1)*op(sites,"S2",b.s1+1);
-                    hterm +=  C2*op(sites,"S2",b.s1)*op(sites,"Sz",b.s1+1);
-        			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"even"});
+        			auto hterm = op(sites->getSites(),"Sz",b.s1)*op(sites->getSites(),"Sz",b.s1+1);
+        			hterm += 0.5*op(sites->getSites(),"S+",b.s1)*op(sites->getSites(),"S-",b.s1+1);
+        			hterm += 0.5*op(sites->getSites(),"S-",b.s1)*op(sites->getSites(),"S+",b.s1+1);
+                    hterm +=  C1*op(sites->getSites(),"Sz",b.s1)*op(sites->getSites(),"Id",b.s1+1);
+                    hterm +=  C2*op(sites->getSites(),"Id",b.s1)*op(sites->getSites(),"Sz",b.s1+1);
+        			gates.push_back(gate{b.s1,b.s1+1,hterm,"even"});
 	        	}
         		else // Odd
         		{
-        			auto hterm = op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-        			hterm += 0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-        			hterm += 0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
-                    hterm +=  C1*op(sites,"Sz",b.s1)*op(sites,"S2",b.s1+1);
-                    hterm +=  C2*op(sites,"S2",b.s1)*op(sites,"Sz",b.s1+1);
-        			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
+        			auto hterm = op(sites->getSites(),"Sz",b.s1)*op(sites->getSites(),"Sz",b.s1+1);
+        			hterm += 0.5*op(sites->getSites(),"S+",b.s1)*op(sites->getSites(),"S-",b.s1+1);
+        			hterm += 0.5*op(sites->getSites(),"S-",b.s1)*op(sites->getSites(),"S+",b.s1+1);
+                    hterm +=  C1*op(sites->getSites(),"Sz",b.s1)*op(sites->getSites(),"Id",b.s1+1);
+                    hterm +=  C2*op(sites->getSites(),"Id",b.s1)*op(sites->getSites(),"Sz",b.s1+1);
+        			gates.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
 	        	}
         	}
         	if(b.t == Lattice::environment)
@@ -143,35 +145,35 @@ protected:
 
         		if(b.z == 0) // Even
         		{
-        			auto hterm = -op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-        			hterm += -0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-        			hterm += -0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
-                    hterm +=  -C1*op(sites,"Sz",b.s1)*op(sites,"S2",b.s1+1);
-                    hterm +=  -C2*op(sites,"S2",b.s1)*op(sites,"Sz",b.s1+1);
-        			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"even"});
+        			auto hterm = -op(sites->getSites(),"Sz",b.s1)*op(sites->getSites(),"Sz",b.s1+1);
+        			hterm += -0.5*op(sites->getSites(),"S+",b.s1)*op(sites->getSites(),"S-",b.s1+1);
+        			hterm += -0.5*op(sites->getSites(),"S-",b.s1)*op(sites->getSites(),"S+",b.s1+1);
+                    hterm +=  -C1*op(sites->getSites(),"Sz",b.s1)*op(sites->getSites(),"Id",b.s1+1);
+                    hterm +=  -C2*op(sites->getSites(),"Id",b.s1)*op(sites->getSites(),"Sz",b.s1+1);
+        			gates.push_back(gate{b.s1,b.s1+1,hterm,"even"});
 	        	}
         		else // Odd
         		{
-        			auto hterm = -op(sites,"Sz",b.s1)*op(sites,"Sz",b.s1+1);
-        			hterm += -0.5*op(sites,"S+",b.s1)*op(sites,"S-",b.s1+1);
-        			hterm += -0.5*op(sites,"S-",b.s1)*op(sites,"S+",b.s1+1);
-                    hterm +=  -C1*op(sites,"Sz",b.s1)*op(sites,"S2",b.s1+1);
-                    hterm +=  -C2*op(sites,"S2",b.s1)*op(sites,"Sz",b.s1+1);
-        			gatesL.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
+        			auto hterm = -op(sites->getSites(),"Sz",b.s1)*op(sites->getSites(),"Sz",b.s1+1);
+        			hterm += -0.5*op(sites->getSites(),"S+",b.s1)*op(sites->getSites(),"S-",b.s1+1);
+        			hterm += -0.5*op(sites->getSites(),"S-",b.s1)*op(sites->getSites(),"S+",b.s1+1);
+                    hterm +=  -C1*op(sites->getSites(),"Sz",b.s1)*op(sites->getSites(),"Id",b.s1+1);
+                    hterm +=  -C2*op(sites->getSites(),"Id",b.s1)*op(sites->getSites(),"Sz",b.s1+1);
+        			gates.push_back(gate{b.s1,b.s1+1,hterm,"odd"});
 	        	}
         	}
 		}
+        return gates;
 	}
 
-public:
-	HeisenbergField(){}
-	HeisenbergField(Args* a, Lattice* l) : Model(a,l) { setParams(); }
-	HeisenbergField(Args* a, Lattice* l, SiteSet s) : Model(a,l,s) { setParams(); }
     virtual void setParams()
     {
         B = args->getReal("B");
         params["B"] = B;
     }
-	~HeisenbergField(){}
+public:
+
+	HeisenbergField(Args* a, Lattice* l, Sites* s) : Model(a,l,s) { setParams(); }
+    
 };
 #endif

@@ -15,31 +15,21 @@ using namespace std;
 class CorrelationService
 {
 private:
-	/* Inputs */
-	Args* args;
+
 	CorrelationBuilder* correlationBuilder;
 	Correlation* correlation;
 	RepositoryBuilder* repoBuilder;
 	Repository* repo;
 
-	/* Outputs */
-	vector<Real> res;
-	vector<string> labels;
-	vector<vector<StringReal>> results;
-
-
-
 public:
 
 	CorrelationService(CorrelationBuilder* cb, RepositoryBuilder* rb) : correlationBuilder(cb), repoBuilder(rb) {} 
 
-	void calculate(Args* a)
+	void calculate(Args* args)
 	{
-		args = a;
 		repo = repoBuilder->build(args);
 		correlation = correlationBuilder->build(args);
 		string type = (args->getBool("momentum") ? "p" : "x");
-		repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results);
 		auto time_max = args->getReal("time");
 		while(correlation->getTime() < time_max)
 		{
@@ -47,10 +37,10 @@ public:
 			correlation->calculate();
 			repo->save(Correlation::getHash(args),correlation);
 			auto [labels,results] = correlation->getResults();
-			repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results);
+			repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results); //<--- Update
 		}
 		auto [labels,results] = correlation->getResults();
-		repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results);
+		repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results); //<--- Update
 	}
 };
 

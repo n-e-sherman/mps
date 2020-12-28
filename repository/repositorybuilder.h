@@ -7,8 +7,7 @@
 class RepositoryBuilder
 {
 public:
-	RepositoryBuilder() {}
-	~RepositoryBuilder(){}
+	
 	Repository* build(Args* args)
 	{
 		auto dataDir = args->getString("dataDir");

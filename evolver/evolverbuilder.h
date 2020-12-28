@@ -1,8 +1,6 @@
 #ifndef __EVOLVERBUILDER_H_
 #define __EVOLVERBUILDER_H_
 
-/* This needs some serious love, deal with this later */
-
 #include "itensor/all.h"
 #include "infrastructure/util.h"
 #include "model/modelbuilder.h"
@@ -16,7 +14,7 @@ using namespace std;
 class EvolverBuilder
 {
 protected:
-	Args* args;
+
 	ModelBuilder* modelBuilder;
 	Model* model;
 
@@ -24,11 +22,11 @@ public:
 
 	EvolverBuilder(ModelBuilder* mb) : modelBuilder(mb){}
 	~EvolverBuilder() {}	
-	Evolver* build(Args* a)
+	Evolver* build(Args* args)
 	{
-		cout << "building evolver" << endl;
-		args = a;
 		auto evolver = args->getString("Evolver");
+		cout << "building evolver: " << evolver << endl;
+		
 		if(evolver == "Trotter")
 		{
 			return new Trotter(args, modelBuilder->build(args));
@@ -39,8 +37,7 @@ public:
 			return new ExpMPO(args, modelBuilder->build(args));
 		}
 		else
-		{
-			/* Implement other operators here, may want to use else if. */
+		{/* Implement other operators here, may want to use else if. */
 			return nullptr;
 		}
 

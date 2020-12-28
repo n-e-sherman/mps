@@ -1,17 +1,14 @@
 #ifndef __MEASUREMENTBUILDER_H_
 #define __MEASUREMENTBUILDER_H_
 
-/* This needs some serious love, deal with this later */
-
 #include "itensor/all.h"
 #include "infrastructure/util.h"
-#include "repository/repositorybuilder.h"
-#include "model/modelbuilder.h"
-#include "state/statebuilder.h"
-#include "operator/operatorbuilder.h"
 #include "measurement/measurement.h"
-#include "measurement/connectedx.h"
-#include "measurement/connectedp.h"
+#include "measurement/realspace.h"
+#include "measurement/kspace.h"
+#include "sites/sitesbuilder.h"
+#include "lattice/latticebuilder.h"
+#include "operator/operatorbuilder.h"
 
 using namespace itensor;
 using namespace std;
@@ -19,42 +16,23 @@ using namespace std;
 class MeasurementBuilder
 {
 protected:
-	Args* args;
-	ModelBuilder* modelBuilder;
+
+	SitesBuilder* sitesBuilder;
 	LatticeBuilder* latticeBuilder;
 	OperatorBuilder* operatorBuilder;
-	RepositoryBuilder* repoBuilder;
-	
-	Repository* repo;
 
 public:
 
-	MeasurementBuilder(ModelBuilder* mb, LatticeBuilder* lb, OperatorBuilder* ob, RepositoryBuilder* rb) : 
-					   modelBuilder(mb), latticeBuilder(lb), operatorBuilder(ob), repoBuilder(rb) {}
-	Measurement* build(Args* a)
+	MeasurementBuilder(SitesBuilder* sb, LatticeBuilder* lb, OperatorBuilder* ob) : 
+					   sitesBuilder(sb), latticeBuilder(lb), operatorBuilder(ob) {}
+	Measurement* build(Args* args)
 	{
-		cout << "building operator" << endl;
-		args = a;
-		repo = repoBuilder->build(args);
-		auto m = args->getString("Measurement");
-		if(m == "Connected")
-		{
-			auto momentum = args->getBool("momentum");
-			if (momentum)
-			{
-				return new Connectedp(args,modelBuilder->build(args),operatorBuilder->build(args));
-			}
-			else
-			{
-				return new Connectedx(args,modelBuilder->build(args),latticeBuilder->build(args));
-			}
-		}
-		else
-		{
-			/* Implement other operators here, may want to use else if. */
-			return nullptr;
-		}
-
+		auto momentum = args->getBool("momentum");
+		string _cout = ((momentum) ? "KSpace" : "RealSpace");
+		cout << "building measurement: " << _cout << endl;
+		if (momentum)
+			return new KSpace(args, operatorBuilder->build(args));
+		return new RealSpace(args, latticeBuilder->build(args), sitesBuilder->build(args));
 	}
 };
 #endif

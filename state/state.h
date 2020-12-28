@@ -1,13 +1,8 @@
 #ifndef __STATE_H_
 #define __STATE_H_
 
-#include "itensor/all.h"
-#include "infrastructure/util.h"
-#include "repository/repositorybuilder.h"
-#include "repository/repository.h"
-#include "model/modelbuilder.h"
-#include "model/sitebuilder.h"
-#include "state/statebuilder.h"
+#include "sites/sites.h"
+#include <string>
 
 using namespace itensor;
 using namespace std;
@@ -15,37 +10,57 @@ using namespace std;
 class State
 {
 protected:
-	/* Inputs */
-	Args* args;
-	SiteSet sites;
-	Model* model;
 
-	/* Outputs */
-	Real E0;
 	MPS state;
+	Real E0 = 0;
 
 public:
-	State(){}
-	State(Args* a, Model* m) : args(a), model(m), E0(0) {}
+
+	State() {}
+	State(MPS m) : state(m) {}
+	State(MPS m, Real r) : state(m), E0(r) {}
 	MPS& getState() { return state; }
+	void setState(MPS psi) { state = MPS(psi); }
 	Real getE0() {return E0; }
-	static string getHash(Args* args)
-	{	
-		Real s = 0;
-		if(args->getBool("momentum")) s = args->getReal("qFactor");
-		string sThermal = "";
-		if(args->getBool("thermal")) sThermal = to_string(args->getReal("beta"));
-		return Model::getHash(args) + "_" + to_string(args->getInt("MaxDim")) + "_" + to_string(s) + "_" + to_string(args->getBool("thermal"))  + "_" + sThermal; // Maybe add some specifications for how you get GS?
-	}
-	virtual void load(ifstream & f)
+	State(State const& other){ E0 = other.E0; state = other.state; }
+	State dag() { auto temp = MPS(state); return State(temp.dag()); }
+
+	/* ITensor wrapping. */
+	void scale(Real s) { state *= s; }
+	void scale(Cplx s) { state *= s; }
+	void position(int i) { state.position(i); }
+	void dagIP() { state.dag(); }  // Does this work?
+	Real normalize() {auto nrm = state.normalize(); return nrm; }
+	void orthogonalize() { state.orthogonalize(); }
+	Real norm() {return itensor::norm(state); }
+	int length() { return state.length(); }
+	Real averageLinkDim() { return itensor::averageLinkDim(state); }
+	int maxLinkDim() { return itensor::maxLinkDim(state); }
+	void replaceSiteInds(IndexSet const& _sites) { state.replaceSiteInds(_sites); }
+	void replaceLinkInds(IndexSet const& _links) { state.replaceLinkInds(_links); }
+	IndexSet siteInds() { return itensor::siteInds(state); }
+	IndexSet linkInds() { return itensor::linkInds(state); }
+	ITensor const& operator()(int i) const { return state(i); }
+	
+	State sub(State& other,Args _args)
 	{
-		read(f,E0);
-		read(f,state);
+		auto right = other.getState();
+		auto res = sum(state,-1*right,_args);
+		return State(res);
 	}
-	virtual void save(ofstream & f)
-	{
-		write(f,E0);
-		write(f,state);
-	}
+
+	void read(istream& is)
+    {
+        itensor::read(is,E0);
+        itensor::read(is,state);
+    }
+    void write(ostream& os) const
+    {
+        itensor::write(os,E0);
+        itensor::write(os,state);
+    }
 };
+
+
+
 #endif

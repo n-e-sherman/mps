@@ -3,78 +3,54 @@
 
 #include "itensor/all.h"
 #include "infrastructure/util.h"
-#include "lattice/latticebuilder.h"
 #include "model/model.h"
 #include "model/heisenberg.h"
 #include "model/heisenbergfield.h"
 #include "model/xx.h"
 #include "model/xxz.h"
 #include "model/dimer.h"
-#include "model/sitebuilder.h"
-#include "repository/repositorybuilder.h"
+#include "sites/sitesbuilder.h"
+#include "lattice/latticebuilder.h"
 
 class ModelBuilder
 {
 
 protected:
-	Args* args;
 	LatticeBuilder* latticeBuilder;
-	SiteBuilder* siteBuilder;
-	RepositoryBuilder* repoBuilder;
-	Repository* repo;
+	SitesBuilder* sitesBuilder;
+
 public:
 	ModelBuilder() {}
-	ModelBuilder(LatticeBuilder* lb, SiteBuilder* sb, RepositoryBuilder* rb) { latticeBuilder = lb; siteBuilder = sb; repoBuilder = rb;}
+	ModelBuilder(LatticeBuilder* lb, SitesBuilder* sb) : latticeBuilder(lb), sitesBuilder(sb) {}
 	~ModelBuilder(){}
-	Model* build(Args* a)
+	Model* build(Args* args)
 	{
-		cout << "building model " << endl;
-		args = a;
-		repo = repoBuilder->build(args);
-		auto modelName = args->getString("Model");
-		if(modelName == "Heisenberg") 
+	
+		auto model = args->getString("Model");	
+		cout << "building model: " << model << endl;
+		if(model == "Heisenberg") 
 		{
-			auto model = repo->load(Model::getHash(args), new Heisenberg(args,latticeBuilder->build(args)));
-			if(model != nullptr) return model;
-			model = new Heisenberg(args, latticeBuilder->build(args), siteBuilder->build(args));
-			repo->save(Model::getHash(args), model);
-			return model;
+ 			return new Heisenberg(args, latticeBuilder->build(args), sitesBuilder->build(args));
 		}
 		else 
-		if(modelName == "HeisenbergField") 
+		if(model == "HeisenbergField") 
 		{
-			auto model = repo->load(Model::getHash(args), new HeisenbergField(args,latticeBuilder->build(args)));
-			if(model != nullptr) return model;
-			model = new HeisenbergField(args, latticeBuilder->build(args), siteBuilder->build(args));
-			repo->save(Model::getHash(args), model);
-			return model;
+			return new HeisenbergField(args, latticeBuilder->build(args), sitesBuilder->build(args));
 		}
 		else 
-		if(modelName == "XX") 
+		if(model == "XX") 
 		{
-			auto model = repo->load(Model::getHash(args), new XX(args,latticeBuilder->build(args)));
-			if(model != nullptr) return model;
-			model = new XX(args, latticeBuilder->build(args), siteBuilder->build(args));
-			repo->save(Model::getHash(args), model);
-			return model;
+			return new XX(args, latticeBuilder->build(args), sitesBuilder->build(args));
 		}
 		else 
-		if(modelName == "XXZ") 
+		if(model == "XXZ") 
 		{
-			auto model = repo->load(Model::getHash(args), new XXZ(args,latticeBuilder->build(args)));
-			if(model != nullptr) return model;
-			model = new XXZ(args, latticeBuilder->build(args), siteBuilder->build(args));
-			repo->save(Model::getHash(args), model);
-			return model;
+			return new XXZ(args, latticeBuilder->build(args), sitesBuilder->build(args));
 		}
 		else 
-		if(modelName == "Dimer") 
+		if(model == "Dimer") 
 		{
-			auto model = repo->load(Model::getHash(args), new Dimer(args,latticeBuilder->build(args)));
-			if(model != nullptr) return model;
-			model = new Dimer(args, latticeBuilder->build(args), siteBuilder->build(args));
-			repo->save(Model::getHash(args), model);
-			return model;
+			return new Dimer(args, latticeBuilder->build(args), sitesBuilder->build(args));
 		}
 		else
 		{

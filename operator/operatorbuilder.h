@@ -1,14 +1,15 @@
 #ifndef __OPERATORBUILDER_H_
 #define __OPERATORBUILDER_H_
 
-/* This needs some serious love, deal with this later */
-
 #include "itensor/all.h"
 #include "infrastructure/util.h"
-#include "repository/repositorybuilder.h"
-#include "model/modelbuilder.h"
 #include "operator/operator.h"
 #include "operator/momentum.h"
+#include "operator/position.h"
+#include "sites/sitesbuilder.h"
+#include "state/state.h"
+#include "lattice/latticebuilder.h"
+
 
 using namespace itensor;
 using namespace std;
@@ -16,39 +17,29 @@ using namespace std;
 class OperatorBuilder
 {
 protected:
-	Args* args;
-	ModelBuilder* modelBuilder;
-	Model* model;
-	SiteSet sites;
+
+	SitesBuilder* sitesBuilder;
 	LatticeBuilder* latticeBuilder;
-	Lattice* lattice;
-	RepositoryBuilder* repoBuilder;
-	Repository* repo;
 
 public:
 
-	OperatorBuilder() {}
-	OperatorBuilder(ModelBuilder* mb, LatticeBuilder* lb, RepositoryBuilder* rb) {modelBuilder = mb; repoBuilder = rb; latticeBuilder = lb; }
-	~OperatorBuilder() {}	
-	Operator* build(Args* a)
+	OperatorBuilder(SitesBuilder* sb, LatticeBuilder* lb) :  sitesBuilder(sb), latticeBuilder(lb) {}	
+	Operator* build(Args* args)
 	{
-		cout << "building operator" << endl;
-		args = a;
-		repo = repoBuilder->build(args);
-		lattice = latticeBuilder->build(args);
-		model = modelBuilder->build(args);
-		sites = model->getSites();
-		auto op = args->getString("Operator");
-		if(op == "Momentum")
+		
+		auto momentum = args->getBool("momentum");
+		string _cout = ((momentum) ? "Momentum" : "Position");
+		cout << "building operator: " << _cout << endl;
+		if(momentum)
 		{
-			return new Momentum(args,lattice,sites);
+			return new Momentum(args,sitesBuilder->build(args),latticeBuilder->build(args));
 		}
 		else
 		{
-			/* Implement other operators here, may want to use else if. */
-			return nullptr;
+			return new Position(args,sitesBuilder->build(args));
 		}
-
+		
+		return nullptr;
 	}
 };
 #endif

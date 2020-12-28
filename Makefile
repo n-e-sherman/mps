@@ -15,16 +15,17 @@ APP= main
 #    will auto-detect if these headers have changed and recompile your app.
 INF_HEADERS= infrastructure/cache.h infrastructure/factory.h infrastructure/util.h
 LAT_HEADERS= lattice/chain.h lattice/lattice.h lattice/latticebuilder.h lattice/thermalchain.h 
-MOD_HEADERS= model/heisenberg.h model/model.h model/modelbuilder.h model/sitebuilder.h model/xx.h model/xxz.h model/dimer.h model/heisenbergfield.h
+MOD_HEADERS= model/heisenberg.h model/model.h model/modelbuilder.h model/xx.h model/xxz.h model/dimer.h model/heisenbergfield.h
 REP_HEADERS= repository/repository.h repository/repositorybuilder.h
-SRV_HEADERS= services/service.h
-STT_HEADERS= state/groundstate.h state/spectralstate.h state/state.h state/statebuilder.h state/thermalstate.h
-CHB_HEADERS= chebyshev/chebyshev.h chebyshev/chebyshevx.h chebyshev/chebyshevp.h chebyshev/chebyshevbuilder.h chebyshev/chebyshevservice.h
-COR_HEADERS= correlation/correlation.h correlation/correlationx.h correlation/correlationp.h correlation/correlationbuilder.h correlation/correlationservice.h
+SRV_HEADERS= service/service.h
+STT_HEADERS= state/groundstate.h state/state.h state/statebuilder.h state/thermalstate.h
+SIT_HEADERS= sites/sites.h sites/sitesbuilder.h
+CHB_HEADERS= chebyshev/chebyshev.h chebyshev/chebyshevbuilder.h chebyshev/chebyshevservice.h
+COR_HEADERS= correlation/correlation.h correlation/correlationbuilder.h correlation/correlationservice.h
 SWP_HEADERS= sweeper/sweeper.h sweeper/sweeperbuilder.h sweeper/krylov.h sweeper/projection.h sweeper/exact.h sweeper/identity.h
-OPR_HEADERS= operator/operator.h operator/momentum.h operator/operatorbuilder.h
+OPR_HEADERS= operator/operator.h operator/momentum.h operator/position.h operator/operatorbuilder.h
 EVR_HEADERS= evolver/evolver.h evolver/evolverbuilder.h evolver/expmpo.h evolver/trotter.h
-MSR_HEADERS= measurement/measurement.h measurement/connectedp.h measurement/connectedx.h measurement/measurementbuilder.h measurement/measurementservice.h
+MSR_HEADERS= measurement/measurement.h measurement/kspace.h measurement/realspace.h measurement/measurementbuilder.h
 #LAN_HEADERS= lanczos/lanczos.h lanczos/lanczosbuilder.h lanczos/reorthogonalize.h
 #chain.h factory.h groundstatecalculator.h heisenberg.h lattice.h latticebuilder.h model.h modelbuilder.h service.h sitebuilder.h thermalchain.h validator.h cache.h repository.h repositorybuilder.h
 # 5. For any additional .cc (source) files making up your project,
@@ -47,10 +48,10 @@ OBJECTS=$(patsubst %.cc,%.o, $(CCFILES))
 GOBJECTS=$(patsubst %,.debug_objs/%, $(OBJECTS))
 
 #Rules ------------------
-%.o: %.cc $(INF_HEADERS) $(KRY_HEADERS) $(LAT_HEADERS) $(MOD_HEADERS) $(REP_HEADERS) $(SRV_HEADERS) $(STT_HEADERS) $(CHB_HEADERS) $(COR_HEADERS) $(TENSOR_HEADERS) $(SWP_HEADERS) $(OPR_HEADERS) $(EVR_HEADERS) $(MSR_HEADERS)
+%.o: %.cc $(INF_HEADERS) $(LAT_HEADERS) $(MOD_HEADERS) $(REP_HEADERS) $(SRV_HEADERS) $(STT_HEADERS) $(SIT_HEADERS) $(CHB_HEADERS) $(COR_HEADERS) $(SWP_HEADERS) $(OPR_HEADERS) $(EVR_HEADERS) $(MSR_HEADERS) $(TENSOR_HEADERS)
 	$(CCCOM) -c $(CCFLAGS) -o $@ $<
 
-.debug_objs/%.o: %.cc $(INF_HEADERS) $(KRY_HEADERS) $(LAT_HEADERS) $(MOD_HEADERS) $(REP_HEADERS) $(SRV_HEADERS) $(STT_HEADERS) $(CHB_HEADERS) $(COR_HEADERS) $(TENSOR_HEADERS) $(SWP_HEADERS) $(OPR_HEADERS) $(EVR_HEADERS) $(MSR_HEADERS)
+.debug_objs/%.o: %.cc $(INF_HEADERS) $(LAT_HEADERS) $(MOD_HEADERS) $(REP_HEADERS) $(SRV_HEADERS) $(STT_HEADERS) $(SIT_HEADERS) $(CHB_HEADERS) $(COR_HEADERS) $(SWP_HEADERS) $(OPR_HEADERS) $(EVR_HEADERS) $(MSR_HEADERS) $(TENSOR_HEADERS)
 	$(CCCOM) -c $(CCGFLAGS) -o $@ $<
 
 #Targets -----------------

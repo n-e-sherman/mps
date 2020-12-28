@@ -21,7 +21,6 @@ public:
 	~SweeperBuilder(){}
 	Sweeper* build(Args* args)
 	{
-
 		auto sweeperType = args->getString("sweeperType");
 		if (sweeperType == "identity")
 		{
@@ -42,7 +41,6 @@ public:
 			/* Add other sweepers if you implement. */
 			return nullptr;
 		}
-
 	}
 };
 #endif

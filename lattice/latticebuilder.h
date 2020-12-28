@@ -7,35 +7,26 @@
 #include "lattice/chain.h"
 #include "lattice/lattice.h"
 
-
 class LatticeBuilder
 {
 public:
-	LatticeBuilder(){}
-	~LatticeBuilder(){}
+
 	Lattice* build(Args* args)
 	{
-		cout << "building lattice" << endl;
-		/* TODO: Maybe implement repo, kind of overkill though. */
-		auto N = args->getInt("N");
 		auto thermal = args->getBool("thermal");
-		auto latticeName = args->getString("Lattice");
-		if(latticeName == "Chain")
+		auto lattice = args->getString("Lattice");
+		cout << "building lattice: " << lattice << endl;
+		
+		if(lattice == "Chain")
 		{
 			if(thermal)
-			{
-				return new ThermalChain(N);
-			}
-			else
-			{
-				return new Chain(N);
-			}
+				return new ThermalChain(args);
+			return new Chain(args);
 		}
 		else
 		{
-			cout << "This should never be called Lattice..." << endl;
-			return nullptr;
 			/* Implement other lattices here, may want to use else if. */
+			return nullptr;
 		}
 	}
 };

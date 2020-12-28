@@ -1,142 +1,131 @@
 #ifndef __CHEBYSHEV_H_
 #define __CHEBYSHEV_H_
-#include <vector>
-#include <string>
-#include "itensor/all.h"
-#include "chebyshev/chebyshevbuilder.h"
-#include "sweeper/sweeper.h"
-#include "itensor/util/print_macro.h"
 
+#include "service/service.h"
 
 using namespace std;
 using namespace itensor;
 
-class Chebyshev
+class Chebyshev : public Service
 {
 protected:
-	Args* args;
+
+	Measurement* measurement;
 	Model* model;
-	State* state;
-	Sweeper* sweeper;
-	MPO H;
-	bool thermal;
-	int nChebyshev;
-	Real W;
-	Real Wp;
+	Operator* op;
 
-	/* Helpers */
-	MPS psi;
-	MPS t0;
-	MPS t1;
-	MPS t2;
-	IndexSet is;
+	State state;
+	State t0;
+	State t1;
+	State t2;
 	int iteration;
-	bool sweep = false;
-
-	/* Outputs */
-	vector<string> labels;
-	vector<vector<StringReal>> results;	
-	vector<vector<Real>> details;
-	vector<string> detail_labels;
-	vector<Real> errorMPO;
+	vector<vector<StringReal>> res;
 
 public:
 
-	Chebyshev(Args* a) {args = a;}
-	Chebyshev(Args* a, Model* m, Sweeper* swp){args = a; model = m; sweeper = swp; }
-	Chebyshev(Args* a, Model* m, State *s, Sweeper* swp)
+	Chebyshev(Args* a, Measurement* ms, Model* m) : Service(a), measurement(ms), model(m) {}
+	Chebyshev(Args* a, Measurement* ms, Model* m, State* s, Operator* o) : Service(a), measurement(ms), model(m), op(o)
 	{ 
-		args = a;
-		model = m;
-		state = s;
-		sweeper = swp;
-		if(args->getBool("details")) 
-		{
-			details.push_back(sweeper->get_details()); 
-			details.push_back(sweeper->get_details());
-			detail_labels = sweeper->get_labels(); 
-		}
-		thermal = args->getBool("thermal");
-		W = args->getReal("W");
-		Wp = args->getReal("Wp");
-		if(thermal) 
-		{
-			model->setSkip(true);
-			H = model->getL(true);
-			H *= (2.0*Wp/W);
-		}
-		else 
-		{
-			H = model->getH();
-			// H *= (2.0*Wp/W);  // Only works for thermal, need different scaling for ground 
-			throw runtime_error("Have not implemented chebyshev for ground state calculation.");
-		}
+		state = *s;
+		setupModel();
+		t0 = op->multiply(state);
+		t1 = model->multiply(t0);
+		t2 = t1;
+		res.push_back(measurement->measure(state,t0));
+		res.push_back(measurement->measure(state,t1));
+		iteration = 1;
 	}
 	
-	~Chebyshev(){}
-	virtual void calculate(int iterations) = 0;
-	virtual tuple<vector<string>, vector<vector<StringReal>> > getResults() // Could be made a part of a "service" which is inherited by this and Correlation
+	virtual void calculate()
 	{
-		processResults();
-		return tuple<vector<string>, vector<vector<StringReal>> >(labels,results);
+		auto temp = model->multiply(t1);
+		temp.scale(2);
+		t2.getState() = sum(temp.getState(),-1*(t0.getState()),*args);
+		t0 = t1;
+		t1 = t2;
+		res.push_back(measurement->measure(state,t2));
+		iteration++;
 	}
+	
 	virtual int getIteration(){ return iteration; }
-	virtual void processResults() = 0; // protected?
-
-
-
 
 	static string getHash(Args* args)
-	{ 
-		string sProj = args->getString("sweeperType");
-		if(sProj == "exact") sProj = "-" + sProj + "-" + to_string(args->getReal("Ep")) + "-" + to_string(args->getInt("sweeperCount"));
-		else
-		if(sProj == "projection") sProj = "-" + sProj + "-" + to_string(args->getReal("Ep")) + "-" + to_string(args->getInt("sweeperCount")) + "-" + to_string(args->getInt("MaxIter"));
-		else
-			sProj = "";
-		return State::getHash(args) + "_Chebyshev" + "_" + to_string(args->getBool("momentum")) + "_" + to_string(args->getReal("W")) + sProj;
+	{	
+		vector<string> strings{"SiteSet","Lattice","Model"};
+		vector<string> reals{"N","MaxDim","beta","beta-tau","W","Wp"};
+		return "Chebyshev" + hash_real(reals, args) + hash_string(strings, args);
 	}
 
 	virtual void load(ifstream & f)
 	{
-		read(f,psi);
+		model->read(f);
+		read(f,state);
 		read(f,t0);
 		read(f,t1);
 		read(f,t2);
-		read(f,H);
-		read(f,W);
-		read(f,Wp);
-		read(f,thermal);
 		read(f,iteration);
-		read(f,details);
-		read(f,detail_labels);
-		psi.position(1);
-		t0.position(1);
-		t1.position(1);
-		t2.position(1);
-		H.position(1);
-		is = siteInds(t0);
-
+		read(f,res);
 	}
-	virtual void save(ofstream & f)
+
+	virtual void save(ofstream & f) const
 	{
-		write(f,psi);
+		model->write(f);
+		write(f,state);
 		write(f,t0);
 		write(f,t1);
 		write(f,t2);
-		write(f,H);
-		write(f,W);
-		write(f,Wp);
-		write(f,thermal);
 		write(f,iteration);
-		write(f,details);
-		write(f,detail_labels);
+		write(f,res);
 	}
 
+private:
+	virtual void setupModel()
+	{
+		auto skip = args->getBool("Skip");
+		auto W = args->getReal("W");
+		auto Wp = args->getReal("Wp");
+		auto scale = (2.0*Wp)/W;
+		auto shift = -W/2 - state.getE0();
+		if (args->getBool("thermal")) { model->calcL(skip, scale, 0); }
+		else { model->calcH(skip, scale, shift); }
+	}
 
+	virtual vector<string> _labels()
+	{
+		auto labels = measurement->addLabels();
+		labels.push_back("nChebyshev");
+		labels.push_back("MaxDim");
+		labels.push_back("N");
+		labels.push_back("Lattice");
+		labels.push_back("Model");
+		labels.push_back("thermal");
+		if(args->getBool("thermal")) { labels.push_back("beta"); labels.push_back("beta-tau"); }
+		labels.push_back("W");
+		labels.push_back("Wp");
+		for(auto& x : model->getParams()){ labels.push_back(x.first); }
+		return labels;
+	}
 
-
+	virtual vector<vector<StringReal>> _results()
+	{
+		auto results = vector<vector<StringReal>>();
+		for(int i : range(res.size()))
+		{
+			auto temp = measurement->addResults(res[i]);
+			temp.push_back(args->getReal("nChebyshev"));
+			temp.push_back(args->getReal("MaxDim"));
+			temp.push_back(args->getReal("N"));
+			temp.push_back(args->getString("Lattice"));
+			temp.push_back(args->getString("Model"));
+			temp.push_back(args->getBool("thermal"));
+			if(args->getBool("thermal")) { temp.push_back(args->getReal("beta")); temp.push_back(args->getReal("beta-tau")); }
+			temp.push_back(args->getReal("W"));
+			temp.push_back(args->getReal("Wp"));
+			for(auto& x : model->getParams()){ temp.push_back(x.second); }
+			results.push_back(temp);
+		}
+		return results;
+	}
 
 };
-
 #endif

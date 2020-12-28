@@ -14,17 +14,22 @@ using namespace std;
 class Repository
 {
 protected:
+
 	string cwd;
 	string dataDir;
 	string resultDir;
 	Cache* cache;
 	bool readFile = false;
 	bool writeFile = false;
+
 public:
-	Repository() {}
+
 	Repository(string d, string r, bool rf = false, bool wf = false) : dataDir(d), resultDir(r) 
-		{cache = Cache::getInstance(); readFile = rf; writeFile = wf; }
-	virtual ~Repository(){}
+	{
+		cache = Cache::getInstance(); 
+		readFile = rf; 
+		writeFile = wf; 
+	}
 
 	template<class T> 
 	T* load(const std::string& hash, T* T_in, bool loadFile = true) 
@@ -43,6 +48,7 @@ public:
 		else
 			return nullptr;
 	}
+
 	template<class T>
 	void save(const std::string& hash, T* t, bool saveFile = true) 
 	{ 
@@ -56,12 +62,13 @@ public:
 			file.close();
 		}
 	}
+
 	template<class T,class LabelT>
 	void save(const std::string &hash, const std::string& folder, const LabelT& labels, const T& data, string delimeter = ",")
 	{
 		/* This function assumes a 2D structure of iterables.
 		 * example: vector<vector<.>>. The outer iterable are
-		 * rows, and the inner iterable is a row.
+		 * which row, and the inner iterable is a row.
 		 */
 		cwd = resultDir;
 		ofstream file;
@@ -80,7 +87,6 @@ public:
 			while(it != row.end())
 			{
 				file << *it;
-				// if(!(*it == NAN)) file << *it;
 				if(++it != row.end()) file << delimeter;
 			}
 			file << "\n";

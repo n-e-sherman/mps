@@ -1,29 +1,29 @@
 #ifndef __GROUNDSTATE_H_
 #define __GROUNDSTATE_H_
 
-#include "itensor/all.h"
-#include "infrastructure/util.h"
-#include "repository/repositorybuilder.h"
-#include "repository/repository.h"
-#include "model/modelbuilder.h"
-#include "model/sitebuilder.h"
 #include "state/state.h"
-#include <string>
 
 using namespace itensor;
 using namespace std;
 
 class GroundState : public State
 {
+
+protected:
+
+	Args* args;
+	Sites* sites;
+	Model* model;
+	
 public:
 
-	GroundState() : State() {}
-	GroundState(Args* a,Model* m) : State(a,m)
+	GroundState(Args* a) : args(a) {}
+	GroundState(Args* a, Model* m) : args(a), model(m)
 	{
+		sites = model->getSites();
 		buildInitialState();
 		calcGroundState();
 	}
-	~GroundState() {}
 
 private:
 
@@ -31,7 +31,7 @@ private:
 	{
 		auto nsweeps = args->getInt("nsweeps",5);
         auto sweeps = getSweeps(); // how?
-        auto [energy,psiout] = dmrg(model->getH(),state,sweeps,"Quiet");
+        auto [energy,psiout] = dmrg(model->getO(),state,sweeps,"Quiet");
         E0=energy;
         state=psiout;
 	}
@@ -42,7 +42,7 @@ private:
 		if (init == "AF")
 		{
 			auto N = args->getInt("N");
-			auto _state = InitState(sites);
+			auto _state = InitState(sites->getSites());
 	        for(auto i : range1(N))
 	            {
 	            if(i%2 == 1) _state.set(i,"Up");
@@ -53,7 +53,7 @@ private:
     	else // (init == "F")
     	{
     		auto N = args->getInt("N");
-			auto _state = InitState(sites);
+			auto _state = InitState(sites->getSites());
 	        for(auto i : range1(N))
 	            {
 		            _state.set(i,"Up");

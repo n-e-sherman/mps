@@ -1,15 +1,17 @@
 #ifndef __STATEBUILDER_H_
 #define __STATEBUILDER_H_
 
+
 #include "itensor/all.h"
 #include "infrastructure/util.h"
-#include "repository/repositorybuilder.h"
-#include "model/modelbuilder.h"
-#include "operator/operatorbuilder.h"
-#include "state/spectralstate.h"
+#include "state/state.h"
 #include "state/groundstate.h"
 #include "state/thermalstate.h"
-#include "state/state.h"
+#include "model/modelbuilder.h"
+#include "lattice/latticebuilder.h"
+#include "evolver/evolverbuilder.h"
+
+
 
 using namespace itensor;
 using namespace std;
@@ -20,33 +22,24 @@ protected:
 
 	ModelBuilder* modelBuilder;
 	LatticeBuilder* latticeBuilder;
-	RepositoryBuilder* repoBuilder;
 	EvolverBuilder* evolverBuilder;
-	Repository* repo;
 
 public:
-	StateBuilder(ModelBuilder* mb, LatticeBuilder* lb, RepositoryBuilder* rb, EvolverBuilder* eb) : modelBuilder(mb), latticeBuilder(lb), repoBuilder(rb), evolverBuilder(eb) {}
-	~StateBuilder() {}
+
+	StateBuilder(ModelBuilder* mb, LatticeBuilder* lb, EvolverBuilder* eb) : 
+				 modelBuilder(mb), latticeBuilder(lb), evolverBuilder(eb) {}
+
 	State* build(Args* args)
 	{
-		cout << "building state" << endl;
-		repo = repoBuilder->build(args);
 		auto thermal = args->getBool("thermal");
+		cout << "building state: " << thermal << endl;
 		if(thermal)
 		{
-			auto state = repo->load(State::getHash(args), new ThermalState());
-			if(state != nullptr) return state;
-			state = new ThermalState(args, modelBuilder->build(args), evolverBuilder->build(args)); 
-			repo->save(State::getHash(args), state);
-			return state;
+			return new ThermalState(args,evolverBuilder->build(args));
 		}
 		else
 		{
-			auto state = repo->load(State::getHash(args), new GroundState());
-			if(state != nullptr) return state;
-			state = new GroundState(args, modelBuilder->build(args)); 
-			repo->save(State::getHash(args), state);
-			return state;
+			return new GroundState(args, modelBuilder->build(args)); 
 		}
 	}
 };
