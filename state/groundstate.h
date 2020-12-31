@@ -21,6 +21,7 @@ public:
 	GroundState(Args* a, Model* m) : args(a), model(m)
 	{
 		sites = model->getSites();
+		model->calcH();
 		buildInitialState();
 		calcGroundState();
 	}
@@ -31,7 +32,7 @@ private:
 	{
 		auto nsweeps = args->getInt("nsweeps",5);
         auto sweeps = getSweeps(); // how?
-        auto [energy,psiout] = dmrg(model->getO(),state,sweeps,"Quiet");
+        auto [energy,psiout] = dmrg(model->getO(),state,sweeps,"Silent");
         E0=energy;
         state=psiout;
 	}
@@ -39,27 +40,30 @@ private:
 	void buildInitialState()
 	{
 		auto init = args->getString("initial");
+		auto N = args->getInt("N");
+		auto _state = InitState(sites->getSites());
 		if (init == "AF")
 		{
-			auto N = args->getInt("N");
-			auto _state = InitState(sites->getSites());
 	        for(auto i : range1(N))
-	            {
+            {
 	            if(i%2 == 1) _state.set(i,"Up");
 	            else         _state.set(i,"Dn");
-	            }
+            }
 	        state = MPS(_state);
     	}
-    	else // (init == "F")
+    	else
+    	if (init == "UF")
     	{
-    		auto N = args->getInt("N");
-			auto _state = InitState(sites->getSites());
-	        for(auto i : range1(N))
-	            {
-		            _state.set(i,"Up");
-	            }
+	        for(auto i : range1(N)) _state.set(i,"Up");
 	        state = MPS(_state);	
     	}
+    	else
+    	if (init == "DF")
+    	{
+	        for(auto i : range1(N)) _state.set(i,"Dn");
+	        state = MPS(_state);	
+    	}
+    	else state = MPS(_state);
     	/* Include other initial states with an else if.*/
 	}
 

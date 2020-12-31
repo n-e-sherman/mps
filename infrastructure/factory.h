@@ -8,6 +8,8 @@
 #include "correlation/correlationbuilder.h"
 #include "chebyshev/chebyshevservice.h"
 #include "chebyshev/chebyshevbuilder.h"
+#include "static/staticbuilder.h"
+#include "static/magnetizationservice.h"
 
 #include "state/statebuilder.h"
 #include "evolver/evolverbuilder.h"
@@ -17,6 +19,7 @@
 #include "sites/sitesbuilder.h"
 #include "lattice/latticebuilder.h"
 #include "repository/repositorybuilder.h"
+
 
 /* Objects */
 RepositoryBuilder* repositoryFactory() { return new RepositoryBuilder(); }
@@ -34,5 +37,8 @@ ChebyshevBuilder* chebyshevBuilderFactory() { return new ChebyshevBuilder(measur
 ChebyshevService* chebyshevServiceFactory() { return new ChebyshevService(chebyshevBuilderFactory(), repositoryFactory()); }
 CorrelationBuilder* correlationBuilderFactory() { return new CorrelationBuilder(evolverFactory(), measurementFactory(), stateFactory(), operatorFactory(), repositoryFactory()); }
 CorrelationService* correlationServiceFactory() { return new CorrelationService(correlationBuilderFactory(), repositoryFactory()); }
+
+StaticBuilder* staticBuilderFactory() {return new StaticBuilder(stateFactory(), measurementFactory(), repositoryFactory()); }
+MagnetizationService* magnetizationServiceFactory() { return new MagnetizationService(staticBuilderFactory(), repositoryFactory()); }
 
 #endif

@@ -25,7 +25,8 @@ COR_HEADERS= correlation/correlation.h correlation/correlationbuilder.h correlat
 SWP_HEADERS= sweeper/sweeper.h sweeper/sweeperbuilder.h sweeper/krylov.h sweeper/projection.h sweeper/exact.h sweeper/identity.h
 OPR_HEADERS= operator/operator.h operator/momentum.h operator/position.h operator/operatorbuilder.h
 EVR_HEADERS= evolver/evolver.h evolver/evolverbuilder.h evolver/expmpo.h evolver/trotter.h
-MSR_HEADERS= measurement/measurement.h measurement/kspace.h measurement/realspace.h measurement/measurementbuilder.h
+MSR_HEADERS= measurement/measurement.h measurement/kspace.h measurement/realspace.h measurement/measurementbuilder.h measurement/local.h
+STC_HEADERS= static/magnetization.h static/static.h static/staticbuilder.h static/magnetizationservice.h
 #LAN_HEADERS= lanczos/lanczos.h lanczos/lanczosbuilder.h lanczos/reorthogonalize.h
 #chain.h factory.h groundstatecalculator.h heisenberg.h lattice.h latticebuilder.h model.h modelbuilder.h service.h sitebuilder.h thermalchain.h validator.h cache.h repository.h repositorybuilder.h
 # 5. For any additional .cc (source) files making up your project,
@@ -48,10 +49,10 @@ OBJECTS=$(patsubst %.cc,%.o, $(CCFILES))
 GOBJECTS=$(patsubst %,.debug_objs/%, $(OBJECTS))
 
 #Rules ------------------
-%.o: %.cc $(INF_HEADERS) $(LAT_HEADERS) $(MOD_HEADERS) $(REP_HEADERS) $(SRV_HEADERS) $(STT_HEADERS) $(SIT_HEADERS) $(CHB_HEADERS) $(COR_HEADERS) $(SWP_HEADERS) $(OPR_HEADERS) $(EVR_HEADERS) $(MSR_HEADERS) $(TENSOR_HEADERS)
+%.o: %.cc $(INF_HEADERS) $(LAT_HEADERS) $(MOD_HEADERS) $(REP_HEADERS) $(SRV_HEADERS) $(STT_HEADERS) $(SIT_HEADERS) $(CHB_HEADERS) $(COR_HEADERS) $(SWP_HEADERS) $(OPR_HEADERS) $(EVR_HEADERS) $(MSR_HEADERS) $(STC_HEADERS) $(TENSOR_HEADERS)
 	$(CCCOM) -c $(CCFLAGS) -o $@ $<
 
-.debug_objs/%.o: %.cc $(INF_HEADERS) $(LAT_HEADERS) $(MOD_HEADERS) $(REP_HEADERS) $(SRV_HEADERS) $(STT_HEADERS) $(SIT_HEADERS) $(CHB_HEADERS) $(COR_HEADERS) $(SWP_HEADERS) $(OPR_HEADERS) $(EVR_HEADERS) $(MSR_HEADERS) $(TENSOR_HEADERS)
+.debug_objs/%.o: %.cc $(INF_HEADERS) $(LAT_HEADERS) $(MOD_HEADERS) $(REP_HEADERS) $(SRV_HEADERS) $(STT_HEADERS) $(SIT_HEADERS) $(CHB_HEADERS) $(COR_HEADERS) $(SWP_HEADERS) $(OPR_HEADERS) $(EVR_HEADERS) $(MSR_HEADERS) $(STC_HEADERS) $(TENSOR_HEADERS)
 	$(CCCOM) -c $(CCGFLAGS) -o $@ $<
 
 #Targets -----------------

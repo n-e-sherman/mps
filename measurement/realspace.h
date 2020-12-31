@@ -33,6 +33,7 @@ public:
     	auto L = vector<ITensor>(N+1);
 		auto R = vector<ITensor>(N+1);
 
+		/* Build Environment */
 		L[1] = psi(P[1]) * psidag(P[1]);
 		L[1] = L[1] * psi(A[1]) * psidag(A[1]);
 		R[N] = psi(A[N]) * psidag(A[N]);
@@ -44,6 +45,8 @@ public:
 			R[I] = R[I+1] * psi(P[I+1]) * psidag(P[I+1]);
 			R[I] = R[I] * psi(A[I]) * psidag(A[I]);
 		}
+
+		/* Calculate O(x) */
 		auto temp = psi(P[1]) * op(sites->getSites(),s_op,P[1]);
 		temp.noPrime();
 		temp = temp * R[1];
@@ -58,6 +61,7 @@ public:
 			res.push_back(eltC(temp));
 		}
 		return res;
+		
 	}
 
 	void processSites()

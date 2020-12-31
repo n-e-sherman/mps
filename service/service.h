@@ -17,7 +17,7 @@ protected:
 public:
 
 	Service(Args* a) : args(a) {}
-
+	virtual void calculate() = 0;
 	virtual tuple<vector<string>, vector<vector<StringReal>> > getResults() // Could be made a part of a "service" which is inherited by this and Correlation
 	{	
 		auto labels = _labels();

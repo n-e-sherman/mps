@@ -19,7 +19,6 @@ public:
 		auto cache = Cache::getInstance();
 		auto sites = (Sites*)cache->load(Sites::getHash(args));
 		if (sites) return sites; // in the cache
-		
 		auto N = args->getInt("N"); if(args->getBool("thermal")) N = 2*N;
 		auto sType = args->getString("SiteSet");
 		cout << "building sites: " << sType << endl;

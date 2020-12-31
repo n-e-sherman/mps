@@ -32,13 +32,15 @@ public:
 	State* build(Args* args)
 	{
 		auto thermal = args->getBool("thermal");
-		cout << "building state: " << thermal << endl;
+		cout << "building state: ";
 		if(thermal)
 		{
+			cout << "ThermalState" << endl;
 			return new ThermalState(args,evolverBuilder->build(args));
 		}
 		else
 		{
+			cout << "GroundState" << endl;
 			return new GroundState(args, modelBuilder->build(args)); 
 		}
 	}

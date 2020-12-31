@@ -13,8 +13,11 @@ int main(int argc, char** argv)
 	Args* args = getArgs(argc,argv);
 	auto cheb = chebyshevServiceFactory();
 	auto corr = correlationServiceFactory();
-	if(args->getBool("Chebyshev"))   cheb->calculate(args);
-	if(args->getBool("Correlation")) corr->calculate(args);
+	auto mag  = magnetizationServiceFactory();
+	if(args->getBool("Chebyshev"))    cheb->calculate(args);
+	if(args->getBool("Correlation"))  corr->calculate(args);
+	if(args->getBool("Magnetization")) mag->calculate(args);
+	return 0;
 }
 
 

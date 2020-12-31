@@ -101,6 +101,7 @@ Args* getArgs(int argc, char* argv[])
     
     args->add("Chebyshev",false);
     args->add("Correlation",false);
+    args->add("Static",false);
     // args->add("Measure",false);
     // args->add("Broadening",false);
     // args->add("Moments",false);
@@ -170,6 +171,15 @@ Args* getArgs(int argc, char* argv[])
     args->add("measureAll",false);
     args->add("Skip",true);
 
+    /* Static Parameters. */
+    args->add("BMin",0);
+    args->add("BMax",1);
+    args->add("BStep",0.1);
+    args->add("betaMin",0);
+    args->add("betaMax",1);
+    args->add("betaStep",0.1);
+    args->add("Static","Magnetization");
+
     /* Sweeper parameters. */
     args->add("Sweeper",false);
     args->add("sweeperType","identity");
@@ -213,8 +223,6 @@ Args* getArgs(int argc, char* argv[])
     args->add("spectral");
     args->add("squared",false);
     args->add("writeDirectory",""); // Potentially irrelevant...
-
-
 
     string eq = "=";
     string dash = "-";

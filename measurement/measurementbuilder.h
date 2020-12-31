@@ -6,9 +6,11 @@
 #include "measurement/measurement.h"
 #include "measurement/realspace.h"
 #include "measurement/kspace.h"
+#include "measurement/local.h"
 #include "sites/sitesbuilder.h"
 #include "lattice/latticebuilder.h"
 #include "operator/operatorbuilder.h"
+
 
 using namespace itensor;
 using namespace std;
@@ -28,11 +30,20 @@ public:
 	Measurement* build(Args* args)
 	{
 		auto momentum = args->getBool("momentum");
-		string _cout = ((momentum) ? "KSpace" : "RealSpace");
-		cout << "building measurement: " << _cout << endl;
-		if (momentum)
-			return new KSpace(args, operatorBuilder->build(args));
-		return new RealSpace(args, latticeBuilder->build(args), sitesBuilder->build(args));
+		auto thermal = args->getBool("thermal");
+		cout << "building measurement: ";
+		if (thermal)
+		{
+			if (momentum) { cout << "KSpace" << endl; return new KSpace(args, operatorBuilder->build(args)); }
+			else { cout << "RealSpace" << endl; return new RealSpace(args, latticeBuilder->build(args), sitesBuilder->build(args)); }
+		}
+		else
+		{
+			cout << "Local" << endl;
+			return new Local(args, sitesBuilder->build(args));
+		}
+		
+		
 	}
 };
 #endif
