@@ -7,6 +7,7 @@
 #include "evolver/evolver.h"
 #include "evolver/expmpo.h"
 #include "evolver/trotter.h"
+#include "evolver/tdvp.h"
 
 using namespace itensor;
 using namespace std;
@@ -35,6 +36,11 @@ public:
 		if(evolver == "ExpMPO")
 		{
 			return new ExpMPO(args, modelBuilder->build(args));
+		}
+		else
+		if(evolver == "TDVP")
+		{
+			return new TDVP(args, modelBuilder->build(args));
 		}
 		else
 		{/* Implement other operators here, may want to use else if. */

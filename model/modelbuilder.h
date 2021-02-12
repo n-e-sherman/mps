@@ -6,6 +6,7 @@
 #include "model/model.h"
 #include "model/heisenberg.h"
 #include "model/heisenbergfield.h"
+#include "model/heisenberglr.h"
 #include "model/xx.h"
 #include "model/xxz.h"
 #include "model/dimer.h"
@@ -36,6 +37,11 @@ public:
 		if(model == "HeisenbergField") 
 		{
 			return new HeisenbergField(args, latticeBuilder->build(args), sitesBuilder->build(args));
+		}
+		else 
+		if(model == "HeisenbergLR") 
+		{
+			return new HeisenbergLR(args, latticeBuilder->build(args), sitesBuilder->build(args));
 		}
 		else 
 		if(model == "XX") 

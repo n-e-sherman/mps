@@ -3,6 +3,8 @@
 
 #include "itensor/all.h"
 
+#include "kzm/kzmbuilder.h"
+#include "kzm/kzmservice.h"
 #include "measurement/measurementbuilder.h"
 #include "correlation/correlationservice.h"
 #include "correlation/correlationbuilder.h"
@@ -37,6 +39,9 @@ ChebyshevBuilder* chebyshevBuilderFactory() { return new ChebyshevBuilder(measur
 ChebyshevService* chebyshevServiceFactory() { return new ChebyshevService(chebyshevBuilderFactory(), repositoryFactory()); }
 CorrelationBuilder* correlationBuilderFactory() { return new CorrelationBuilder(evolverFactory(), measurementFactory(), stateFactory(), operatorFactory(), repositoryFactory()); }
 CorrelationService* correlationServiceFactory() { return new CorrelationService(correlationBuilderFactory(), repositoryFactory()); }
+
+KZMBuilder* kzmBuilderFactory() { return new KZMBuilder(repositoryFactory()); }
+KZMService* kzmServiceFactory() { return new KZMService(kzmBuilderFactory(), repositoryFactory()); }
 
 StaticBuilder* staticBuilderFactory() {return new StaticBuilder(stateFactory(), measurementFactory(), repositoryFactory()); }
 MagnetizationService* magnetizationServiceFactory() { return new MagnetizationService(staticBuilderFactory(), repositoryFactory()); }

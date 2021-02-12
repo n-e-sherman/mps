@@ -5,7 +5,9 @@
 #include "infrastructure/util.h"
 #include "lattice/thermalchain.h"
 #include "lattice/chain.h"
+#include "lattice/triangular.h"
 #include "lattice/lattice.h"
+
 
 class LatticeBuilder
 {
@@ -22,6 +24,10 @@ public:
 			if(thermal)
 				return new ThermalChain(args);
 			return new Chain(args);
+		}
+		else if(lattice == "Triangular")
+		{
+			return new Triangular(args);
 		}
 		else
 		{

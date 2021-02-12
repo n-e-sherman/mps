@@ -97,8 +97,7 @@ Args* getArgs(int argc, char* argv[])
      ******** Default values ********
      ********************************/
 
-    /* Calculation parameters. */
-    
+/* Calculation parameters. */
     args->add("Chebyshev",false);
     args->add("Correlation",false);
     args->add("Static",false);
@@ -107,15 +106,17 @@ Args* getArgs(int argc, char* argv[])
     // args->add("Moments",false);
     // args->add("Weights",false);
 
-    /* IO */
+/* IO */
     args->add("cwd","./");
     args->add("dataDir","./");
     args->add("resDir","./");
 
 
-    /* Global parameters */
+/* Global parameters */
     args->add("thermal",true);
     args->add("N",100);
+    args->add("Nx",20);
+    args->add("Ny",5);
     args->add("SiteSet","SpinHalf");
     args->add("ConserveSz",true);
     args->add("ConserveQNs",true);
@@ -126,38 +127,51 @@ Args* getArgs(int argc, char* argv[])
     args->add("qFactor",1.0);
 
 
-    /* State parameters. */
+/* State parameters. */
     args->add("thermalMaxDim",2000);
     args->add("realStep",true);
-    args->add("beta",0);
-    args->add("beta-tau",0.1);
     args->add("thermalEps",1E-9);
     args->add("coolingType","Trotter");
 
-    /* Operator parameters. */
+/* Operator parameters. */
     args->add("Operator","Momentum");
     args->add("localOperator","Sz");
 
-    /* Measurement parameters. */
+/* Measurement parameters. */
     args->add("Measurement","Connected");
 
-    /* Model parameters. */
+/* Model parameters. */
     args->add("Lattice","Chain");
     args->add("Model","Heisenberg");
     args->add("Delta",1.0);
+    args->add("J",1.0);
     args->add("Je",1.0);
     args->add("Jo",1.0);
     args->add("Jz",1.0);
     args->add("Jxy",1.0);
     args->add("B",1.0);
+    args->add("J2",0.0);
+    args->add("J3",0.0);
+    args->add("YPeriodic",true);
 
-    /* Evolver parameters. */
+/* Evolver parameters. */
+    /* Trotter */
     args->add("Evolver","Trotter");
     args->add("time-tau",0.1);
     args->add("beta",0);
+    args->add("beta-tau",0.1);
     args->add("time",0);
+    /* TDVP */
+    args->add("KrylovOrd",3);
+    args->add("DoNormalize",true); // May interfere with other modules?
+    args->add("epsK",1E-12);
+    args->add("Cutoff",1E-8); // May interfere with other modules?
+    args->add("Quiet",true);
+    args->add("NumCenter",1); // Also ITensor parameter.
+    args->add("beta-sweeps",100);
+    args->add("time-sweeps",100);
 
-    /* Chebyshev parameters. */
+/* Chebyshev parameters. */
     args->add("W",8);
     args->add("Wp",0.9875);
     args->add("nChebyshev",100);
@@ -171,7 +185,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("measureAll",false);
     args->add("Skip",true);
 
-    /* Static Parameters. */
+/* Static Parameters. */
     args->add("BMin",0);
     args->add("BMax",1);
     args->add("BStep",0.1);
@@ -180,20 +194,26 @@ Args* getArgs(int argc, char* argv[])
     args->add("betaStep",0.1);
     args->add("Static","Magnetization");
 
-    /* Sweeper parameters. */
+/* KZM Parameters. */
+    args->add("g0",5.0);
+    args->add("v",1.0);
+    args->add("saveKZM",true);
+    args->add("loadKZM",true);
+
+/* Sweeper parameters. */
     args->add("Sweeper",false);
     args->add("sweeperType","identity");
     args->add("sweeperCount",10);
     args->add("phiThreshold",1E-12);
     args->add("MaxIter",30);
     args->add("Ep",1.0);
-    args->add("NumCenter",2); // Also ITensor parameter.
+    args->add("NumCenter",1); // Also ITensor parameter.
     args->add("NormCutoff",1e-10); // Also ITensor parameter.
     args->add("difThreshold",1e-8);
     args->add("details",true);
     args->add("errorMPOProd",false);
 
-    /* ITensor parameters. */
+/* ITensor parameters. */
     args->add("nSweeps",5);
     args->add("sweeps_maxdim","80,100,150,150,200");
     args->add("sweeps_mindim","20,20,10,10,10");
@@ -207,11 +227,11 @@ Args* getArgs(int argc, char* argv[])
     args->add("numCenter",1); // Also Sweeper parameter.
     args->add("ConserveQNs",true);
     args->add("MaxDim",500);
-    args->add("MinDim",50);
+    args->add("MinDim",0);
     args->add("Method","DensityMatrix");
     args->add("Nsweep",3);
     
-    /* Artifacts */
+/* Artifacts */
     args->add("Nmoments",0);
     args->add("wi",0);
     args->add("wf",4);
@@ -326,7 +346,39 @@ Args* getArgs(int argc, char* argv[])
     auto cache = Cache::getInstance();
     cache->save("args",args);
     return args;
-}
+    }
+    
+    void print_matrix(vector<vector<int>> adjmat)
+    {
+        for(auto i : range(adjmat.size()))
+        {
+            for(auto j : range(adjmat[i].size())) {cout << adjmat[i][j] << " ";}
+            cout << endl;
+        }
+    }
+
+    void print(vector<int> v, bool end = true)
+    {
+        cout << "[";
+        for(auto x : v) cout << x << ",";
+        cout << "]";
+        if (end)
+            cout << endl;
+    }
+
+    void print(vector<vector<int>> v)
+    {
+        cout << "[";
+        for(auto x : v) print(x);
+        cout << "]" << endl;
+    }
+
+    void print(set<int> v)
+    {
+        cout << "{";
+        for(auto x : v) cout << x << ",";
+        cout << "}" << endl;
+    }
 
     string _hash_string(string name, Args* args)
     {

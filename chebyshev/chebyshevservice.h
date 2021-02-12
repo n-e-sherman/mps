@@ -22,10 +22,9 @@ private:
 	Repository* repo;
 
 public:
-	ChebyshevService(){}
-	ChebyshevService(ChebyshevBuilder* cb, RepositoryBuilder* rb) {	chebyshevBuilder = cb; repoBuilder = rb; }
-	~ChebyshevService(){}
 
+	ChebyshevService(ChebyshevBuilder* cb, RepositoryBuilder* rb) : chebyshevBuilder(cb), repoBuilder(rb) {}
+	
 	void calculate(Args* args)
 	{
 		repo = repoBuilder->build(args);

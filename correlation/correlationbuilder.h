@@ -28,7 +28,6 @@ public:
 	
 	CorrelationBuilder(EvolverBuilder* eb, MeasurementBuilder* msb, StateBuilder* sb, OperatorBuilder* ob, RepositoryBuilder* rb) : 
 					   evolverBuilder(eb), measurementBuilder(msb), stateBuilder(sb), operatorBuilder(ob), repoBuilder(rb) {}
-	~CorrelationBuilder(){}
 	Correlation* build(Args* args)
 	{
 		cout << "building correlation" << endl;
