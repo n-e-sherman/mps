@@ -97,10 +97,11 @@ Args* getArgs(int argc, char* argv[])
      ******** Default values ********
      ********************************/
 
-/* Calculation parameters. */
+/* Calculation Type. */
     args->add("Chebyshev",false);
     args->add("Correlation",false);
     args->add("Static",false);
+    args->add("KZM",false);
     // args->add("Measure",false);
     // args->add("Broadening",false);
     // args->add("Moments",false);
