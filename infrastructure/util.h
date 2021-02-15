@@ -474,6 +474,17 @@ struct StringReal
 
     }
 
+    void print()
+    {
+        if(t == tReal)    cout << r << endl;
+        else
+        if(t == tCplx)    cout << c << endl;
+        else
+        if (t == tString) cout << s << endl;
+        else
+                          cout << NAN << endl;
+    }
+
     template<class T>
     StringReal operator=(const T& t) {return StringReal(t);}
 

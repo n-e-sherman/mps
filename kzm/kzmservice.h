@@ -34,7 +34,7 @@ public:
 			kzm->calculate();
 			repo->save(KZM::getHash(args),kzm,save);
 			auto [labels,results] = kzm->getResults();
-			repo->save(KZM::getHash(args),"kzm/",labels,results);
+			repo->save(KZM::getHash(args),"kzm",labels,results);
 		}
 		auto [labels,results] = kzm->getResults();
 		repo->save(KZM::getHash(args),"kzm",labels,results);

@@ -271,6 +271,7 @@ private:
 			temp.push_back(args->getInt("beta-tau"));
 			temp.push_back(args->getInt("beta-sweeps"));
 			temp.push_back(args->getInt("time-tau"));
+			results.push_back(temp);
 		} 
 		return results;
 	}
