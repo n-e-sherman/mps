@@ -85,9 +85,18 @@ private:
 		auto W = args->getReal("W");
 		auto Wp = args->getReal("Wp");
 		auto scale = (2.0*Wp)/W;
-		auto shift = -W/2 - state.getE0();
+		auto shift = -(scale * state.getE0()) - Wp;
 		if (args->getBool("thermal")) { model->calcL(skip, scale, 0); }
 		else { model->calcH(skip, scale, shift); }
+		auto MPOMaxDim = args->getInt("MPOMaxDim");
+		if(maxLinkDim(model->getO()) > MPOMaxDim)
+		{
+			cout << "compressing MPO from chi = " << maxLinkDim(model->getO()) << "too chi = " << endl;
+			auto MaxDim = args->getInt("MaxDim");
+			args->add("MaxDim",MPOMaxDim);
+			model->orthogonalize();
+			cout << maxLinkDim(model->getO()) << endl;
+		}
 	}
 
 	virtual vector<string> _labels()

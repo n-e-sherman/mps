@@ -51,6 +51,23 @@ private:
 	        state.ref(n) *= D;
         }
         
+        // Define bond indices.
+    	auto links = std::vector<Index>(N+1);
+		for(auto n : range(N+1))
+	    {
+		    auto tags = format("Link,l=%d",n);
+		    if(hasQNs(state))
+		    	links.at(n) = Index(QN(),1,tags);
+		    else
+		    	links.at(n) = Index(1,tags);
+	    }
+		for(int n = 2; n <= N-1; n += 2)
+	    {
+		    auto l = links.at(n);
+		    state.ref(n) = state(n)*setElt(l(1));
+		    state.ref(n+1) = state(n+1)*setElt(itensor::dag(l)(1));
+	    }
+        
 	}
 
 	void coolState()

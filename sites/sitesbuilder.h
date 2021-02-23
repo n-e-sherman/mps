@@ -24,17 +24,17 @@ public:
 		cout << "building sites: " << sType << endl;
 		if (sType == "SpinHalf")
 		{
-			sites = new Sites(args,SpinHalf(N));			
+			sites = new Sites(args,SpinHalf(N,*args));			
 		}
 		else
 		if (sType == "SpinOne")
 		{
-			sites = new Sites(args,SpinOne(N));	
+			sites = new Sites(args,SpinOne(N,*args));	
 		}
 		else
 		if (sType == "SpinTwo")
 		{
-			sites = new Sites(args,SpinTwo(N));
+			sites = new Sites(args,SpinTwo(N,*args));
 		}
 		else
 		{

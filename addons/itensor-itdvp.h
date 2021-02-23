@@ -105,17 +105,17 @@ public:
 		C_ = C_/norm(C_); 
 	}
 
-    void iTDVP(Cplx dt) 
+    void iTDVP(Cplx dt, Args const & args) 
 	{
 		//"Integrating the TDVP equations" on page 35 of SciPost Phys. Lect. Notes 7 (2019)
 		//input: il, ir, il-AC-ir, il-C-ir, il-AL-ir, il-AR-ir
 		//output: il-AC'-ir, il-C'-ir, il-AL'-ir, il-AR'-ir
 		LocalOp Heff(W_, lw_, rw_, {"numCenter=",1}); // <---- Make a parameter? Maybe this is forced?
-		applyExp(Heff,AC_,dt);
+		applyExp(Heff,AC_,dt,args);
 
 		lw_ *= delta(wl_, wr_); 
 		K_op Keff(lw_, rw_, il_, ir_); //K_op is defined in util.h
-		applyExp(Keff,C_,dt); 
+		applyExp(Keff,C_,dt,args); 
 
 		AL_ = split_AL(); //il_-AL-ir_
 		AR_ = split_AR(); //il_-AR-ir_ 

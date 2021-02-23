@@ -3,7 +3,6 @@
 
 #include "evolver/evolver.h"
 #include "addons/itensor-tdvp.h"
-#include "addons/itensor-basisextension.h"
 
 using namespace itensor;
 using namespace std;
@@ -12,28 +11,17 @@ class TDVP : public Evolver
 {
 protected:
 
-	vector<Model::gate> mgates;
-	vector<BondGate> gates;
-	Sites* sites;
-	Model* model;
-
-	std::vector<Real> epsilonK;
 	Sweeps sweeps;
 	Cplx dt;
 
 public:
 
 	TDVP(){}
-	TDVP(Args* a, Model* m) : Evolver(a,m)
-	{
-		sites = model->getSites();
-	}
+	TDVP(Args* a, Model* m) : Evolver(a,m) {}
 
-	void evolve(State& s)
+	virtual void evolve(State& s)
 	{
-		if(false) /* Make a check */
-        	addBasis(s.getState(),model->getO(),epsilonK,*args);
-		tdvp(s.getState(),model->getO(),dt,sweeps,*args);
+		tdvp(s.getState(),model->getO(),-dt,sweeps,*args);
 	}
 
 	void setup(BondGate::Type type, Real tau, string op = "H")
@@ -46,46 +34,33 @@ public:
 		if(op == "H"){ model->calcH(); }
 		else         { model->calcL(); }
 
-		auto epsK = args->getReal("epsK");
-        epsilonK = {epsK, epsK};
-
-		/* Make these args parameters? */
+		/* Include other sweep params in the future. */
 		sweeps = Sweeps(1);
-	    sweeps.maxdim() = 2000;
-	    sweeps.niter() = 10;
-	    //sweeps.cutoff() = 1E-12;
+	    sweeps.maxdim() = args->getInt("MaxDim");
+	    sweeps.niter() = args->getInt("niter");
+	    
 	}
 
-	virtual void read(istream& is)
+	/* Don't need read & write */
+
+};
+
+class TDVPswap : public TDVP
+{
+protected:
+
+public:
+
+	TDVPswap(){}
+	TDVPswap(Args* a, Model* m) : TDVP(a,m) {}
+	virtual void evolve(State& s)
 	{
-		sites->read(is);
+		if((s.maxLinkDim() >= args->getInt("MaxDim")))
+			tdvp(s.getState(),model->getO(),-dt,sweeps,(*args) += {"NumCenter",1});	
+		else
+			tdvp(s.getState(),model->getO(),-dt,sweeps,(*args) += {"NumCenter",2});	
 	}
-
-	virtual void write(ostream& os) const
-	{
-		sites->write(os);
-	}
-
 
 };
 #endif
 
-
-// for(int n = 1; n <= nsw; ++n)
-//         {
-//         if(n < 3)
-//             {
-//             // Global subspace expansion
-//             std::vector<Real> epsilonK = {1E-12, 1E-12};
-//             addBasis(psi1,H,epsilonK,{"Cutoff",1E-8,
-//                                       "Method","DensityMatrix",
-//                                       "KrylovOrd",3,
-//                                       "DoNormalize",true,
-//                                       "Quiet",true});
-//             }
-        
-//         // TDVP sweep
-//         energy = tdvp(psi1,H,-t,sweeps,{"DoNormalize",true,
-//                                         "Quiet",true,
-//                                         "NumCenter",1});
-//         }

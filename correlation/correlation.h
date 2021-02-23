@@ -82,6 +82,7 @@ private:
 		labels.push_back("thermal");
 		if(args->getBool("thermal")) { labels.push_back("beta"); labels.push_back("time-tau"); }
 		for(auto& x : evolver->getParams()){ labels.push_back(x.first); }
+		labels.push_back("Evolver");
 		return labels;
 	}
 
@@ -99,6 +100,7 @@ private:
 			temp.push_back(args->getBool("thermal"));
 			if(args->getBool("thermal")) { temp.push_back(args->getReal("beta")); temp.push_back(args->getReal("time-tau")); }
 			for(auto& x : evolver->getParams()){ temp.push_back(x.second); }
+			temp.push_back(args->getString("Evolver"));
 			results.push_back(temp);
 		}
 		return results;

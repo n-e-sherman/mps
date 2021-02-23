@@ -36,7 +36,11 @@ public:
 		if(thermal)
 		{
 			cout << "ThermalState" << endl;
-			return new ThermalState(args,evolverBuilder->build(args));
+			auto swap = args->getBool("swap");
+			args->add("swap",true);
+			auto res = new ThermalState(args,evolverBuilder->build(args));
+			args->add("swap",swap);
+			return res;
 		}
 		else
 		{

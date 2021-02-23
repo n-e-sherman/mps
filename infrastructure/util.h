@@ -124,7 +124,6 @@ Args* getArgs(int argc, char* argv[])
     args->add("ConserveSz",true);
     args->add("ConserveQNs",true);
     args->add("imaginary",true);
-    args->add("Normalize",false);
     args->add("read",true);
     args->add("write",true);
     args->add("qFactor",1.0);
@@ -160,19 +159,26 @@ Args* getArgs(int argc, char* argv[])
 /* Evolver parameters. */
     /* Trotter */
     args->add("Evolver","Trotter");
-    args->add("time-tau",0.1);
-    args->add("beta",0);
-    args->add("beta-tau",0.1);
     args->add("time",0);
+    args->add("beta",0);
+    args->add("time-tau",0.1);
+    args->add("beta-tau",0.1);
+    args->add("Normalize",false);
     /* TDVP */
-    args->add("KrylovOrd",3);
-    args->add("DoNormalize",true); // May interfere with other modules?
-    args->add("epsK",1E-12);
-    args->add("Cutoff",1E-8); // May interfere with other modules?
+    args->add("swap",true);
+    args->add("DoNormalize",false);
     args->add("Quiet",true);
     args->add("NumCenter",1); // Also ITensor parameter.
-    args->add("beta-sweeps",100);
-    args->add("time-sweeps",100);
+    args->add("niter",10); // # of Krylov vectors.
+    // Other sweep parameters such as Nsweeps, Cutoff, MinDim, MaxDim, MaxIter, etc.
+
+    /* Basis Extension*/
+    args->add("Cutoff",1E-8); // May interfere with other modules?
+    args->add("Quiet",true);
+    args->add("DoNormalize",false);
+    args->add("NBasis",3);
+    args->add("KrylovOrd",3);
+    args->add("epsK",1E-12);
 
 /* Chebyshev parameters. */
     args->add("W",8);
@@ -187,6 +193,7 @@ Args* getArgs(int argc, char* argv[])
     args->add("OpName","Sz");
     args->add("measureAll",false);
     args->add("Skip",true);
+    args->add("MPOMaxDim",20);
 
 /* Static Parameters. */
     args->add("BMin",0);
@@ -202,30 +209,34 @@ Args* getArgs(int argc, char* argv[])
     args->add("v",1.0);
     args->add("saveKZM",true);
     args->add("loadKZM",true);
+    args->add("beta-sweeps",100);
+    args->add("time-sweeps",100);
 
 /* Sweeper parameters. */
-    args->add("Sweeper",false);
-    args->add("sweeperType","identity");
-    args->add("sweeperCount",10);
-    args->add("phiThreshold",1E-12);
-    args->add("MaxIter",30);
-    args->add("Ep",1.0);
-    args->add("NumCenter",1); // Also ITensor parameter.
-    args->add("NormCutoff",1e-10); // Also ITensor parameter.
-    args->add("difThreshold",1e-8);
-    args->add("details",true);
-    args->add("errorMPOProd",false);
+    // args->add("Sweeper",false);
+    // args->add("sweeperType","identity");
+    // args->add("sweeperCount",10);
+    // args->add("phiThreshold",1E-12);
+    // args->add("MaxIter",30);
+    // args->add("Ep",1.0);
+    // args->add("NumCenter",1); // Also ITensor parameter.
+    // args->add("NormCutoff",1e-10); // Also ITensor parameter.
+    // args->add("difThreshold",1e-8);
+    // args->add("details",true);
+    // args->add("errorMPOProd",false);
 
-/* ITensor parameters. */
+/* DMRG parameters. */
     args->add("nSweeps",5);
     args->add("sweeps_maxdim","80,100,150,150,200");
     args->add("sweeps_mindim","20,20,10,10,10");
     args->add("sweeps_cutoff","1E-6,1E-8,1E-10,1E-12,1E-12");
     args->add("sweeps_niter","4,3,2,2,2");
     args->add("sweeps_noise","1E-7,1E-8,1E-10,0,0");
+
+/* ITensor parameters. */
     args->add("initial","AF");
     args->add("UseSVD",true);
-    args->add("MaxIter",30);
+    // args->add("MaxIter",30); // Interfaces with DMRG
     args->add("NormCutoff",1e-7); // Also Sweeper parameter.
     args->add("numCenter",1); // Also Sweeper parameter.
     args->add("ConserveQNs",true);
@@ -247,18 +258,29 @@ Args* getArgs(int argc, char* argv[])
     args->add("squared",false);
     args->add("writeDirectory",""); // Potentially irrelevant...
 
+
+    /* Have only implemented multiple values for --<name>=<value> format. */
+    string comma = ",";
     string eq = "=";
     string dash = "-";
     string ddash = "--";
     for(int i = 1; i < argc; i++)
     {
         auto arg = string(argv[i]);
-
         if(arg.find(ddash) != string::npos) // double dash argument
         {
             if(arg.find(eq) != string::npos) // double dash with equals
             {
-                args->add(stoc(arg.erase(0,2)));
+                if(arg.find(comma) != string::npos) // There are multiple values
+                {
+                    auto sarg = arg.erase(0,2);
+                    auto arg_name = sarg.substr(0, sarg.find(eq));
+                    auto arg_value = sarg.substr(sarg.find(eq)+1,sarg.size());
+                    cout << sarg << " " << arg_name << " " << arg_value << endl;
+                    args->add(arg_name, arg_value);
+                }
+                else
+                    args->add(stoc(arg.erase(0,2)));
             }
             else // value in next arg or no value or space then equals.
             {

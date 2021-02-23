@@ -21,8 +21,14 @@ public:
 	virtual void setup(BondGate::Type type, Real tau, string op = "H") = 0;
 	map<string, Real> getParams() {return model->getParams(); }
 	Sites* getSites(){ return model->getSites(); }
-	virtual void read(istream& is){}
-	virtual void write(ostream& os) const {}
+	virtual void read(istream& is) 
+	{
+		model->read(is);
+	}
+	virtual void write(ostream& os) const 
+	{
+		model->write(os);
+	}
 
 };
 #endif

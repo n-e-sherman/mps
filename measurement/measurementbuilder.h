@@ -32,16 +32,22 @@ public:
 		auto momentum = args->getBool("momentum");
 		auto thermal = args->getBool("thermal");
 		cout << "building measurement: ";
-		if (thermal)
+		if (momentum)
 		{
-			if (momentum) { cout << "KSpace" << endl; return new KSpace(args, operatorBuilder->build(args)); }
-			else { cout << "RealSpace" << endl; return new RealSpace(args, latticeBuilder->build(args), sitesBuilder->build(args)); }
+			cout << "KSpace" << endl; 
+			return new KSpace(args, operatorBuilder->build(args));
 		}
 		else
 		{
+			if(thermal)
+			{
+				cout << "RealSpace" << endl; 
+				return new RealSpace(args, latticeBuilder->build(args), sitesBuilder->build(args)); 	
+			}
 			cout << "Local" << endl;
 			return new Local(args, sitesBuilder->build(args));
 		}
+		
 		
 		
 	}

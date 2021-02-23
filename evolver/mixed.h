@@ -1,48 +1,70 @@
-#ifndef __TROTTER_H_
-#define __TROTTER_H_
+#ifndef __MIXED_H_
+#define __MIXED_H_
 
 #include "evolver/evolver.h"
+#include "addons/itensor-tdvp.h"
 
 using namespace itensor;
 using namespace std;
 
-class Trotter : public Evolver
+class Mixed : public Evolver
 {
 protected:
 
+	/* Trotter */
 	vector<Model::gate> mgates;
 	vector<BondGate> gates;
 	Sites* sites;
 
+	/* tdvp */
+	Sweeps sweeps;
+	Cplx dt;
+
 public:
 
-	Trotter(){}
-	Trotter(Args* a, Model* m) : Evolver(a,m)
+	Mixed(){}
+	Mixed(Args* a, Model* m) : Evolver(a,m)
 	{
 		sites = model->getSites();
 	}
 
 	void evolve(State& s)
 	{
-		gateTEvol(gates,1.0,1.0,s.getState(),*args); // time evolves, don't need -t, just t, this figures it out.
+		if(s.maxLinkDim() < args->getInt("MaxDim")) // use TEBD until chi saturated, then use TDVP.
+		{
+			cout << s.maxLinkDim() << endl;
+			gateTEvol(gates,1.0,1.0,s.getState(),*args);
+		}
+		else
+			tdvp(s.getState(),model->getO(),-dt,sweeps,*args);
 	}
 
 	void setup(BondGate::Type type, Real tau, string op = "H")
 	{
-		if(op == "H"){ mgates = model->getGatesH();	}
-		else         { mgates = model->getGatesL(); }
+		dt = Cplx(tau);
+		if(type == BondGate::tReal)
+		{
+			dt *= Complex_i;
+		}
+		if(op == "H"){ model->calcH(); mgates = model->getGatesH(); }
+		else         { model->calcL(); mgates = model->getGatesL(); }
+
 		buildGates(type,tau);
+
+		/* Make these args parameters? */
+		sweeps = Sweeps(1);
+	    sweeps.maxdim() = args->getInt("MaxDim");
+	    sweeps.niter() = args->getInt("niter");
 	}
 
 	virtual void read(istream& is)
 	{
-		Evolver::read(is);
-		sites = model->getSites();
+		sites->read(is);
 	}
 
 	virtual void write(ostream& os) const
 	{
-		Evolver::write(os);
+		sites->write(os);
 	}
 
 private:

@@ -8,6 +8,7 @@
 #include "evolver/expmpo.h"
 #include "evolver/trotter.h"
 #include "evolver/tdvp.h"
+#include "evolver/mixed.h"
 
 using namespace itensor;
 using namespace std;
@@ -40,7 +41,14 @@ public:
 		else
 		if(evolver == "TDVP")
 		{
+			if(args->getBool("swap"))
+				return new TDVPswap(args, modelBuilder->build(args));	
 			return new TDVP(args, modelBuilder->build(args));
+		}
+		else
+		if(evolver == "Mixed")
+		{
+			return new Mixed(args, modelBuilder->build(args));
 		}
 		else
 		{/* Implement other operators here, may want to use else if. */

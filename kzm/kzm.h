@@ -31,6 +31,7 @@ protected:
 	Real v;
 	Real t_f;
 	Real time;
+	Real n_ex;
 
 	int chi;
 	int beta_sweeps;
@@ -44,6 +45,7 @@ protected:
 	vector<Real> Es;
 	vector<Real> Eps;
 	vector<Real> gs;
+	vector<Real> ns;
 
 public:
 
@@ -68,18 +70,25 @@ public:
 		init_MPS(sites, A, il, ir, is, chi); // Could be generalized
 		init_MPO(sites, W, wl, wr, g0); // Could be generalized   
 		iA = iMPS(A, il, ir, is, W, wl, wr, "A"); 
+		auto gs_tol = args->getReal("gs_tol",1E-7);
 		
 		// Get Ground state
+		auto counter = 0;
 		for(int i = 0; i < beta_sweeps; i++)
 		{
-			iA.iTDVP(-beta_tau); // I think this assumes TFIM?
+			counter = i;
+			iA.iTDVP(-beta_tau, {"MaxIter",30}); // I think this assumes TFIM?
+			if( abs(exact_energy(g0) - iA.get_energy(false)) < gs_tol) break;
 		}
-
+		cout << "Ground state found in " << counter << " iterations." << endl;
 		time = 0;
-		Eps.push_back(iA.get_energy(false));
+		auto Ep = iA.get_energy(false);
+		auto n = (Ep-exact_energy(g0))/(2.0*J);
+		Eps.push_back(Ep);
 		Es.push_back(exact_energy(g0));
 		gs.push_back(g0);
-		cout << "(g,t,E,E_exact) = (" << gt(time) << "," << time << "," << iA.get_energy(false) << "," << exact_energy(gt(time)) << ")" << endl;
+		ns.push_back(n);
+		cout << "(g,t,E,E_exact) = (" << g0 << " ," << time << " ," << iA.get_energy(false) << " ," << exact_energy(g0) << ")" << endl;
 	}
 
 	virtual void calculate()
@@ -88,11 +97,14 @@ public:
 		auto g = gt(time);
 		init_MPO(sites, W, wl, wr, g); // Could be generalized
 		iA.set_MPO(W, wl, wr);
-		iA.iTDVP(-tau*Complex_i);
-		Eps.push_back(iA.get_energy(false));
+		iA.iTDVP(-tau*Complex_i, *args);
+		auto Ep = iA.get_energy(false);
+		auto n = (Ep-exact_energy(g))/(2.0*J);
+		Eps.push_back(Ep);
 		Es.push_back(exact_energy(g));
 		gs.push_back(g);
-		cout << "(g,t,E,E_exact) = (" << g << "," << time << ","  << iA.get_energy(false) << "," << exact_energy(gt(time)) << ")" << endl;
+		ns.push_back(n);
+		cout << "(g, n, n_ex) = (" << g << " ," << n << " ," << n_ex << " )" << endl;
 	}
 	
 	Real getTime() { return time; }
@@ -111,6 +123,7 @@ public:
     	read(f,Es);
     	read(f,Eps);
     	read(f,gs);
+    	read(f,ns);
     	read(f,time);
     	read(f,sites);
     }
@@ -121,6 +134,7 @@ public:
     	write(f,Es);
     	write(f,Eps);
     	write(f,gs);
+    	write(f,ns);
     	write(f,time);
     	write(f,sites);
 	}
@@ -137,6 +151,7 @@ private:
 		g0  = args->getReal("g0");
 		v = args->getReal("v");
 		t_f = g0/v;
+		n_ex = (sqrt(2)/(4.0*M_PI))*sqrt(v);
 	}
 
 	double gt(double t)
@@ -254,7 +269,7 @@ private:
 
 	virtual vector<string> _labels()
 	{
-		auto labels = vector<string>{"v,Ep,E,MaxDim,g,beta-tau,beta-sweeps,time-tau"};
+		auto labels = vector<string>{"v,n,Ep,E,MaxDim,g,beta-tau,beta-sweeps,time-tau"};
 		return labels;
 	}
 	virtual vector<vector<StringReal>> _results()
@@ -264,6 +279,7 @@ private:
 		{
 			auto temp = vector<StringReal>();
 			temp.push_back(args->getReal("v"));
+			temp.push_back(ns[i]);
 			temp.push_back(Eps[i]);
 			temp.push_back(Es[i]);
 			temp.push_back(args->getInt("MaxDim"));

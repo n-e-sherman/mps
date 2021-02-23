@@ -43,16 +43,21 @@ protected:
 public:
 	Model(Args* a, Lattice* l, Sites* s) : Operator(a,s), lattice(l) {}
 
-	virtual void calcH(bool skip = false, Real scale = 1.0, Real shift = 0){ O = scale*toMPO(calcAmpoH(skip,shift)); }
-	virtual void calcL(bool skip = false, Real scale = 1.0, Real shift = 0){ O = scale*toMPO(calcAmpoL(skip,shift)); }
+	virtual void calcH(bool skip = false, Real scale = 1.0, Real shift = 0){ O = scale*toMPO(calcAmpoH(skip,shift),*args); }
+	virtual void calcL(bool skip = false, Real scale = 1.0, Real shift = 0){ O = scale*toMPO(calcAmpoL(skip,shift),*args); }
 
-	virtual void calcExpH(Cplx tau){ O = toExpH(calcAmpoH(), tau); }
-	virtual void calcExpL(Cplx tau){ O = toExpH(calcAmpoL(), tau); }
+	virtual void calcExpH(Cplx tau){ O = toExpH(calcAmpoH(), tau, *args); }
+	virtual void calcExpL(Cplx tau){ O = toExpH(calcAmpoL(), tau, *args); }
 
 	vector<gate> getGatesH() { return calcGatesH(); }
 	vector<gate> getGatesL() { return calcGatesL(); }
 	map<string, Real> getParams() {return params; }
 	Sites* getSites() const {return sites; }
+
+	/* ITensor Wrappers */
+	void orthogonalize(){ O.orthogonalize(*args); }
+	int maxLinkDim() { return itensor::maxLinkDim(O); }
+	Real averageLinkDim() { return itensor::averageLinkDim(O); }
 
 	static string hashParams(Args* args)
 	{ // A better way to do this?
@@ -83,6 +88,8 @@ public:
         itensor::write(os,keys);
         itensor::write(os,values);
     }
+
+
 
 private:
 	tuple<vector<string>, vector<Real> > dtov(map<string, Real> d) const

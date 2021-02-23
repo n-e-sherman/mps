@@ -30,7 +30,6 @@ private:
 
 	void calcGroundState()
 	{
-		auto nsweeps = args->getInt("nsweeps",5);
         auto sweeps = getSweeps(); // how?
         auto [energy,psiout] = dmrg(model->getO(),state,sweeps,"Silent");
         E0=energy;
