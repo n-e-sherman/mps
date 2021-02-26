@@ -13,11 +13,15 @@ class LatticeBuilder
 {
 public:
 
-	Lattice* build(Args* args)
+	Lattice* build(Args* args_in, std::string key = "")
 	{
+		auto base = "lattice";
+		key = key + "." + base;
+		auto args = build_args(args_in, base, key);
+		
 		auto thermal = args->getBool("thermal");
 		auto lattice = args->getString("Lattice");
-		cout << "building lattice: " << lattice << endl;
+		cout << "building lattice: " << lattice << " -- key: " << key << endl;
 		
 		if(lattice == "Chain")
 		{

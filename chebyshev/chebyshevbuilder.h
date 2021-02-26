@@ -25,14 +25,19 @@ protected:
 public:
 	ChebyshevBuilder(MeasurementBuilder* msb, ModelBuilder* mb, StateBuilder* sb, OperatorBuilder* ob, RepositoryBuilder* rb) :
 					 measurementBuilder(msb), modelBuilder(mb), stateBuilder(sb), operatorBuilder(ob), repoBuilder(rb) {}
-	Chebyshev* build(Args* args)
+	Chebyshev* build(Args* args_in, std::string key = "")
 	{
-		cout << "building chebyshev" << endl;
-		repo = repoBuilder->build(args);
-		
-		auto chebyshev = repo->load(Chebyshev::getHash(args), new Chebyshev(args, measurementBuilder->build(args), modelBuilder->build(args)));
-		if(chebyshev != nullptr) return chebyshev;
-		chebyshev = new Chebyshev(args, measurementBuilder->build(args), modelBuilder->build(args), stateBuilder->build(args), operatorBuilder->build(args));
+		auto base = "chebyshev";
+		key = key + "." + base;
+		auto args = build_args(args_in, base, key);
+
+		cout << "building chebyshev -- key: " << key << endl;
+		repo = repoBuilder->build(args, key);
+		auto load = args->getBool("load"); 
+
+		auto chebyshev = repo->load(Chebyshev::getHash(args), new Chebyshev(args, measurementBuilder->build(args, key), modelBuilder->build(args, key)));
+		if((chebyshev != nullptr) && load) return chebyshev;
+		chebyshev = new Chebyshev(args, measurementBuilder->build(args, key), modelBuilder->build(args, key), stateBuilder->build(args, key), operatorBuilder->build(args, key));
 		repo->save(Chebyshev::getHash(args), chebyshev);
 		return chebyshev;
 	}

@@ -18,7 +18,7 @@ public:
 
 	virtual void evolve(State& s)
 	{
-		s.setState(noPrime(applyMPO(model->getO(),s.getState())));
+		s.setState(noPrime(applyMPO(model->getO(),s.getState(),*args)));
 	}
 	
 	void setup(BondGate::Type type, Real tau, string op = "H")

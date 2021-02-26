@@ -23,11 +23,15 @@ public:
 
 	KZMService(KZMBuilder* kb, RepositoryBuilder* rb) : kzmBuilder(kb), repoBuilder(rb) {}
 
-	void calculate(Args* args)
+	void calculate(Args* args_in)
 	{
-		repo = repoBuilder->build(args);
-		kzm = kzmBuilder->build(args); // <-- Issue here
-		auto save = args->getBool("saveKZM");
+		auto key =  "kzmService";
+		auto args = build_args(args_in, key);
+
+		repo = repoBuilder->build(args, key);
+		kzm = kzmBuilder->build(args, key); // <-- Issue here
+		auto save = args->getBool("save");
+
 		Real t_f = args->getReal("g0")/args->getReal("v");
 		while(kzm->getTime() < t_f)
 		{

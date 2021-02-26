@@ -6,6 +6,7 @@
 #include "itensor/all.h"
 #include "itensor/util/print_macro.h"
 #include "infrastructure/cache.h"
+#include "infrastructure/defaults.h"
 #include <bits/stdc++.h> 
 #include "model/model.h"
 
@@ -26,6 +27,7 @@ vector<Real> stringToVector(string s)
     for(auto x : sres) res.push_back(stod(x));
     return res;
 }
+
 vector<int> stringToVectorI(string s)
 {   // I am assuming this string is comma separated, and NO SPACES
     stringstream ss(s);
@@ -88,349 +90,67 @@ char* stoc(std::string x)
     std::strcpy(y, x.c_str());
     return y;
 }
-
-Args* getArgs(int argc, char* argv[])
+   
+void print_matrix(vector<vector<int>> adjmat)
 {
-    Args* args = new Args();
-
-    /********************************
-     ******** Default values ********
-     ********************************/
-
-/* Calculation Type. */
-    args->add("Chebyshev",false);
-    args->add("Correlation",false);
-    args->add("Static",false);
-    args->add("Magnetization",false);
-    args->add("KZM",false);
-    
-    // args->add("Measure",false);
-    // args->add("Broadening",false);
-    // args->add("Moments",false);
-    // args->add("Weights",false);
-
-/* IO */
-    args->add("cwd","./");
-    args->add("dataDir","./");
-    args->add("resDir","./");
-
-
-/* Global parameters */
-    args->add("thermal",true);
-    args->add("N",100);
-    args->add("Nx",20);
-    args->add("Ny",5);
-    args->add("SiteSet","SpinHalf");
-    args->add("ConserveSz",true);
-    args->add("ConserveQNs",true);
-    args->add("imaginary",true);
-    args->add("read",true);
-    args->add("write",true);
-    args->add("qFactor",1.0);
-
-
-/* State parameters. */
-    args->add("thermalMaxDim",2000);
-    args->add("realStep",true);
-    args->add("thermalEps",1E-9);
-    args->add("coolingType","Trotter");
-
-/* Operator parameters. */
-    args->add("Operator","Momentum");
-    args->add("localOperator","Sz");
-
-/* Measurement parameters. */
-    args->add("Measurement","Connected");
-
-/* Model parameters. */
-    args->add("Lattice","Chain");
-    args->add("Model","Heisenberg");
-    args->add("Delta",1.0);
-    args->add("J",1.0);
-    args->add("Je",1.0);
-    args->add("Jo",1.0);
-    args->add("Jz",1.0);
-    args->add("Jxy",1.0);
-    args->add("B",1.0);
-    args->add("J2",0.0);
-    args->add("J3",0.0);
-    args->add("YPeriodic",true);
-
-/* Evolver parameters. */
-    /* Trotter */
-    args->add("Evolver","Trotter");
-    args->add("time",0);
-    args->add("beta",0);
-    args->add("time-tau",0.1);
-    args->add("beta-tau",0.1);
-    args->add("Normalize",false);
-    /* TDVP */
-    args->add("swap",true);
-    args->add("DoNormalize",false);
-    args->add("Quiet",true);
-    args->add("NumCenter",1); // Also ITensor parameter.
-    args->add("niter",10); // # of Krylov vectors.
-    // Other sweep parameters such as Nsweeps, Cutoff, MinDim, MaxDim, MaxIter, etc.
-
-    /* Basis Extension*/
-    args->add("Cutoff",1E-8); // May interfere with other modules?
-    args->add("Quiet",true);
-    args->add("DoNormalize",false);
-    args->add("NBasis",3);
-    args->add("KrylovOrd",3);
-    args->add("epsK",1E-12);
-
-/* Chebyshev parameters. */
-    args->add("W",8);
-    args->add("Wp",0.9875);
-    args->add("nChebyshev",100);
-    args->add("nSave",1); // Chebyshev iteration saving won't occur by default.
-    args->add("momentum",false);
-    args->add("saveChebyshev",true);
-    args->add("loadChebyshev",true);
-    args->add("cheReadFile",true);
-    args->add("cheWriteFile",true);
-    args->add("OpName","Sz");
-    args->add("measureAll",false);
-    args->add("Skip",true);
-    args->add("MPOMaxDim",20);
-
-/* Static Parameters. */
-    args->add("BMin",0);
-    args->add("BMax",1);
-    args->add("BStep",0.1);
-    args->add("betaMin",0);
-    args->add("betaMax",1);
-    args->add("betaStep",0.1);
-    args->add("Static","Magnetization");
-
-/* KZM Parameters. */
-    args->add("g0",5.0);
-    args->add("v",1.0);
-    args->add("saveKZM",true);
-    args->add("loadKZM",true);
-    args->add("beta-sweeps",100);
-    args->add("time-sweeps",100);
-
-/* Sweeper parameters. */
-    // args->add("Sweeper",false);
-    // args->add("sweeperType","identity");
-    // args->add("sweeperCount",10);
-    // args->add("phiThreshold",1E-12);
-    // args->add("MaxIter",30);
-    // args->add("Ep",1.0);
-    // args->add("NumCenter",1); // Also ITensor parameter.
-    // args->add("NormCutoff",1e-10); // Also ITensor parameter.
-    // args->add("difThreshold",1e-8);
-    // args->add("details",true);
-    // args->add("errorMPOProd",false);
-
-/* DMRG parameters. */
-    args->add("nSweeps",5);
-    args->add("sweeps_maxdim","80,100,150,150,200");
-    args->add("sweeps_mindim","20,20,10,10,10");
-    args->add("sweeps_cutoff","1E-6,1E-8,1E-10,1E-12,1E-12");
-    args->add("sweeps_niter","4,3,2,2,2");
-    args->add("sweeps_noise","1E-7,1E-8,1E-10,0,0");
-
-/* ITensor parameters. */
-    args->add("initial","AF");
-    args->add("UseSVD",true);
-    // args->add("MaxIter",30); // Interfaces with DMRG
-    args->add("NormCutoff",1e-7); // Also Sweeper parameter.
-    args->add("numCenter",1); // Also Sweeper parameter.
-    args->add("ConserveQNs",true);
-    args->add("MaxDim",500);
-    args->add("MinDim",0);
-    args->add("Method","DensityMatrix");
-    args->add("Nsweep",3);
-    
-/* Artifacts */
-    args->add("Nmoments",0);
-    args->add("wi",0);
-    args->add("wf",4);
-    args->add("nw",201);
-    args->add("etas","0.1,0.2");
-    args->add("eps",0.0001);
-    args->add("nLanczos",40);
-    args->add("reorthogonalize",false);
-    args->add("spectral");
-    args->add("squared",false);
-    args->add("writeDirectory",""); // Potentially irrelevant...
-
-
-    /* Have only implemented multiple values for --<name>=<value> format. */
-    string comma = ",";
-    string eq = "=";
-    string dash = "-";
-    string ddash = "--";
-    for(int i = 1; i < argc; i++)
+    for(auto i : range(adjmat.size()))
     {
-        auto arg = string(argv[i]);
-        if(arg.find(ddash) != string::npos) // double dash argument
-        {
-            if(arg.find(eq) != string::npos) // double dash with equals
-            {
-                if(arg.find(comma) != string::npos) // There are multiple values
-                {
-                    auto sarg = arg.erase(0,2);
-                    auto arg_name = sarg.substr(0, sarg.find(eq));
-                    auto arg_value = sarg.substr(sarg.find(eq)+1,sarg.size());
-                    cout << sarg << " " << arg_name << " " << arg_value << endl;
-                    args->add(arg_name, arg_value);
-                }
-                else
-                    args->add(stoc(arg.erase(0,2)));
-            }
-            else // value in next arg or no value or space then equals.
-            {
-                if((i+1) >= argc)
-                {
-                    args->add(stoc(arg.erase(0,2)));
-                    break;
-                }
-                if(string(argv[i+1]).find(eq) != string::npos) // space then equals
-                {
-                    if((i+2) >= argc)
-                    {
-                        args->add(stoc(arg.erase(0,2)));
-                        break;
-                    }
-                    args->add(stoc(arg.erase(0,2) + string(argv[i+1]) + string(argv[i+2]) ));
-                    i += 2;
-                }
-                if(string(argv[i+1]).find(ddash) != string::npos) // no value
-                    args->add(stoc(arg.erase(0,2)));
-                else
-                    args->add(stoc(arg.erase(0,2) + "=" + string(argv[++i])));
-            }
-        }
-
-        else
-        if(arg.find(dash) != string::npos) // dash argument
-        {
-            if(arg.find(eq) != string::npos) // dash with equals
-            {
-                args->add(stoc(arg.erase(0,1)));
-            }
-            else // value in next arg or no value or space then equals
-            {
-                if((i+1) >= argc)
-                {
-                    args->add(stoc(arg.erase(0,1)));
-                    break;
-                }
-                if(string(argv[i+1]).find(eq) != string::npos) // space then equals
-                {
-                    if((i+2) >= argc)
-                    {
-                        args->add(stoc(arg.erase(0,1)));
-                        break;
-                    }
-                    args->add(stoc(arg.erase(0,1) + string(argv[i+1]) + string(argv[i+2]) ));
-                    i += 2;
-                }
-                if(string(argv[i+1]).find(dash) != string::npos) // no value
-                    args->add(stoc(arg.erase(0,1)));
-                else
-                    args->add(stoc(arg.erase(0,1) + "=" + string(argv[++i])));
-            }
-        }
-
-        else
-        if(arg.find(eq) != string::npos) // dash with equals
-        {
-            args->add(stoc(arg));
-        }
-        else // word with no equals
-        {
-
-            if((i+1) >= argc)
-            {
-                args->add(stoc(arg));
-                break;
-            }
-            if(string(argv[i+1]).find(eq) != string::npos) // space then equals
-            {
-                if((i+2) >= argc)
-                {
-                    args->add(stoc(arg));
-                    break;
-                }
-                args->add(stoc(arg + string(argv[i+1]) + string(argv[i+2]) ));
-                i += 2;
-            }
-            else
-            {
-                args->add(stoc(arg));
-            }
-        }
-
-
-    } 
-    auto cache = Cache::getInstance();
-    cache->save("args",args);
-    return args;
+        for(auto j : range(adjmat[i].size())) {cout << adjmat[i][j] << " ";}
+        cout << endl;
     }
-    
-    void print_matrix(vector<vector<int>> adjmat)
-    {
-        for(auto i : range(adjmat.size()))
-        {
-            for(auto j : range(adjmat[i].size())) {cout << adjmat[i][j] << " ";}
-            cout << endl;
-        }
-    }
+}
 
-    void print(vector<int> v, bool end = true)
-    {
-        cout << "[";
-        for(auto x : v) cout << x << ",";
-        cout << "]";
-        if (end)
-            cout << endl;
-    }
+void print(vector<int> v, bool end = true)
+{
+    cout << "[";
+    for(auto x : v) cout << x << ",";
+    cout << "]";
+    if (end)
+        cout << endl;
+}
 
-    void print(vector<vector<int>> v)
-    {
-        cout << "[";
-        for(auto x : v) print(x);
-        cout << "]" << endl;
-    }
+void print(vector<vector<int>> v)
+{
+    cout << "[";
+    for(auto x : v) print(x);
+    cout << "]" << endl;
+}
 
-    void print(set<int> v)
-    {
-        cout << "{";
-        for(auto x : v) cout << x << ",";
-        cout << "}" << endl;
-    }
+void print(set<int> v)
+{
+    cout << "{";
+    for(auto x : v) cout << x << ",";
+    cout << "}" << endl;
+}
 
-    string _hash_string(string name, Args* args)
-    {
-        auto h = args->getString(name); // will be NAN if a string.
-        if(name == "Model") return "_" + args->getString(name) + "_" + Model::hashParams(args);
-        return "_" + h;
-    }
-    string hash_string(vector<string> hashes, Args* args)
-    {
-        string hash = "";
-        for(auto &name : hashes) hash += _hash_string(name,args);   
-        return hash;
-    }
+string _hash_string(string name, Args* args)
+{
+    auto h = args->getString(name); // will be NAN if a string.
+    if(name == "Model") return "_" + args->getString(name) + "_" + Model::hashParams(args);
+    return "_" + h;
+}
+
+string hash_string(vector<string> hashes, Args* args)
+{
+    string hash = "";
+    for(auto &name : hashes) hash += _hash_string(name,args);   
+    return hash;
+}
 
 
-    string _hash_real(string name, Args* args)
-    {
-        auto h = args->getReal(name); // will be NAN if a string.
-        if((name == "beta")) { if(args->getBool("thermal")) return "_" + to_string(h); else {return "";} }
-        return "_" + to_string(h);
-    }
-    string hash_real(vector<string> hashes, Args* args)
-    {
-        string hash = "";
-        for(auto &name : hashes) hash += _hash_real(name,args);   
-        return hash;
-    }
+string _hash_real(string name, Args* args)
+{
+    auto h = args->getReal(name); // will be NAN if a string.
+    if((name == "beta")) { if(args->getBool("thermal")) return "_" + to_string(h); else {return "";} }
+    return "_" + to_string(h);
+}
+
+string hash_real(vector<string> hashes, Args* args)
+{
+    string hash = "";
+    for(auto &name : hashes) hash += _hash_real(name,args);   
+    return hash;
+}
 
 
 struct StringReal
@@ -545,9 +265,150 @@ struct StringReal
 
 };
 
+/*************************************************************************/
+/*************************************************************************/
 
+void read_args(int argc, char* argv[], std::map<std::string, Args*>& args)
+{
+    /* Have tested multiple values for --<name>=<value> format. */
+    /* assumes the command line argument has --<key>:<name>=<value> format. The # of dashes can be 0,1, or 2. */
+    string comma = ",";
+    string eq = "=";
+    string dash = "-";
+    string ddash = "--";
+    string colon = ":";
+    for(int i = 1; i < argc; i++)
+    {
+        auto arg = string(argv[i]);
+        if(arg.find(ddash) != string::npos) // ddash format
+        {
+            auto sarg = arg.erase(0,2);
+            if(arg.find(eq) != string::npos)
+            {
+                string arg_key = "global";
+                if(sarg.find(colon) != string::npos) // we have a key
+                {
+                    arg_key = sarg.substr(0, sarg.find(colon));
+                    cout << "arg = " << arg << " sarg = " << sarg <<  " arg_key = " << arg_key << endl;
+                    sarg.erase(0,sarg.find(colon));
+                }
+                if(arg.find(comma) != string::npos) // There are multiple values
+                {
+                    auto arg_name = sarg.substr(0, sarg.find(eq));
+                    auto arg_value = sarg.substr(sarg.find(eq)+1,sarg.size());
+                    cout << sarg << " " << arg_name << " " << arg_value << endl;
+                    if(args.find(arg_key) != args.end()) 
+                        args[arg_key]->add(arg_name, arg_value);
+                    else
+                        args[arg_key] = new Args(arg_name, arg_value);
+                }
+                else
+                {
+                    if(args.find(arg_key) != args.end()) 
+                        args[arg_key]->add(stoc(sarg));
+                    else
+                        args[arg_key] = new Args(stoc(sarg));
+                }
+            }
+        }
+        else
+        if(arg.find(dash) != string::npos) // dash format
+        {
+            auto sarg = arg.erase(0,1);
+            if(arg.find(eq) != string::npos)
+            {
+                string arg_key = "global";
+                if(sarg.find(colon) != string::npos) // we have a key
+                {
+                    arg_key = sarg.substr(0, sarg.find(colon));
+                    sarg.erase(0,sarg.find(colon));
+                }
+                if(arg.find(comma) != string::npos) // There are multiple values
+                {
+                    auto sarg = arg.erase(0,1);
+                    auto arg_name = sarg.substr(0, sarg.find(eq));
+                    auto arg_value = sarg.substr(sarg.find(eq)+1,sarg.size());
+                    cout << sarg << " " << arg_name << " " << arg_value << endl;
+                    if(args.find(arg_key) != args.end()) 
+                        args[arg_key]->add(arg_name, arg_value);
+                    else
+                        args[arg_key] = new Args(arg_name, arg_value);
+                }
+                else
+                {
+                    if(args.find(arg_key) != args.end()) 
+                        args[arg_key]->add(stoc(sarg));
+                    else
+                        args[arg_key] = new Args(stoc(sarg));
+                }
+            }
+        }
+        else
+        if(arg.find(eq) != string::npos) // no dash format
+        {
+            auto sarg = arg;
+            string arg_key = "global";
+            if(sarg.find(colon) != string::npos) // we have a key
+            {
+                arg_key = sarg.substr(0, sarg.find(colon));
+                sarg.erase(0,sarg.find(colon));
+            }
+            if(arg.find(comma) != string::npos) // There are multiple values
+                {
+                    auto arg_name = sarg.substr(0, sarg.find(eq));
+                    auto arg_value = sarg.substr(sarg.find(eq)+1,sarg.size());
+                    cout << sarg << " " << arg_name << " " << arg_value << endl;
+                    if(args.find(arg_key) != args.end()) 
+                        args[arg_key]->add(arg_name, arg_value);
+                    else
+                        args[arg_key] = new Args(arg_name, arg_value);
+                }
+                else
+                {
+                    if(args.find(arg_key) != args.end()) 
+                        args[arg_key]->add(stoc(sarg));
+                    else
+                        args[arg_key] = new Args(stoc(sarg));
+                }
+            
+        }
+        else // word with no equals
+        {
+            if((i+1) >= argc)
+            {
+                args["global"]->add(stoc(arg));
+                // break;
+            }
+        }
+    } 
+}
 
+Args* getArgs(int argc, char* argv[])
+{
+    std::map<std::string, Args*> args;
+    args["global"] = default_global();
+    args["chebyshevService.chebyshev"] = new Args("Skip",true);
 
+    read_args(argc, argv, args);
+    auto cache = Cache::getInstance();
+    for (auto const& [key, val] : args)
+    {
+        cout << key << endl;
+        cache->save(key,val);
+    }
+    return args["global"];
+}
 
+Args* build_args(Args* args_in, std::string base, std::string key = "NULL")
+{
+    auto cache = Cache::getInstance();
+    auto args_base = (Args*)cache->load(base);
+    auto args_key = (Args*)cache->load(key);
+    auto args = new Args(*args_in);
+    if (args_base != nullptr) *args += *args_base;
+    if (args_key != nullptr) *args += *args_key;
+    return args;
+}
 
+    
 #endif

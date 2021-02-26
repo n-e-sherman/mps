@@ -24,39 +24,42 @@ public:
 	ModelBuilder() {}
 	ModelBuilder(LatticeBuilder* lb, SitesBuilder* sb) : latticeBuilder(lb), sitesBuilder(sb) {}
 	~ModelBuilder(){}
-	Model* build(Args* args)
+	Model* build(Args* args_in, std::string key = "")
 	{
-	
+		auto base = "model";
+		key = key + "." + base;
+		auto args = build_args(args_in, base, key);
+		
 		auto model = args->getString("Model");	
-		cout << "building model: " << model << endl;
+		cout << "building model: " << model << " -- key: " << key << endl;
 		if(model == "Heisenberg") 
 		{
- 			return new Heisenberg(args, latticeBuilder->build(args), sitesBuilder->build(args));
+ 			return new Heisenberg(args, latticeBuilder->build(args, key), sitesBuilder->build(args, key));
 		}
 		else 
 		if(model == "HeisenbergField") 
 		{
-			return new HeisenbergField(args, latticeBuilder->build(args), sitesBuilder->build(args));
+			return new HeisenbergField(args, latticeBuilder->build(args, key), sitesBuilder->build(args, key));
 		}
 		else 
 		if(model == "HeisenbergLR") 
 		{
-			return new HeisenbergLR(args, latticeBuilder->build(args), sitesBuilder->build(args));
+			return new HeisenbergLR(args, latticeBuilder->build(args, key), sitesBuilder->build(args, key));
 		}
 		else 
 		if(model == "XX") 
 		{
-			return new XX(args, latticeBuilder->build(args), sitesBuilder->build(args));
+			return new XX(args, latticeBuilder->build(args, key), sitesBuilder->build(args, key));
 		}
 		else 
 		if(model == "XXZ") 
 		{
-			return new XXZ(args, latticeBuilder->build(args), sitesBuilder->build(args));
+			return new XXZ(args, latticeBuilder->build(args, key), sitesBuilder->build(args, key));
 		}
 		else 
 		if(model == "Dimer") 
 		{
-			return new Dimer(args, latticeBuilder->build(args), sitesBuilder->build(args));
+			return new Dimer(args, latticeBuilder->build(args, key), sitesBuilder->build(args, key));
 		}
 		else
 		{

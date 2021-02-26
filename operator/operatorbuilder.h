@@ -24,19 +24,22 @@ protected:
 public:
 
 	OperatorBuilder(SitesBuilder* sb, LatticeBuilder* lb) :  sitesBuilder(sb), latticeBuilder(lb) {}	
-	Operator* build(Args* args)
+	Operator* build(Args* args_in, std::string key = "")
 	{
+		auto base = "operator";
+		key = key + "." + base;
+		auto args = build_args(args_in, base, key);
 		
 		auto momentum = args->getBool("momentum");
 		string _cout = ((momentum) ? "Momentum" : "Position");
-		cout << "building operator: " << _cout << endl;
+		cout << "building operator: " << _cout << " -- key: " << key << endl;
 		if(momentum)
 		{
-			return new Momentum(args,sitesBuilder->build(args),latticeBuilder->build(args));
+			return new Momentum(args,sitesBuilder->build(args, key),latticeBuilder->build(args, key));
 		}
 		else
 		{
-			return new Position(args,sitesBuilder->build(args));
+			return new Position(args,sitesBuilder->build(args, key));
 		}
 		
 		return nullptr;

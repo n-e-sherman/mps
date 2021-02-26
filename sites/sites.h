@@ -4,6 +4,7 @@
 
 // #include "sites/sitesbuilder.h"
 #include "itensor/mps/sites/spintwo.h"
+#include "infrastructure/util.h"
 #include <string>
 #include <iostream>
 
@@ -41,7 +42,9 @@ public:
 	void read(istream& is)
     {
     	auto cache = Cache::getInstance();
-    	args = (Args*)cache->load("args");
+    	auto args_ = (Args*)cache->load("global"); args = new Args(*args_);
+    	auto args_sites = (Args*)cache->load("sites"); if(args_sites != nullptr) *args += *args_sites; // a bit sloppy, but "build_args" is not working...
+
     	auto sType = args->getString("SiteSet");
     	if (sType == "SpinHalf")
 		{

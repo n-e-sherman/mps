@@ -29,23 +29,27 @@ public:
 	StateBuilder(ModelBuilder* mb, LatticeBuilder* lb, EvolverBuilder* eb) : 
 				 modelBuilder(mb), latticeBuilder(lb), evolverBuilder(eb) {}
 
-	State* build(Args* args)
+	State* build(Args* args_in, std::string key = "")
 	{
+		auto base = "state";
+		key = key + "." + base;
+		auto args = build_args(args_in, base, key);
+		
 		auto thermal = args->getBool("thermal");
 		cout << "building state: ";
 		if(thermal)
 		{
-			cout << "ThermalState" << endl;
+			cout << "ThermalState" << " -- key: " << key << endl;
 			auto swap = args->getBool("swap");
 			args->add("swap",true);
-			auto res = new ThermalState(args,evolverBuilder->build(args));
+			auto res = new ThermalState(args,evolverBuilder->build(args, key));
 			args->add("swap",swap);
 			return res;
 		}
 		else
 		{
-			cout << "GroundState" << endl;
-			return new GroundState(args, modelBuilder->build(args)); 
+			cout << "GroundState" << " " << key << endl;
+			return new GroundState(args, modelBuilder->build(args, key)); 
 		}
 	}
 };

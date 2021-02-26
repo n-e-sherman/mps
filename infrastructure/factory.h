@@ -27,23 +27,21 @@
 RepositoryBuilder* repositoryFactory() { return new RepositoryBuilder(); }
 LatticeBuilder* latticeFactory() { return new LatticeBuilder(); }
 SitesBuilder* sitesFactory() { return new SitesBuilder(); }
-ModelBuilder* modelFactory() { return new ModelBuilder(latticeFactory(), sitesFactory()); }
-OperatorBuilder* operatorFactory() { return new OperatorBuilder(sitesFactory(), latticeFactory()); }
+ModelBuilder* modelFactory() { return new ModelBuilder( latticeFactory(), sitesFactory() ); }
+OperatorBuilder* operatorFactory() { return new OperatorBuilder( sitesFactory(), latticeFactory() ); }
 SweeperBuilder* sweeperFactory() { return new SweeperBuilder(); }
-EvolverBuilder* evolverFactory() { return new EvolverBuilder(modelFactory()); }
-StateBuilder* stateFactory() { return new StateBuilder(modelFactory(), latticeFactory(), evolverFactory()); }
-MeasurementBuilder* measurementFactory() { return new MeasurementBuilder(sitesFactory(), latticeFactory(), operatorFactory()); }
+EvolverBuilder* evolverFactory() { return new EvolverBuilder( modelFactory() ); }
+StateBuilder* stateFactory() { return new StateBuilder( modelFactory(), latticeFactory(), evolverFactory() ); }
+MeasurementBuilder* measurementFactory() { return new MeasurementBuilder( sitesFactory(), latticeFactory(), operatorFactory() ); }
+ChebyshevBuilder* chebyshevFactory() { return new ChebyshevBuilder( measurementFactory(), modelFactory(), stateFactory(), operatorFactory(), repositoryFactory() ); }
+CorrelationBuilder* correlationFactory() { return new CorrelationBuilder( evolverFactory(), measurementFactory(), stateFactory(), operatorFactory(), repositoryFactory() ); }
+KZMBuilder* kzmFactory() { return new KZMBuilder( repositoryFactory() ); }
+StaticBuilder* staticFactory() {return new StaticBuilder( stateFactory(), measurementFactory(), repositoryFactory() ); }
 
 /* Services */
-ChebyshevBuilder* chebyshevBuilderFactory() { return new ChebyshevBuilder(measurementFactory(), modelFactory(), stateFactory(), operatorFactory(), repositoryFactory()); }
-ChebyshevService* chebyshevServiceFactory() { return new ChebyshevService(chebyshevBuilderFactory(), repositoryFactory()); }
-CorrelationBuilder* correlationBuilderFactory() { return new CorrelationBuilder(evolverFactory(), measurementFactory(), stateFactory(), operatorFactory(), repositoryFactory()); }
-CorrelationService* correlationServiceFactory() { return new CorrelationService(correlationBuilderFactory(), repositoryFactory()); }
-
-KZMBuilder* kzmBuilderFactory() { return new KZMBuilder(repositoryFactory()); }
-KZMService* kzmServiceFactory() { return new KZMService(kzmBuilderFactory(), repositoryFactory()); }
-
-StaticBuilder* staticBuilderFactory() {return new StaticBuilder(stateFactory(), measurementFactory(), repositoryFactory()); }
-MagnetizationService* magnetizationServiceFactory() { return new MagnetizationService(staticBuilderFactory(), repositoryFactory()); }
+ChebyshevService* chebyshevServiceFactory() { return new ChebyshevService( chebyshevFactory(), repositoryFactory() ); }
+CorrelationService* correlationServiceFactory() { return new CorrelationService( correlationFactory(), repositoryFactory() ); }
+KZMService* kzmServiceFactory() { return new KZMService( kzmFactory(), repositoryFactory() ); }
+MagnetizationService* magnetizationServiceFactory() { return new MagnetizationService( staticFactory(), repositoryFactory() ); }
 
 #endif

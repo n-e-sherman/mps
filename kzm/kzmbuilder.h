@@ -18,16 +18,18 @@ protected:
 public:
 
 	KZMBuilder(RepositoryBuilder* rb) : repoBuilder(rb) {}					 
-	KZM* build(Args* args)
+	KZM* build(Args* args_in, std::string key = "")
 	{
-		repo = repoBuilder->build(args);
-		auto load = args->getBool("loadKZM");
-		if(load)
-		{
-			auto kzm = repo->load(KZM::getHash(args), new KZM(args));
-			if(kzm != nullptr) return kzm;	
-		}
-		auto kzm = new KZM(args, SpinHalf(3, {"ConserveQNs=", false})); // Could be generalized
+		auto base = "kzm";
+		key = key + "." + base;
+		auto args = build_args(args_in, base, key);
+
+		repo = repoBuilder->build(args, key);
+		auto load = args->getBool("load");
+
+		auto kzm = repo->load(KZM::getHash(args), new KZM(args));
+		if((kzm != nullptr) && load) return kzm;	
+		kzm = new KZM(args, SpinHalf(3, {"ConserveQNs=", false})); // Could be generalized
 		repo->save(KZM::getHash(args), kzm);
 		return kzm;
 	}

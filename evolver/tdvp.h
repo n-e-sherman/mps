@@ -37,7 +37,7 @@ public:
 		/* Include other sweep params in the future. */
 		sweeps = Sweeps(1);
 	    sweeps.maxdim() = args->getInt("MaxDim");
-	    sweeps.niter() = args->getInt("niter");
+	    sweeps.niter() = args->getInt("MaxIter");
 	    
 	}
 

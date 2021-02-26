@@ -23,11 +23,15 @@ private:
 public:
 
 	MagnetizationService(StaticBuilder* sb, RepositoryBuilder* rb) : staticBuilder(sb), repoBuilder(rb) {} 
-	void calculate(Args* args)
+	void calculate(Args* args_in)
 	{
+		auto key =  "magnetizationService";
+		auto args = build_args(args_in, key);
 
-		repo = repoBuilder->build(args);
-		auto mag = staticBuilder->build(args);
+		repo = repoBuilder->build(args, key);
+		auto mag = staticBuilder->build(args, key);
+		auto save = args->getBool("save");
+		
 		mag->calculate();
 		auto [labels,results] = mag->getResults();
 		repo->save(Magnetization::getHash(args),"magnetization/"+args->getString("Model"),labels,results); //<--- Update

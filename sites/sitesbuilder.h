@@ -14,14 +14,18 @@ protected:
 
 public:
 
-	Sites* build(Args* args)
+	Sites* build(Args* args_in, std::string key = "")
 	{
+		auto base = "sites";
+		key = key + "." + base;
+		auto args = build_args(args_in, base, key);
+		
 		auto cache = Cache::getInstance();
 		auto sites = (Sites*)cache->load(Sites::getHash(args));
 		if (sites) return sites; // in the cache
 		auto N = args->getInt("N"); if(args->getBool("thermal")) N = 2*N;
 		auto sType = args->getString("SiteSet");
-		cout << "building sites: " << sType << endl;
+		cout << "building sites: " << sType << " -- key: " << key << endl;
 		if (sType == "SpinHalf")
 		{
 			sites = new Sites(args,SpinHalf(N,*args));			

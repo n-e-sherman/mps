@@ -25,12 +25,15 @@ public:
 
 	ChebyshevService(ChebyshevBuilder* cb, RepositoryBuilder* rb) : chebyshevBuilder(cb), repoBuilder(rb) {}
 	
-	void calculate(Args* args)
+	void calculate(Args* args_in)
 	{
-		repo = repoBuilder->build(args);
-		chebyshev = chebyshevBuilder->build(args);
-    	auto save = args->getBool("saveChebyshev");
-		int nSave = args->getInt("nSave");
+		auto key =  "chebyshevService";
+		auto args = build_args(args_in, key);
+
+		repo = repoBuilder->build(args, key);
+		chebyshev = chebyshevBuilder->build(args, key);
+    	auto save = args->getBool("save");
+    	
 		int nChebyshev = args->getInt("nChebyshev");
 		string type = (args->getBool("momentum") ? "p" : "x");
 		int remaining = nChebyshev - chebyshev->getIteration();

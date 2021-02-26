@@ -26,9 +26,13 @@ protected:
 public:
 
 	StaticBuilder(StateBuilder* sb, MeasurementBuilder * msb, RepositoryBuilder* rb) : stateBuilder(sb), measurementBuilder(msb), repoBuilder(rb) {}
-	Static* build(Args* args)
+	Static* build(Args* args_in, std::string key = "")
 	{
-		cout << "building static: " << endl;
+		auto base = "static";
+		key = key + "." + base;
+		auto args = build_args(args_in, base, key);
+		
+		cout << "building static: -- key: " << key << endl;
 		return new Magnetization(args, stateBuilder, measurementBuilder);
 		/* May want to include other options in the future. */
 	}

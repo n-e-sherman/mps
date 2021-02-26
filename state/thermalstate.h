@@ -74,7 +74,7 @@ private:
 	{
 		auto tau = args->getReal("beta-tau");
 		auto ttotal = beta/2.0;
-		auto eps = args->getReal("thermalEps");
+		auto eps = args->getReal("eps");
     	int nt = int((ttotal/tau)*(1.0+eps));
     	if(fabs(nt*tau-ttotal) > eps) { nt += 1; tau = ttotal/Real(nt); }
     	evolver->setup(BondGate::tImag, tau);
