@@ -14,7 +14,7 @@ public:
 
 	Position(Args* a, Sites* s) : Operator(a,s) { _build(); }
 
-	virtual State multiply(State& s_in, Args args = Args::global())
+	virtual State multiply(State& s_in, Args* args_in = nullptr)
 	{	
 		auto _res = MPS(s_in.getState());
 		auto psi = MPS(_res);

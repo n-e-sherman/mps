@@ -38,7 +38,7 @@ public:
 		string type = (args->getBool("momentum") ? "p" : "x");
 		while(correlation->getTime() < time_max)
 		{
-			cout << "time = " << correlation->getTime() << endl;
+			cout << "time = " << correlation->getTime() << " / " << time_max << endl;
 			correlation->calculate();
 			repo->save(Correlation::getHash(args),correlation,save);
 			auto [labels,results] = correlation->getResults();

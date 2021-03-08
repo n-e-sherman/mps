@@ -22,8 +22,10 @@ public:
 	Operator(Args* a, Sites* s) : args(a), sites(s) {}
 	MPO& getO(){ return O; }
 
-	virtual State multiply(State& s_in, Args args = Args::global())
+	virtual State multiply(State& s_in, Args* args_in = nullptr)
 	{
+		// if (args_in != nullptr)
+		// 	return State(noPrime(applyMPO(O,s_in.getState(),*args_in)));
 		return State(noPrime(applyMPO(O,s_in.getState())));
 	}
 

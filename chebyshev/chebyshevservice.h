@@ -39,7 +39,7 @@ public:
 		int remaining = nChebyshev - chebyshev->getIteration();
 		while(remaining > 0)
 		{
-			cout << "remaining: " << remaining << endl;
+			cout << "n = " << chebyshev->getIteration() << " / " << nChebyshev << endl;
 			chebyshev->calculate();
 			remaining = nChebyshev - chebyshev->getIteration();
 			repo->save(Chebyshev::getHash(args),chebyshev,save);

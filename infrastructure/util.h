@@ -289,8 +289,8 @@ void read_args(int argc, char* argv[], std::map<std::string, Args*>& args)
                 if(sarg.find(colon) != string::npos) // we have a key
                 {
                     arg_key = sarg.substr(0, sarg.find(colon));
-                    cout << "arg = " << arg << " sarg = " << sarg <<  " arg_key = " << arg_key << endl;
-                    sarg.erase(0,sarg.find(colon));
+                    sarg.erase(0,sarg.find(colon)+1);
+                    cout << "arg,arg_key,sarg = " << arg << "," << arg_key << "," << sarg << endl;
                 }
                 if(arg.find(comma) != string::npos) // There are multiple values
                 {
@@ -321,7 +321,7 @@ void read_args(int argc, char* argv[], std::map<std::string, Args*>& args)
                 if(sarg.find(colon) != string::npos) // we have a key
                 {
                     arg_key = sarg.substr(0, sarg.find(colon));
-                    sarg.erase(0,sarg.find(colon));
+                    sarg.erase(0,sarg.find(colon)+1);
                 }
                 if(arg.find(comma) != string::npos) // There are multiple values
                 {
@@ -351,7 +351,7 @@ void read_args(int argc, char* argv[], std::map<std::string, Args*>& args)
             if(sarg.find(colon) != string::npos) // we have a key
             {
                 arg_key = sarg.substr(0, sarg.find(colon));
-                sarg.erase(0,sarg.find(colon));
+                sarg.erase(0,sarg.find(colon)+1);
             }
             if(arg.find(comma) != string::npos) // There are multiple values
                 {
@@ -405,8 +405,8 @@ Args* build_args(Args* args_in, std::string base, std::string key = "NULL")
     auto args_base = (Args*)cache->load(base);
     auto args_key = (Args*)cache->load(key);
     auto args = new Args(*args_in);
-    if (args_base != nullptr) *args += *args_base;
-    if (args_key != nullptr) *args += *args_key;
+    if (args_base != nullptr) (*args) += (*args_base); 
+    if (args_key != nullptr) (*args) += (*args_key);
     return args;
 }
 

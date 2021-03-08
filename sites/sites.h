@@ -43,7 +43,7 @@ public:
     {
     	auto cache = Cache::getInstance();
     	auto args_ = (Args*)cache->load("global"); args = new Args(*args_);
-    	auto args_sites = (Args*)cache->load("sites"); if(args_sites != nullptr) *args += *args_sites; // a bit sloppy, but "build_args" is not working...
+    	auto args_sites = (Args*)cache->load("sites"); if(args_sites != nullptr) (*args) += (*args_sites); // a bit sloppy, but "build_args" is not working...
 
     	auto sType = args->getString("SiteSet");
     	if (sType == "SpinHalf")

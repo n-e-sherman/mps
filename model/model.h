@@ -55,7 +55,7 @@ public:
 	Sites* getSites() const {return sites; }
 
 	/* ITensor Wrappers */
-	void orthogonalize(){ O.orthogonalize(*args); }
+	void orthogonalize(Args* args_in){ O.orthogonalize(*args_in); }
 	int maxLinkDim() { return itensor::maxLinkDim(O); }
 	Real averageLinkDim() { return itensor::averageLinkDim(O); }
 
@@ -69,6 +69,8 @@ public:
 			res = "_" + to_string(args->getReal("Je")) + to_string(args->getReal("Jo"));
 		if(sModel == "HeisenbergField")
 			res = "_" + to_string(args->getReal("B"));
+		if(sModel == "HeisenbergLR")
+			res = "_" + to_string(args->getReal("J2")) + to_string(args->getReal("J3"));
 		return res;
 	}
 

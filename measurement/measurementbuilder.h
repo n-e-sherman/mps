@@ -45,10 +45,10 @@ public:
 		{
 			if(thermal)
 			{
-				cout << "RealSpace" << " " << key << endl; 
+				cout << "RealSpace" << " -- key: " << key << endl;  
 				return new RealSpace(args, latticeBuilder->build(args, key), sitesBuilder->build(args, key)); 	
 			}
-			cout << "Local" << " " << key << endl;
+			cout << "Local" << " -- key: " << key << endl;  
 			return new Local(args, sitesBuilder->build(args, key));
 		}
 		

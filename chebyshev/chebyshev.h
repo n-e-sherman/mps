@@ -29,7 +29,7 @@ public:
 		state = *s;
 		setupModel();
 		t0 = op->multiply(state);
-		t1 = model->multiply(t0);
+		t1 = model->multiply(t0,args);
 		t2 = t1;
 		res.push_back(measurement->measure(state,t0));
 		res.push_back(measurement->measure(state,t1));
@@ -38,7 +38,7 @@ public:
 	
 	virtual void calculate()
 	{
-		auto temp = model->multiply(t1);
+		auto temp = model->multiply(t1,args);
 		temp.scale(2);
 		t2.getState() = sum(temp.getState(),-1*(t0.getState()),*args);
 		t0 = t1;
@@ -91,11 +91,11 @@ private:
 		auto MPOMaxDim = args->getInt("MPOMaxDim");
 		if(maxLinkDim(model->getO()) > MPOMaxDim)
 		{
-			cout << "compressing MPO from chi = " << maxLinkDim(model->getO()) << "too chi = " << endl;
+			cout << "compressing MPO from chi = " << maxLinkDim(model->getO()) << " to chi = " << MPOMaxDim << endl;
 			auto MaxDim = args->getInt("MaxDim");
 			args->add("MaxDim",MPOMaxDim);
-			model->orthogonalize();
-			cout << maxLinkDim(model->getO()) << endl;
+			model->orthogonalize(args);
+			args->add("MaxDim",MaxDim);
 		}
 	}
 

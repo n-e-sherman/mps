@@ -145,6 +145,7 @@ Args* default_global()
     // args->add("State","ThermalState"); // <--- Useless b/c of "momentum" and/or "thermal" parameter
         /* Thermal State */
         args->add("eps",1E-9);
+        args->add("beta",0);
         /* Ground State */
         args->add("initial","AF");
         args->add("nSweeps",5);
