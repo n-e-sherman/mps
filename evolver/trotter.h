@@ -31,6 +31,8 @@ public:
 	{
 		if(op == "H"){ mgates = model->getGatesH();	}
 		else         { mgates = model->getGatesL(); }
+		// if(type != BondGate::tReal)
+		// 	args->add("Normalize",true);
 		buildGates(type,tau);
 	}
 

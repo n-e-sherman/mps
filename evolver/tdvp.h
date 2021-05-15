@@ -28,9 +28,9 @@ public:
 	{
 		dt = Cplx(tau);
 		if(type == BondGate::tReal)
-		{
 			dt *= Complex_i;
-		}
+		// else
+		// 	args->add("DoNormalize",true);
 		if(op == "H"){ model->calcH(); }
 		else         { model->calcL(); }
 

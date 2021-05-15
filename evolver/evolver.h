@@ -16,6 +16,7 @@ protected:
 public:
 	
 	Evolver(){}
+	Evolver(Args* a) : args(a) {}
 	Evolver(Args* a, Model* m) : args(a), model(m) {}
 	virtual void evolve(State& s) = 0;
 	virtual void setup(BondGate::Type type, Real tau, string op = "H") = 0;

@@ -54,7 +54,7 @@ public:
 	{ 
 		cwd = dataDir;
 		cache->save(hash,t);
-		if(saveFile)
+		if(saveFile & writeFile)
 		{
 			ofstream file;
 			file.open(cwd+ ".data/" + hash, ios::binary | ofstream::trunc);
@@ -64,7 +64,7 @@ public:
 	}
 
 	template<class T,class LabelT>
-	void save(const std::string &hash, const std::string& folder, const LabelT& labels, const T& data, string delimeter = ",")
+	void save(const std::string &hash, const std::string& folder, const LabelT& labels, const T& data, bool print_location = false)
 	{
 		/* This function assumes a 2D structure of iterables.
 		 * example: vector<vector<.>>. The outer iterable are
@@ -72,12 +72,14 @@ public:
 		 */
 		cwd = resultDir;
 		ofstream file;
+		if (print_location)
+			cout <<  "Results saved at location: " << cwd + ".results/" + folder + "/" + hash << endl;
 		file.open(cwd + ".results/" + folder + "/" + hash);
 		auto it = labels.begin();
 		while(it != labels.end())
 		{
 			file << *it;
-			if(++it != labels.end()) file << delimeter;
+			if(++it != labels.end()) file << ",";
 		}
 		file << "\n";
 
@@ -87,7 +89,7 @@ public:
 			while(it != row.end())
 			{
 				file << *it;
-				if(++it != row.end()) file << delimeter;
+				if(++it != row.end()) file << ",";
 			}
 			file << "\n";
 		}

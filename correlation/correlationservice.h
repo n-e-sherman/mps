@@ -36,6 +36,7 @@ public:
 
 		auto time_max = args->getReal("time");
 		string type = (args->getBool("momentum") ? "p" : "x");
+		if(!(args->getBool("realTime"))) type = "i" + type;
 		while(correlation->getTime() < time_max)
 		{
 			cout << "time = " << correlation->getTime() << " / " << time_max << endl;
@@ -45,7 +46,7 @@ public:
 			repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results); //<--- Update
 		}
 		auto [labels,results] = correlation->getResults();
-		repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results); //<--- Update
+		repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results,true); //<--- Update
 	}
 };
 

@@ -7,6 +7,7 @@
 #include "evolver/evolver.h"
 #include "evolver/expmpo.h"
 #include "evolver/trotter.h"
+#include "evolver/trivial.h"
 #include "evolver/tdvp.h"
 #include "evolver/mixed.h"
 
@@ -32,7 +33,10 @@ public:
 		
 		auto evolver = args->getString("Evolver");
 		cout << "building evolver: " << evolver << " -- key: " << key << endl;
-		
+		if(evolver == "Trivial")
+		{
+			return new Trivial(args);
+		}
 		if(evolver == "Trotter")
 		{
 			return new Trotter(args, modelBuilder->build(args, key));
@@ -52,6 +56,8 @@ public:
 		else
 		if(evolver == "Mixed")
 		{
+			cout << "Mixed Evolver is currently out of service." << endl;
+			exit(1);
 			return new Mixed(args, modelBuilder->build(args, key));
 		}
 		else

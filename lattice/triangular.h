@@ -2,6 +2,8 @@
 #define __TRIANGULAR_H_
 
 #include "lattice/lattice.h"
+#include "repository/repository.h"
+// #include <algorithm>
 
 using namespace std;
 using namespace itensor;
@@ -14,6 +16,8 @@ protected:
 	vector<vector<int>> triangles;
 	vector<vector<int>> seconds;
 	vector<vector<int>> thirds;
+	vector<vector<int>> fourths_plus;
+	vector<vector<int>> fourths_sub;
 
 public:
 	
@@ -31,15 +35,57 @@ public:
 		get_triangles();
 		get_seconds();
 		get_thirds();
+		get_fourths();
 
 		/* bonds */
 		for(auto &l : lat) bonds.push_back(bond{l.s1,l.s2,physical,-1,1});  // z seems ill-defined here?
 		for(auto &b : seconds) bonds.push_back(bond{b[0],b[1],physical,-1,2});  // z seems ill-defined here?
 		for(auto &b : thirds) bonds.push_back(bond{b[0],b[1],physical,-1,3});  // z seems ill-defined here?
+		for(auto &b : fourths_plus) rings.push_back(ring{b[0],b[1],b[2],b[3],physical,-1, 4, 1});  // z seems ill-defined here?
+		for(auto &b : fourths_sub) rings.push_back(ring{b[0],b[1],b[2],b[3],physical,-1, 4, -1});  // z seems ill-defined here?
 
 		/* sites */
 		for(int i : range1(N)) sites.push_back(site{i,i,0,physical});
 	}
+
+	void print_lattice()
+    {
+    	
+    	cout << "bonds = " << endl << "[";
+    	for(auto &b : bonds) cout << "[" << b.s1 << "," << b.s2 << "]" << endl;
+    	cout << "]";
+    	cout << "adjmat = " << endl;  print(adjmat);
+    	cout << "seconds = " << endl; print(seconds);
+    	cout << "thirds = " << endl;  print(thirds);
+    }
+
+    void save_lattice(Repository* repo)
+    {
+    	auto labels = vector<string>({"x","y"});
+    	auto labels_tri = vector<string>({"x","y","z"});
+    	auto labels_fourth = vector<string>({"x1","y1","x2","y2"});
+    	auto labels_adjmat = vector<string>();
+    	auto Nx = args->getInt("Nx");
+		auto Ny = args->getInt("Ny");
+		auto N = Nx*Ny;
+    	for(auto i : range(N)) labels_adjmat.push_back(to_string(i));
+    	vector<vector<int>> vec_bonds;
+    	for(auto &b : bonds)
+    	{
+    		if (b.n == 1)
+    			vec_bonds.push_back(vector<int>{b.s1,b.s2});   
+    	}
+    	repo->save("triangles","temp",labels_tri,triangles);
+    	repo->save("fourths_plus","temp",labels_fourth,fourths_plus);
+    	repo->save("fourths_sub","temp",labels_fourth,fourths_sub);
+    	repo->save("bonds","temp",labels,vec_bonds);
+    	repo->save("seconds","temp",labels,seconds);
+    	repo->save("thirds","temp",labels,thirds);
+    	repo->save("adjmat","temp",labels_adjmat,adjmat);
+
+    	// repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results); //<--- Update
+    }
+
 
 protected:
 
@@ -156,6 +202,71 @@ protected:
 	    	}
 	    }	
     }
+
+    void get_fourths() // adjmat used
+    {
+
+    	vector<vector<int>> rings;
+    	for(auto _tri1 : triangles)
+    	{
+    		set<int> tri1; for(auto x : _tri1) tri1.insert(x);
+    		for(auto _tri2 : triangles)
+	    	{
+	    		set<int> tri2; for(auto x : _tri2) tri2.insert(x);
+	    		set<int> tri_intersect;
+	    		set_intersection(tri1.begin(), tri1.end(), tri2.begin(), tri2.end(), std::inserter(tri_intersect, tri_intersect.begin()));
+	    		if(tri_intersect.size() == 2) // 2nd neighbor found
+	            {
+	                set<int> tri_union;
+	                set_union(tri1.begin(), tri1.end(), tri2.begin(), tri2.end(), std::inserter(tri_union, tri_union.begin()));
+	                vector<int> ring(tri_union.begin(),tri_union.end());
+	                rings.push_back(ring);
+	            }
+	    	}
+    	}
+    	// set_difference(tri_union.begin(), tri_union.end(), tri_intersect.begin(), tri_intersect.end(), std::inserter(_second, _second.begin()));
+
+    	for (auto ring : rings)
+    	{
+    		auto s1 = ring[0];
+    		for(auto j : range(1,ring.size()))
+    		{
+    			auto s2 = ring[j];
+    			auto pair = vector<int>{s1,s2};
+    			sort(pair.begin(),pair.end());
+    			auto off = vector<int>(ring);
+    			off.erase(std::remove(off.begin(), off.end(), pair[0]), off.end());
+    			off.erase(std::remove(off.begin(), off.end(), pair[1]), off.end());
+    			sort(off.begin(),off.end());
+    			auto res = vector<int>{pair[0],pair[1],off[0],off[1]};
+    			if( (adjmat[pair[0]][pair[1]] == 2) || (adjmat[off[0]][off[1]] == 2) ) // Subtract these
+    			{
+    				fourths_sub.push_back(res);
+    			}
+    			else
+    			{
+    				fourths_plus.push_back(res);
+    			}
+    		}
+    	}
+		// fourths = []
+		// for b in rings:
+		//     res = {'add' : [], 'sub' : [] }
+		//     s1 = b[0]
+		//     for j in range(1,len(b)):
+		//         s2 = b[j]
+		//         pair = tuple(np.sort([s2,s1]))
+		//         off = tuple(np.sort(list(set(b) - set(pair))))
+		//         if (pair in seconds) or (off in seconds):
+		//             res['sub'].append([pair,off])
+		//         else:
+		//             res['add'].append([pair,off])
+		//     fourths.append(res)
+
+    }
+
+    
+
     
 };
 

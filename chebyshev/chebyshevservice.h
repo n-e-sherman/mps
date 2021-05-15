@@ -47,7 +47,7 @@ public:
 			repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results);
 		}
 		auto [labels,results] = chebyshev->getResults();
-		repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results); 
+		repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results,true); 
 	}
 };
 

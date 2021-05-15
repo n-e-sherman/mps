@@ -99,6 +99,7 @@ Args* default_global()
         /* HeisenbergLR */
         args->add("J2",0.0);
         args->add("J3",0.0);
+        args->add("J4",0.0);
         /* XX */
         /* XXZ */
         args->add("Jxy",1.0);
@@ -116,7 +117,9 @@ Args* default_global()
         args->add("qFactor",1.0);
 
     /* evolver */
+
     args->add("Evolver","TDVP");
+    args->add("realTime",true);
     args->add("time-tau",0.1); // Should be in the evolver, not in the parent.
     args->add("beta-tau",0.1);
         /* TDVP */

@@ -11,6 +11,7 @@ class HeisenbergLR : public Model
 protected:
 	Real J2;
 	Real J3;
+    Real J4;
 
 	virtual AutoMPO calcAmpoH(bool skip = false, Real shift = 0)
 	{
@@ -37,9 +38,25 @@ protected:
 	                ampo += 0.5*J3,"S-",b.s1,"S+",b.s2;
 	                ampo +=     J3,"Sz",b.s1,"Sz",b.s2;
         		}
-	                
         	}
         }
+        if(J4 != 0)
+        {
+            for(auto r : lattice->getRings())
+            {
+                ampo +=         J4*r.sign,"Sz",r.s1,"Sz",r.s2,"Sz",r.s3,"Sz",r.s4;
+                ampo +=     0.5*J4*r.sign,"Sz",r.s1,"Sz",r.s2,"S+",r.s3,"S-",r.s4;
+                ampo +=     0.5*J4*r.sign,"Sz",r.s1,"Sz",r.s2,"S-",r.s3,"S+",r.s4;
+                ampo +=     0.5*J4*r.sign,"S+",r.s1,"S-",r.s2,"Sz",r.s3,"Sz",r.s4;
+                ampo +=     0.5*J4*r.sign,"S-",r.s1,"S+",r.s2,"Sz",r.s3,"Sz",r.s4;
+                ampo +=    0.25*J4*r.sign,"S+",r.s1,"S-",r.s2,"S+",r.s3,"S-",r.s4;
+                ampo +=    0.25*J4*r.sign,"S+",r.s1,"S-",r.s2,"S-",r.s3,"S+",r.s4;
+                ampo +=    0.25*J4*r.sign,"S-",r.s1,"S+",r.s2,"S+",r.s3,"S-",r.s4;
+                ampo +=    0.25*J4*r.sign,"S-",r.s1,"S+",r.s2,"S-",r.s3,"S+",r.s4;
+            }
+        }
+
+        
         if(shift != 0) calcAmpoShift(ampo, shift);
         return ampo;
 	}
@@ -94,6 +111,38 @@ protected:
         		}
         	}
         }
+        if(J4 != 0)
+        {
+
+            for(auto r : lattice->getRings())
+            {
+                if(r.t == Lattice::physical)
+                {
+                    ampo +=         J4*r.sign,"Sz",r.s1,"Sz",r.s2,"Sz",r.s3,"Sz",r.s4;
+                    ampo +=     0.5*J4*r.sign,"Sz",r.s1,"Sz",r.s2,"S+",r.s3,"S-",r.s4;
+                    ampo +=     0.5*J4*r.sign,"Sz",r.s1,"Sz",r.s2,"S-",r.s3,"S+",r.s4;
+                    ampo +=     0.5*J4*r.sign,"S+",r.s1,"S-",r.s2,"Sz",r.s3,"Sz",r.s4;
+                    ampo +=     0.5*J4*r.sign,"S-",r.s1,"S+",r.s2,"Sz",r.s3,"Sz",r.s4;
+                    ampo +=    0.25*J4*r.sign,"S+",r.s1,"S-",r.s2,"S+",r.s3,"S-",r.s4;
+                    ampo +=    0.25*J4*r.sign,"S+",r.s1,"S-",r.s2,"S-",r.s3,"S+",r.s4;
+                    ampo +=    0.25*J4*r.sign,"S-",r.s1,"S+",r.s2,"S+",r.s3,"S-",r.s4;
+                    ampo +=    0.25*J4*r.sign,"S-",r.s1,"S+",r.s2,"S-",r.s3,"S+",r.s4;    
+                }
+                if(r.t == Lattice::environment)
+                {
+                    ampo +=     -1.0*J4*r.sign,"Sz",r.s1,"Sz",r.s2,"Sz",r.s3,"Sz",r.s4;
+                    ampo +=     -0.5*J4*r.sign,"Sz",r.s1,"Sz",r.s2,"S+",r.s3,"S-",r.s4;
+                    ampo +=     -0.5*J4*r.sign,"Sz",r.s1,"Sz",r.s2,"S-",r.s3,"S+",r.s4;
+                    ampo +=     -0.5*J4*r.sign,"S+",r.s1,"S-",r.s2,"Sz",r.s3,"Sz",r.s4;
+                    ampo +=     -0.5*J4*r.sign,"S-",r.s1,"S+",r.s2,"Sz",r.s3,"Sz",r.s4;
+                    ampo +=    -0.25*J4*r.sign,"S+",r.s1,"S-",r.s2,"S+",r.s3,"S-",r.s4;
+                    ampo +=    -0.25*J4*r.sign,"S+",r.s1,"S-",r.s2,"S-",r.s3,"S+",r.s4;
+                    ampo +=    -0.25*J4*r.sign,"S-",r.s1,"S+",r.s2,"S+",r.s3,"S-",r.s4;
+                    ampo +=    -0.25*J4*r.sign,"S-",r.s1,"S+",r.s2,"S-",r.s3,"S+",r.s4;    
+                }
+                
+            }
+        }
         if(shift != 0) calcAmpoShift(ampo, shift);
         return ampo;
 	}
@@ -118,8 +167,10 @@ protected:
     {
         J2 = args->getReal("J2");
         J3 = args->getReal("J3");
+        J4 = args->getReal("J4");
         params["J2"] = J2;
         params["J3"] = J3;
+        params["J4"] = J4;
     }
 
 public:

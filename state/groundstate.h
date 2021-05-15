@@ -24,6 +24,7 @@ public:
 		model->calcH();
 		buildInitialState();
 		calcGroundState();
+		cout << "ground state bond-dim = " << itensor::maxLinkDim(state) << endl;
 	}
 
 private:
