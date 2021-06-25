@@ -70,7 +70,7 @@ public:
 		if(sModel == "HeisenbergField")
 			res = "_" + to_string(args->getReal("B"));
 		if(sModel == "HeisenbergLR")
-			res = "_" + to_string(args->getReal("J2")) + to_string(args->getReal("J3"));
+			res = "_" + to_string(args->getReal("J2")) + to_string(args->getReal("J3"))+"_"+ to_string(args->getInt("Nx"))+"_"+to_string(args->getInt("Ny"))+"_"+args->getString("Geometry");
 		return res;
 	}
 

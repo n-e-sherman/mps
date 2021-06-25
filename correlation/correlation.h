@@ -110,6 +110,7 @@ private:
 		else { labels.push_back("E0"); }
 		for(auto& x : ket_evolver->getParams()){ labels.push_back(x.first); }
 		labels.push_back("Evolver");
+		labels.push_back("Geometry");
 		return labels;
 	}
 
@@ -130,6 +131,7 @@ private:
 			else { temp.push_back(bra.getE0()); }
 			for(auto& x : ket_evolver->getParams()){ temp.push_back(x.second); }
 			temp.push_back(args->getString("Evolver"));
+			temp.push_back(args->getString("Geometry"));
 			results.push_back(temp);
 		}
 		return results;

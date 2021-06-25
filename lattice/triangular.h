@@ -12,6 +12,7 @@ class Triangular : public Lattice
 {
 protected:
 
+	LatticeGraph lat;
 	vector<vector<int>> adjmat; // Is this needed as a member?
 	vector<vector<int>> triangles;
 	vector<vector<int>> seconds;
@@ -30,8 +31,15 @@ public:
 		if(N != args->getInt("N")) { cout << "N is not equal to Nx*Ny, Modifying this." << endl; args->add("N",N); }
 
 		/* lattice data */
-		auto lat = triangularLattice(Nx,Ny,*args);
-		get_adjmat(N,lat);
+		auto geometry = args->getString("Geometry");
+		if(geometry == "YC")
+			lat = triangularLattice(Nx,Ny,*args);
+		else
+		if(geometry == "XC")
+			get_lattice_XC(Nx,Ny);
+		else
+			Error("Geometry specified is not implemented: "+geometry);
+		get_adjmat(N);
 		get_triangles();
 		get_seconds();
 		get_thirds();
@@ -75,13 +83,13 @@ public:
     		if (b.n == 1)
     			vec_bonds.push_back(vector<int>{b.s1,b.s2});   
     	}
-    	repo->save("triangles","temp",labels_tri,triangles);
-    	repo->save("fourths_plus","temp",labels_fourth,fourths_plus);
-    	repo->save("fourths_sub","temp",labels_fourth,fourths_sub);
-    	repo->save("bonds","temp",labels,vec_bonds);
-    	repo->save("seconds","temp",labels,seconds);
-    	repo->save("thirds","temp",labels,thirds);
-    	repo->save("adjmat","temp",labels_adjmat,adjmat);
+    	repo->save("triangles","temp",labels_tri,triangles,true);
+    	repo->save("fourths_plus","temp",labels_fourth,fourths_plus,true);
+    	repo->save("fourths_sub","temp",labels_fourth,fourths_sub,true);
+    	repo->save("bonds","temp",labels,vec_bonds,true);
+    	repo->save("seconds","temp",labels,seconds,true);
+    	repo->save("thirds","temp",labels,thirds,true);
+    	repo->save("adjmat","temp",labels_adjmat,adjmat,true);
 
     	// repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results); //<--- Update
     }
@@ -89,7 +97,58 @@ public:
 
 protected:
 
-    void get_adjmat(int N, LatticeGraph& lat)
+	void get_lattice_XC(int Nx, int Ny)
+	{
+        auto PBC = args->getBool("YPeriodic");
+        int N = Nx*Ny;
+
+        lat.clear();
+        for(int n = 1; n <= N; ++n)
+        {
+        	int x = (n-1)/Ny+1; 
+	        int y = (n-1)%Ny+1;
+            //up
+            if(y == Ny)
+            {
+            	auto n2 = n+1-Ny;
+                if((n2 <= N) and PBC)
+                    lat.emplace_back(n,n2);
+            }
+            else
+            {
+            	auto n2 = n+1;
+                if(n2 <= N)
+                    lat.emplace_back(n,n2);
+            }
+                
+            //right
+            auto n2 = n+Ny;
+            if(n2 <= N)
+                lat.emplace_back(n,n2);
+            //diagonal
+            if((n%2) == 0) 
+            {
+            	//up and right
+            	if(y == Ny)
+            	{
+            		n2 = n+1;
+                    if((n2 <= N) and PBC)
+                        lat.emplace_back(n,n2);
+            	}  
+                else
+                {
+                	n2 = n+1+Ny;
+                    if(n2 <= N)
+                        lat.emplace_back(n,n2);
+                }
+                n2 = n+Ny-1;
+                if(n2 <= N)
+                    lat.emplace_back(n,n2);
+            }
+        }
+	}
+
+    void get_adjmat(int N)
     {
     	adjmat = vector<vector<int>>(N+1,vector<int>(N+1));
     	for(auto &l : lat)

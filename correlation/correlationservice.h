@@ -37,7 +37,7 @@ public:
 		auto time_max = args->getReal("time");
 		string type = (args->getBool("momentum") ? "p" : "x");
 		if(!(args->getBool("realTime"))) type = "i" + type;
-		while(correlation->getTime() < time_max)
+		while(abs(correlation->getTime()) < abs(time_max))
 		{
 			cout << "time = " << correlation->getTime() << " / " << time_max << endl;
 			correlation->calculate();
