@@ -30,6 +30,8 @@ public:
 	virtual vector<string> addLabels() = 0;
 	virtual vector<StringReal> addResults(vector<StringReal> &_in) = 0;
 	virtual void update(){}
+	virtual void read(istream& is) {}
+    virtual void write(ostream& os) const {}
 
 };
 #endif

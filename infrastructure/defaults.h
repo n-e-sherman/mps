@@ -115,6 +115,10 @@ Args* default_global()
         args->add("localOperator","Sz");
         /* Momentum */
         args->add("localOperator","Sz");
+        args->add("momentumFunction","cos");
+        args->add("qx",0.0);
+        args->add("qy",0.0);
+        args->add("qz",0.0);
         args->add("qFactor",1.0);
 
     /* evolver */

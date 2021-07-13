@@ -41,7 +41,7 @@ public:
 	{
 		bra_evolver->evolve(bra);
 		ket_evolver->evolve(ket);
-		res.push_back(measurement->measure(bra,ket));
+		res.push_back(measurement->measure(bra,ket)); // <--- Issue here, want to double check this when loading.
 		time += tau; times.push_back(time);
 	}
 	
@@ -50,7 +50,7 @@ public:
 	static string getHash(Args* args)
 	{
 		vector<string> strings{"SiteSet","Lattice","Model","Evolver"};
-		vector<string> reals{"N","MaxDim","beta","beta-tau","time-tau"};
+		vector<string> reals{"N","MaxDim","beta","beta-tau","time-tau","qx","qy","qz"};
 		auto res = "Correlation" + hash_real(reals,args) + hash_string(strings, args);
 		if(!(args->getBool("realTime"))) res += "i";
 		return res;
@@ -60,6 +60,7 @@ public:
     {
     	bra_evolver->read(f);
     	ket_evolver->read(f);
+    	measurement->read(f);
     	read(f,bra);
     	read(f,ket);
     	read(f,time);
@@ -73,6 +74,7 @@ public:
 	{ 
 		bra_evolver->write(f);
 		ket_evolver->write(f);
+		measurement->write(f);
 		write(f,bra);
 		write(f,ket);
 		write(f,time);

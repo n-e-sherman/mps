@@ -14,7 +14,7 @@ public:
 	{	
 		auto N = args->getInt("N");
 		for(int i : range1(N-1)) bonds.push_back(bond{i,i+1,physical,i%2}); 
-		for(int i : range1(N)) sites.push_back(site{i,i,0,physical}); 
+		for(int i : range1(N)) sites.push_back(site{i,Real(i),0,0,physical}); 
 	}
 };
 

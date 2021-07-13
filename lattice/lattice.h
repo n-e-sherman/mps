@@ -15,7 +15,7 @@ public:
 protected:
 	struct bond { int s1 = 0; int s2 = 0; type t = physical; int z = 0;	int n = 1; };
 	struct ring {int s1 = 0; int s2 = 0; int s3 = 0; int s4 = 0; type t = physical; int z = 0; int n = 1; int sign = 1; };
-	struct site { int s = 0; int p = 0; int a = 0; type t = physical; };
+	struct site { int s = 0; Real rx = 0; Real ry = 0; Real rz = 0; type t = physical; };
 
 	vector<ring> rings;
 	vector<bond> bonds;

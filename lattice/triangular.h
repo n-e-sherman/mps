@@ -19,6 +19,7 @@ protected:
 	vector<vector<int>> thirds;
 	vector<vector<int>> fourths_plus;
 	vector<vector<int>> fourths_sub;
+	vector<vector<Real>> positions;
 
 public:
 	
@@ -31,19 +32,13 @@ public:
 		if(N != args->getInt("N")) { cout << "N is not equal to Nx*Ny, Modifying this." << endl; args->add("N",N); }
 
 		/* lattice data */
-		auto geometry = args->getString("Geometry");
-		if(geometry == "YC")
-			lat = triangularLattice(Nx,Ny,*args);
-		else
-		if(geometry == "XC")
-			get_lattice_XC(Nx,Ny);
-		else
-			Error("Geometry specified is not implemented: "+geometry);
+		get_lattice(Nx,Ny);
 		get_adjmat(N);
 		get_triangles();
 		get_seconds();
 		get_thirds();
 		get_fourths();
+
 
 		/* bonds */
 		for(auto &l : lat) bonds.push_back(bond{l.s1,l.s2,physical,-1,1});  // z seems ill-defined here?
@@ -51,9 +46,8 @@ public:
 		for(auto &b : thirds) bonds.push_back(bond{b[0],b[1],physical,-1,3});  // z seems ill-defined here?
 		for(auto &b : fourths_plus) rings.push_back(ring{b[0],b[1],b[2],b[3],physical,-1, 4, 1});  // z seems ill-defined here?
 		for(auto &b : fourths_sub) rings.push_back(ring{b[0],b[1],b[2],b[3],physical,-1, 4, -1});  // z seems ill-defined here?
-
 		/* sites */
-		for(int i : range1(N)) sites.push_back(site{i,i,0,physical});
+		for(int i : range1(N)) sites.push_back(site{i,positions[i-1][0],positions[i-1][1],positions[i-1][2],physical});
 	}
 
 	void print_lattice()
@@ -97,16 +91,59 @@ public:
 
 protected:
 
+	void get_lattice(int Nx, int Ny)
+	{
+		auto geometry = args->getString("Geometry");
+		if(geometry == "YC")
+		{
+			lat = triangularLattice(Nx,Ny,*args);
+			get_positions_YC(Nx,Ny);
+		}
+		else
+		if(geometry == "XC")
+		{
+			get_lattice_XC(Nx,Ny);
+		}
+		else
+			Error("Geometry specified is not implemented: "+geometry);
+	}
+
+	void get_positions_YC(int Nx, int Ny)
+	{
+		int N = Nx*Ny;
+		Real ax = sqrt(3.0)/2.0;
+	    Real ay = 1.0;
+	    Real shift = -0.5;
+		for(int n = 1; n <= N; ++n)
+        {
+	        int x = (n-1)/Ny+1; 
+	        int y = (n-1)%Ny+1;
+	        auto rx = ax*x;
+	        auto ry = ay*y + x*shift;
+	        while(ry < 0)
+	        	ry += ay*Ny;
+	        positions.push_back({rx,ry,0.0});
+    	}
+
+	}
+
 	void get_lattice_XC(int Nx, int Ny)
 	{
+		lat.clear();
         auto PBC = args->getBool("YPeriodic");
         int N = Nx*Ny;
-
-        lat.clear();
+        Real ax = 1.0;
+        Real ay = sqrt(3.0)/2.0;
+        Real shift = 0.5;
         for(int n = 1; n <= N; ++n)
         {
         	int x = (n-1)/Ny+1; 
 	        int y = (n-1)%Ny+1;
+	        auto rx = ax*x;
+	        auto ry = ay*y;
+	        if((y%2) == 0)
+	        	rx += shift;	        
+	        positions.push_back({rx,ry,0.0});
             //up
             if(y == Ny)
             {
