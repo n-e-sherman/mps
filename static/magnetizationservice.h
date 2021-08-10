@@ -27,6 +27,7 @@ public:
 	{
 		auto key =  "magnetizationService";
 		auto args = build_args(args_in, key);
+		args->add("Static","Magnetization");
 
 		repo = repoBuilder->build(args, key);
 		auto mag = staticBuilder->build(args, key);

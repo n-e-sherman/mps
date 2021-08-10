@@ -41,7 +41,7 @@ public:
 	{
 		bra_evolver->evolve(bra);
 		ket_evolver->evolve(ket);
-		res.push_back(measurement->measure(bra,ket)); // <--- Issue here, want to double check this when loading.
+		res.push_back(measurement->measure(bra,ket));
 		time += tau; times.push_back(time);
 	}
 	
@@ -53,6 +53,8 @@ public:
 		vector<string> reals{"N","MaxDim","beta","beta-tau","time-tau","qx","qy","qz"};
 		auto res = "Correlation" + hash_real(reals,args) + hash_string(strings, args);
 		if(!(args->getBool("realTime"))) res += "i";
+		if(args->getBool("CenterSite")) res += "-CenterSite";
+		if(args->getBool("Connected")) res += "-Connected";
 		return res;
 	}
 
@@ -113,6 +115,8 @@ private:
 		for(auto& x : ket_evolver->getParams()){ labels.push_back(x.first); }
 		labels.push_back("Evolver");
 		labels.push_back("Geometry");
+		labels.push_back("CenterSite");
+		labels.push_back("Connected");
 		return labels;
 	}
 
@@ -134,6 +138,8 @@ private:
 			for(auto& x : ket_evolver->getParams()){ temp.push_back(x.second); }
 			temp.push_back(args->getString("Evolver"));
 			temp.push_back(args->getString("Geometry"));
+			temp.push_back(args->getBool("CenterSite"));
+			temp.push_back(args->getBool("Connected"));
 			results.push_back(temp);
 		}
 		return results;

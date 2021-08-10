@@ -15,6 +15,9 @@ using namespace std;
 
 vector<Real> stringToVector(string s)
 {   // I am assuming this string is comma separated, and NO SPACES
+    if (s == "") // empty string
+        return vector<Real>();
+
     stringstream ss(s);
     vector<string> sres;
     while( ss.good() )
@@ -30,6 +33,9 @@ vector<Real> stringToVector(string s)
 
 vector<int> stringToVectorI(string s)
 {   // I am assuming this string is comma separated, and NO SPACES
+    if (s == "") // empty string
+        return vector<int>();
+
     stringstream ss(s);
     vector<string> sres;
     while( ss.good() )
@@ -147,6 +153,21 @@ string _hash_real(string name, Args* args)
 }
 
 string hash_real(vector<string> hashes, Args* args)
+{
+    string hash = "";
+    for(auto &name : hashes) hash += _hash_real(name,args);   
+    return hash;
+}
+
+string _hash_bool(string name, Args* args)
+{
+    auto h = args->getBool(name); // will be NAN if a string.
+    if(h)
+        return "_" + to_string(h);
+    return string("");
+}
+
+string hash_bool(vector<string> hashes, Args* args)
 {
     string hash = "";
     for(auto &name : hashes) hash += _hash_real(name,args);   
@@ -291,13 +312,11 @@ void read_args(int argc, char* argv[], std::map<std::string, Args*>& args)
                 {
                     arg_key = sarg.substr(0, sarg.find(colon));
                     sarg.erase(0,sarg.find(colon)+1);
-                    cout << "arg,arg_key,sarg = " << arg << "," << arg_key << "," << sarg << endl;
                 }
                 if(arg.find(comma) != string::npos) // There are multiple values
                 {
                     auto arg_name = sarg.substr(0, sarg.find(eq));
                     auto arg_value = sarg.substr(sarg.find(eq)+1,sarg.size());
-                    cout << sarg << " " << arg_name << " " << arg_value << endl;
                     if(args.find(arg_key) != args.end()) 
                         args[arg_key]->add(arg_name, arg_value);
                     else
@@ -329,7 +348,6 @@ void read_args(int argc, char* argv[], std::map<std::string, Args*>& args)
                     auto sarg = arg.erase(0,1);
                     auto arg_name = sarg.substr(0, sarg.find(eq));
                     auto arg_value = sarg.substr(sarg.find(eq)+1,sarg.size());
-                    cout << sarg << " " << arg_name << " " << arg_value << endl;
                     if(args.find(arg_key) != args.end()) 
                         args[arg_key]->add(arg_name, arg_value);
                     else
@@ -358,7 +376,6 @@ void read_args(int argc, char* argv[], std::map<std::string, Args*>& args)
                 {
                     auto arg_name = sarg.substr(0, sarg.find(eq));
                     auto arg_value = sarg.substr(sarg.find(eq)+1,sarg.size());
-                    cout << sarg << " " << arg_name << " " << arg_value << endl;
                     if(args.find(arg_key) != args.end()) 
                         args[arg_key]->add(arg_name, arg_value);
                     else

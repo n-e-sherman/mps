@@ -137,11 +137,11 @@ protected:
         Real shift = 0.5;
         for(int n = 1; n <= N; ++n)
         {
-        	int x = (n-1)/Ny+1; 
-	        int y = (n-1)%Ny+1;
+        	int x = (n-1)/Ny; 
+	        int y = (n-1)%Ny;
 	        auto rx = ax*x;
 	        auto ry = ay*y;
-	        if((y%2) == 0)
+	        if((y%2) == 1)
 	        	rx += shift;	        
 	        positions.push_back({rx,ry,0.0});
             //up

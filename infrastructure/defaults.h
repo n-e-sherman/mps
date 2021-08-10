@@ -16,6 +16,7 @@ Args* default_global()
     args->add("Correlation",false);
     args->add("KZM",false);
     args->add("Magnetization",false);
+    args->add("StaticCorrelation",false);
 
     /* system parameters */
     args->add("N",100);
@@ -33,6 +34,8 @@ Args* default_global()
     /* chebyshevService */
     args->add("nChebyshev",10);
     args->add("momentum",false);
+    args->add("CenterSite",true);
+    args->add("Connected",true);
 
     /* correlationService */
     args->add("time",1);
@@ -67,7 +70,7 @@ Args* default_global()
 
     /* static */
     args->add("load",true);
-    args->add("Static","Magnetization");
+    args->add("Static","StaticCorrelation");
         /* Magnetization */
         args->add("BMin",0);
         args->add("BMax",1);
@@ -75,6 +78,10 @@ Args* default_global()
         args->add("betaMin",0);
         args->add("betaMax",1);
         args->add("betaStep",0.1);
+        /* Correlations */
+        args->add("qxs","");
+        args->add("qys","");
+        args->add("qzs","");
 
 /* objects */
 

@@ -14,10 +14,12 @@ int main(int argc, char** argv)
 	auto cheb = chebyshevServiceFactory();
 	auto corr = correlationServiceFactory();
 	auto mag  = magnetizationServiceFactory();
+	auto scor = staticCorrelationServiceFactory();
 	auto kzm  = kzmServiceFactory();
 	if(args->getBool("Chebyshev"))    cheb->calculate(args);
 	if(args->getBool("Correlation"))  corr->calculate(args);
 	if(args->getBool("Magnetization")) mag->calculate(args);
+	if(args->getBool("StaticCorrelation")) scor->calculate(args);
 	if(args->getBool("KZM")) kzm->calculate(args);
 	return 0;
 }

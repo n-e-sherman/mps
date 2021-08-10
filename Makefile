@@ -24,10 +24,10 @@ SIT_HEADERS= sites/sites.h sites/sitesbuilder.h
 CHB_HEADERS= chebyshev/chebyshev.h chebyshev/chebyshevbuilder.h chebyshev/chebyshevservice.h
 COR_HEADERS= correlation/correlation.h correlation/correlationbuilder.h correlation/correlationservice.h
 SWP_HEADERS= sweeper/sweeper.h sweeper/sweeperbuilder.h sweeper/krylov.h sweeper/projection.h sweeper/exact.h sweeper/identity.h
-OPR_HEADERS= operator/operator.h operator/momentum.h operator/position.h operator/operatorbuilder.h
+OPR_HEADERS= operator/operator.h operator/momentum.h operator/momentumcenter.h operator/position.h operator/positionconnected.h operator/operatorbuilder.h
 EVR_HEADERS= evolver/evolver.h evolver/evolverbuilder.h evolver/expmpo.h evolver/trotter.h evolver/tdvp.h evolver/trivial.h
-MSR_HEADERS= measurement/measurement.h measurement/kspace.h measurement/realspace.h measurement/measurementbuilder.h measurement/local.h
-STC_HEADERS= static/magnetization.h static/static.h static/staticbuilder.h static/magnetizationservice.h
+MSR_HEADERS= measurement/measurement.h measurement/kspace.h measurement/realspace.h measurement/measurementbuilder.h measurement/local.h measurement/centersite.h
+STC_HEADERS= static/magnetization.h static/static.h static/staticbuilder.h static/magnetizationservice.h static/staticcorrelation.h static/staticcorrelationservice.h
 KZM_HEADERS= kzm/kzm.h kzm/kzmbuilder.h kzm/kzmservice.h
 
 #LAN_HEADERS= lanczos/lanczos.h lanczos/lanczosbuilder.h lanczos/reorthogonalize.h

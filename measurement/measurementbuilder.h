@@ -6,6 +6,7 @@
 #include "measurement/measurement.h"
 #include "measurement/realspace.h"
 #include "measurement/kspace.h"
+#include "measurement/centersite.h"
 #include "measurement/local.h"
 #include "sites/sitesbuilder.h"
 #include "lattice/latticebuilder.h"
@@ -35,11 +36,21 @@ public:
 		
 		auto momentum = args->getBool("momentum");
 		auto thermal = args->getBool("thermal");
+		auto centerSite = args->getBool("CenterSite");
+		auto CSargs = new Args(*args);
+		CSargs->add("momentum",false);
 		cout << "building measurement: ";
-		if (momentum)
+
+		if(momentum)
 		{
+			if(centerSite)
+			{
+				cout << "CenterSite" << " -- key: " << key << endl; 
+				return new CenterSite(args, operatorBuilder->build(CSargs, key));
+			}
 			cout << "KSpace" << " -- key: " << key << endl; 
 			return new KSpace(args, operatorBuilder->build(args, key));
+
 		}
 		else
 		{

@@ -5,7 +5,9 @@
 #include "infrastructure/util.h"
 #include "operator/operator.h"
 #include "operator/momentum.h"
+#include "operator/momentumcenter.h"
 #include "operator/position.h"
+#include "operator/positionconnected.h"
 #include "sites/sitesbuilder.h"
 #include "state/state.h"
 #include "lattice/latticebuilder.h"
@@ -31,14 +33,28 @@ public:
 		auto args = build_args(args_in, base, key);
 		
 		auto momentum = args->getBool("momentum");
-		string _cout = ((momentum) ? "Momentum" : "Position");
-		cout << "building operator: " << _cout << " -- key: " << key << endl;
+		auto connected = args->getBool("Connected");
+		auto centerSite = args->getBool("CenterSite");
+		cout << "building operator: ";
+
 		if(momentum)
 		{
+			if(centerSite)
+			{
+				cout << "MomentumCenter" << " -- key: " << key << endl; 
+				return new MomentumCenter(args,sitesBuilder->build(args, key),latticeBuilder->build(args, key));
+			}
+			cout << "Momentum" << " -- key: " << key << endl; 
 			return new Momentum(args,sitesBuilder->build(args, key),latticeBuilder->build(args, key));
 		}
 		else
 		{
+			if(connected)
+			{
+				cout << "PositionConnected" << " -- key: " << key << endl; 
+				return new PositionConnected(args,sitesBuilder->build(args, key));
+			}
+			cout << "Position" << " -- key: " << key << endl; 
 			return new Position(args,sitesBuilder->build(args, key));
 		}
 		

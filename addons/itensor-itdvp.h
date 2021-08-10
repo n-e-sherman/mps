@@ -115,7 +115,11 @@ public:
 
 		lw_ *= delta(wl_, wr_); 
 		K_op Keff(lw_, rw_, il_, ir_); //K_op is defined in util.h
+		cout << "before: " << endl;
+		PrintData(C_);
 		applyExp(Keff,C_,dt,args); 
+		cout << "after: " << endl;
+		PrintData(C_);
 
 		AL_ = split_AL(); //il_-AL-ir_
 		AR_ = split_AR(); //il_-AR-ir_ 

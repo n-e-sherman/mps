@@ -32,13 +32,11 @@ public:
 	void read(istream& is)
     {
     	sites->read(is);
-    	itensor::read(is,O);
     }
     
     void write(ostream& os) const
     {
     	sites->write(os);
-    	itensor::write(os,O);
     }
 	
 };

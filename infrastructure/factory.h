@@ -12,6 +12,7 @@
 #include "chebyshev/chebyshevbuilder.h"
 #include "static/staticbuilder.h"
 #include "static/magnetizationservice.h"
+#include "static/staticcorrelationservice.h"
 
 #include "state/statebuilder.h"
 #include "evolver/evolverbuilder.h"
@@ -36,12 +37,13 @@ MeasurementBuilder* measurementFactory() { return new MeasurementBuilder( sitesF
 ChebyshevBuilder* chebyshevFactory() { return new ChebyshevBuilder( measurementFactory(), modelFactory(), stateFactory(), operatorFactory(), repositoryFactory() ); }
 CorrelationBuilder* correlationFactory() { return new CorrelationBuilder( evolverFactory(), measurementFactory(), stateFactory(), operatorFactory(), repositoryFactory() ); }
 KZMBuilder* kzmFactory() { return new KZMBuilder( repositoryFactory() ); }
-StaticBuilder* staticFactory() {return new StaticBuilder( stateFactory(), measurementFactory(), repositoryFactory() ); }
+StaticBuilder* staticFactory() {return new StaticBuilder( stateFactory(), measurementFactory(), operatorFactory(), latticeFactory(),repositoryFactory() ); }
 
 /* Services */
 ChebyshevService* chebyshevServiceFactory() { return new ChebyshevService( chebyshevFactory(), repositoryFactory() ); }
 CorrelationService* correlationServiceFactory() { return new CorrelationService( correlationFactory(), repositoryFactory() ); }
 KZMService* kzmServiceFactory() { return new KZMService( kzmFactory(), repositoryFactory() ); }
 MagnetizationService* magnetizationServiceFactory() { return new MagnetizationService( staticFactory(), repositoryFactory() ); }
+StaticCorrelationService* staticCorrelationServiceFactory() { return new StaticCorrelationService( staticFactory(), repositoryFactory() ); }
 
 #endif
