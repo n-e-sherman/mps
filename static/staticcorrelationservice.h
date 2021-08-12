@@ -35,9 +35,9 @@ public:
 		
 		corr->calculate();
 		auto [xlabels,xresults] = corr->getResults();
-		// auto [plabels,presults] = corr->getResults();
+		auto [plabels,presults] = corr->getResults();
 		repo->save(StaticCorrelation::getHash(args),"staticcorrelation/x/"+args->getString("Model"),xlabels,xresults,true); //<--- Update
-		// repo->save(StaticCorrelation::getHash(args),"staticcorrelation/p/"+args->getString("Model"),plabels,presults,true); //<--- Update
+		repo->save(StaticCorrelation::getHash(args),"staticcorrelation/p/"+args->getString("Model"),plabels,presults,true); //<--- Update
 	}
 };
 

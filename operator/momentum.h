@@ -12,7 +12,9 @@ protected:
     Lattice* lattice;
     std::function<Real(Real)> func;
 public:
+
 	Momentum(Args* a, Sites* s, Lattice* l) : Operator(a,s), lattice(l) { _build(); }
+	Momentum(Args* a, Sites* s, Lattice* l, bool trash): Operator(a,s), lattice(l) {}
 
 	void updateMomentum(vector<Real> qs)
 	{
@@ -47,7 +49,7 @@ public:
     	itensor::write(os,O);
     }
 
-private:
+protected:
 	void _build()
 	{
 		auto N = args->getInt("N");
@@ -64,7 +66,7 @@ private:
 			func = _cos;
 			coeff = sqrt(1.0/(Real(N)));
 		}
-		_build_O(coeff);
+		this->_build_O(coeff);
     	
 	}
 
@@ -77,7 +79,7 @@ private:
 		return cos(x);
 	}
 
-protected:
+// protected:
 
 	virtual void _build_O(Real coeff)
 	{

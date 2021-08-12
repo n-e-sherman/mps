@@ -59,19 +59,19 @@ public:
 
             }    
         }
-		// Momentum	
 
-		// cout << "calculating momentum" << endl;
-		// resp.clear();
-		// for(auto i : range(qxs.size()))
-		// {
-		// 	Sq->updateMomentum(qxs[i], qys[i], qzs[i]);
-		// 	auto Spsi = Sq->multiply(psi);
-		// 	auto Sq_exp = inner(psi.getState(),Spsi.getState());
-		// 	cout << qxs[i] << "," << qys[i] << "," << qzs[i] << "," << Sq_exp << "," << inner(Spsi.getState(),Spsi.getState()) << endl;
-		// 	resp.push_back(measurementq->measure(psi,Spsi)[0].real());
+		cout << "calculating momentum" << endl;
+		resp.clear();
+		for(auto i : range(qxs.size()))
+		{
+			Sq->updateMomentum(qxs[i], qys[i], qzs[i]);
+			auto Spsi = Sq->multiply(psi);
+			cout << "******************" << endl;
+			cout << qxs[i] << "," << qys[i] << "," << inner(Spsi.getState(),Spsi.getState()) << "," << measurementq->measure(psi,Spsi)[0].real() << endl;
+			auto Sq_exp = inner(psi.getState(),Spsi.getState());
+			resp.push_back(measurementq->measure(psi,Spsi)[0].real());
 
-		// }
+		}
 	}
 
 	static string getHash(Args* args)

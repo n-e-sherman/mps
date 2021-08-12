@@ -11,7 +11,7 @@ protected:
 	ITensor lOp_T;
 public:
 
-	PositionConnected(Args* a, Sites* s) : Position(a,s) { _build(); }
+	PositionConnected(Args* a, Sites* s) : Position(a,s) {}
 
 	virtual State multiply(State& s_in, Args* args_in = nullptr)
 	{	

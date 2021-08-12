@@ -11,7 +11,7 @@ class MomentumCenter : public Momentum
 {
 
 public:
-	MomentumCenter(Args* a, Sites* s, Lattice* l) : Momentum(a,s,l) {}
+	MomentumCenter(Args* a, Sites* s, Lattice* l) : Momentum(a,s,l,true) { _build(); }
 
 protected:
 
