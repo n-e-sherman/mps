@@ -28,6 +28,7 @@ protected:
 	Real tau;
 	Real J;
 	Real g0;
+	Real gf;
 	Real v;
 	Real t_f;
 	Real time;
@@ -80,7 +81,11 @@ public:
 			iA.iTDVP(-beta_tau, {"MaxIter",30}); // I think this assumes TFIM?
 			if( abs(exact_energy(g0) - iA.get_energy(false)) < gs_tol) break;
 		}
+		cout << "***********************************************************************" << endl;
+		cout << "***********************************************************************" << endl;
 		cout << "Ground state found in " << counter << " iterations." << endl;
+		cout << "***********************************************************************" << endl;
+		cout << "***********************************************************************" << endl;
 		time = 0;
 		auto Ep = iA.get_energy(false);
 		auto n = (Ep-exact_energy(g0))/(2.0*J);
@@ -88,23 +93,35 @@ public:
 		Es.push_back(exact_energy(g0));
 		gs.push_back(g0);
 		ns.push_back(n);
+
 		cout << "(g,t,E,E_exact) = (" << g0 << " ," << time << " ," << iA.get_energy(false) << " ," << exact_energy(g0) << ")" << endl;
 	}
 
 	virtual void calculate()
 	{
+
 		time = min(time + tau,t_f);
 		auto g = gt(time);
+		// if(!(g == 2))
+		// 	return;
 		init_MPO(sites, W, wl, wr, g); // Could be generalized
 		iA.set_MPO(W, wl, wr);
+
+		cout << "***********************************************************************" << endl;
+		cout << "***********************************************************************" << endl;
+		cout << "g = " << g << endl;
+		cout << "***********************************************************************" << endl;
+		cout << "***********************************************************************" << endl;
+		// iA.test();
+
 		iA.iTDVP(-tau*Complex_i, *args);
-		auto Ep = iA.get_energy(false);
-		auto n = (Ep-exact_energy(g))/(2.0*J);
-		Eps.push_back(Ep);
-		Es.push_back(exact_energy(g));
-		gs.push_back(g);
-		ns.push_back(n);
-		cout << "(g, n, n_ex) = (" << g << " ," << n << " ," << n_ex << " )" << endl;
+		// auto Ep = iA.get_energy(false);
+		// auto n = (Ep-exact_energy(g))/(2.0*J);
+		// Eps.push_back(Ep);
+		// Es.push_back(exact_energy(g));
+		// gs.push_back(g);
+		// ns.push_back(n);
+		// cout << "(g, n, n_ex) = (" << g << " ," << n << " ," << n_ex << " )" << endl;
 	}
 	
 	Real getTime() { return time; }
@@ -149,8 +166,9 @@ private:
 		tau  = args->getReal("time-tau");
 		J = args->getReal("J");
 		g0  = args->getReal("g0");
+		gf = args->getReal("gf");
 		v = args->getReal("v");
-		t_f = g0/v;
+		t_f = (g0-gf)/v;
 		n_ex = (sqrt(2)/(4.0*M_PI))*sqrt(v);
 	}
 

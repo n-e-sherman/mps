@@ -7,7 +7,7 @@
 .debug_objs/
 .inputs/
 .vscode/
-jupyter/
+.jupyter/
 scripts/
 bandwidth
 bandwidth.o

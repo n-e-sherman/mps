@@ -89,6 +89,31 @@ public:
 		rw_ = get_rw(); 
 	}
 
+	void test()
+	{
+		/*lw - [il_, wl_, il_']
+		 *rw - [ir_, wr_, ir_']
+		 * W - [il_, is_, is_', ir_]
+		 */
+		cout << "testing" << endl;
+		cout << "************************************" << endl;
+		auto Ms = vector<ITensor>{AL_, AC_, AR_};
+		auto names = vector<string>{"A","Th","B"};
+		int i = 0;
+		for(auto &M : Ms)
+		{
+			auto Mdag = prime(dag(M));
+			auto res = lw_ * M;
+			res = res * W_;
+			res = res * Mdag;
+			res = res * rw_;
+			cout << names[i] << endl;
+			PrintData(res);	
+			i++;
+		}
+		
+	}
+
     void mixed_gauge()
 	{
 		//Algorithm 2 in SciPost Phys. Lect. Notes 7 (2019)
@@ -112,20 +137,16 @@ public:
 		//output: il-AC'-ir, il-C'-ir, il-AL'-ir, il-AR'-ir
 		LocalOp Heff(W_, lw_, rw_, {"numCenter=",1}); // <---- Make a parameter? Maybe this is forced?
 		applyExp(Heff,AC_,dt,args);
-
 		lw_ *= delta(wl_, wr_); 
 		K_op Keff(lw_, rw_, il_, ir_); //K_op is defined in util.h
-		cout << "before: " << endl;
-		PrintData(C_);
 		applyExp(Keff,C_,dt,args); 
-		cout << "after: " << endl;
-		PrintData(C_);
-
 		AL_ = split_AL(); //il_-AL-ir_
 		AR_ = split_AR(); //il_-AR-ir_ 
 		C_ /= norm(C_); 
 		AC_ /= norm(AC_); 
 
+		check_canonical(true);
+		
 		lw_ = get_lw(); 
 		rw_ = get_rw(); 
 	}
@@ -176,10 +197,23 @@ public:
 		if(is_print)
 		{
 			cout << "=============check_canonical===========" << endl; 
-			PrintData(AL_ * prime(dag(AL_), ir_));   
-			PrintData(AR_ * prime(dag(AR_), il_));   
-			PrintData(AC_ - AL_C);  
-			PrintData(AC_ - C_AR); 
+			auto A2 = AL_ * prime(dag(AL_), ir_);
+			auto B2 = AR_ * prime(dag(AR_), il_);
+			PrintData(A2);
+			PrintData(B2);
+			PrintData(norm(AC_ - AL_C));
+			PrintData(norm(AC_ - C_AR));
+			auto AC2 = AC_ * delta(ir_, prime(ir_));
+			AC2 = AC2 * AC_.conj();
+			auto C2 = C_ * delta(ir_, prime(ir_));
+			C2 = C2 * C_.conj();
+
+			auto AC2_L = AC_ * delta(il_, prime(il_));
+			AC2_L = AC2_L * AC_.conj();
+			auto C2_L = C_ * delta(il_, prime(il_));
+			C2_L = C2_L * C_.conj();
+			PrintData(norm(AC2 - C2));
+			PrintData(norm(AC2_L - C2_L));
 			cout << "=============done checking  ===========" << endl; 
 		}
 		return norm(AC_ - AL_C); 
@@ -457,6 +491,7 @@ public:
 		//Eq. 139-142 in SciPost Phys. Lect. Notes 7 (2019) 
 		//input: il_-AC_-ir_, il_-C_-ir_; 
 		//return: il_-AR-ir_ 
+
 		ITensor Cdag_AC = dag(C_ * delta(ir_, prime(ir_))) * AC_;  
 		ITensor U(prime(ir_)), S, V;  
 		svd(Cdag_AC, U, S, V); 

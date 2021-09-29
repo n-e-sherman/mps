@@ -3,7 +3,6 @@
 
 #include "lattice/lattice.h"
 #include "repository/repository.h"
-// #include <algorithm>
 
 using namespace std;
 using namespace itensor;
@@ -320,7 +319,6 @@ protected:
 	            }
 	    	}
     	}
-    	// set_difference(tri_union.begin(), tri_union.end(), tri_intersect.begin(), tri_intersect.end(), std::inserter(_second, _second.begin()));
 
     	for (auto ring : rings)
     	{
@@ -345,19 +343,6 @@ protected:
     			}
     		}
     	}
-		// fourths = []
-		// for b in rings:
-		//     res = {'add' : [], 'sub' : [] }
-		//     s1 = b[0]
-		//     for j in range(1,len(b)):
-		//         s2 = b[j]
-		//         pair = tuple(np.sort([s2,s1]))
-		//         off = tuple(np.sort(list(set(b) - set(pair))))
-		//         if (pair in seconds) or (off in seconds):
-		//             res['sub'].append([pair,off])
-		//         else:
-		//             res['add'].append([pair,off])
-		//     fourths.append(res)
 
     }
 

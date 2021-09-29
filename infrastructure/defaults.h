@@ -42,6 +42,7 @@ Args* default_global()
 
     /* kzmService */
     args->add("g0",5.0);
+    args->add("gf",1.0);
     args->add("v",1.0);
 
     /* magnetizationService */

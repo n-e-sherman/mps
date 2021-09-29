@@ -50,7 +50,13 @@ public:
 	static string getHash(Args* args)
 	{
 		vector<string> strings{"SiteSet","Lattice","Model","Evolver"};
-		vector<string> reals{"N","MaxDim","beta","beta-tau","time-tau","qx","qy","qz"};
+		vector<string> reals{"N","MaxDim","beta","beta-tau","time-tau"};
+		if(args->getBool("momentum"))
+		{
+			reals.push_back("qx");
+			reals.push_back("qy");
+			reals.push_back("qz");
+		}
 		auto res = "Correlation" + hash_real(reals,args) + hash_string(strings, args);
 		if(!(args->getBool("realTime"))) res += "i";
 		if(args->getBool("CenterSite")) res += "-CenterSite";

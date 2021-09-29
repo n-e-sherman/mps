@@ -9,13 +9,13 @@ LIBRARY_DIR=$(HOME)/itensor
 #    set APP to 'myappname'. Running 'make' will compile the app.
 #    Running 'make debug' will make a program called 'myappname-g'
 #    which includes debugging symbols and can be used in gdb (Gnu debugger);
-APP = main
+APP = test
 
 # 4. Add any headers your program depends on here. The make program
 #    will auto-detect if these headers have changed and recompile your app.
 ADD_HEADERS= addons/itensor-basisextension.h addons/itensor-tdvp.h addons/itensor-itdvp.h addons/itensor-itdvp-util.h
 INF_HEADERS= infrastructure/cache.h infrastructure/factory.h infrastructure/util.h infrastructure/defaults.h
-LAT_HEADERS= lattice/chain.h lattice/lattice.h lattice/latticebuilder.h lattice/thermalchain.h lattice/triangular.h 
+LAT_HEADERS= lattice/chain.h lattice/lattice.h lattice/latticebuilder.h lattice/thermalchain.h lattice/triangular.h lattice/square.h 
 MOD_HEADERS= model/heisenberg.h model/model.h model/modelbuilder.h model/xx.h model/xxz.h model/dimer.h model/heisenbergfield.h model/heisenberglr.h
 REP_HEADERS= repository/repository.h repository/repositorybuilder.h
 SRV_HEADERS= service/service.h

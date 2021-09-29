@@ -32,7 +32,7 @@ public:
 		kzm = kzmBuilder->build(args, key); // <-- Issue here
 		auto save = args->getBool("save");
 
-		Real t_f = args->getReal("g0")/args->getReal("v");
+		Real t_f = (args->getReal("g0") - args->getReal("gf")) / args->getReal("v");
 		while(kzm->getTime() < t_f)
 		{
 			kzm->calculate();
