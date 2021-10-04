@@ -112,7 +112,7 @@ private:
 		labels.push_back("t");
 		labels.push_back("MaxDim");
 		labels.push_back("N");
-		if(args->getString("Lattice") == "Triangular") { labels.push_back("Nx"); labels.push_back("Ny"); }
+		if((args->getString("Lattice") == "Triangular") || (args->getString("Lattice") == "Square")) { labels.push_back("Nx"); labels.push_back("Ny"); }
 		labels.push_back("Lattice");
 		labels.push_back("Model");
 		labels.push_back("thermal");
@@ -135,7 +135,7 @@ private:
 			temp.push_back(times[i]);
 			temp.push_back(args->getReal("MaxDim"));
 			temp.push_back(args->getReal("N"));
-			if(args->getString("Lattice") == "Triangular") { temp.push_back(args->getInt("Nx")); temp.push_back(args->getInt("Ny")); }
+			if((args->getString("Lattice") == "Triangular") || (args->getString("Lattice") == "Square")) { temp.push_back(args->getInt("Nx")); temp.push_back(args->getInt("Ny")); }
 			temp.push_back(args->getString("Lattice"));
 			temp.push_back(args->getString("Model"));
 			temp.push_back(args->getBool("thermal"));
