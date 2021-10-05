@@ -44,10 +44,10 @@ public:
 			remaining = nChebyshev - chebyshev->getIteration();
 			repo->save(Chebyshev::getHash(args),chebyshev,save);
 			auto [labels,results] = chebyshev->getResults();
-			repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results);
+			repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model")+"/"+args->getString("Lattice"),labels,results);
 		}
 		auto [labels,results] = chebyshev->getResults();
-		repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model"),labels,results,true); 
+		repo->save(Chebyshev::getHash(args),"chebyshev"+type+"/"+args->getString("Model")+"/"+args->getString("Lattice"),labels,results,true); 
 	}
 };
 

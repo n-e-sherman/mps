@@ -43,10 +43,10 @@ public:
 			correlation->calculate();
 			repo->save(Correlation::getHash(args),correlation,save);
 			auto [labels,results] = correlation->getResults();
-			repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results); //<--- Update
+			repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model")+"/"+args->getString("Lattice"),labels,results); //<--- Update
 		}
 		auto [labels,results] = correlation->getResults();
-		repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model"),labels,results,true); //<--- Update
+		repo->save(Correlation::getHash(args),"correlation"+type+"/"+args->getString("Model")+"/"+args->getString("Lattice"),labels,results,true); //<--- Update
 	}
 };
 
