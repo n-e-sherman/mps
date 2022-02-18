@@ -6,6 +6,7 @@
 #include "lattice/thermalchain.h"
 #include "lattice/chain.h"
 #include "lattice/triangular.h"
+#include "lattice/thermaltriangular.h"
 #include "lattice/square.h"
 #include "lattice/lattice.h"
 
@@ -32,6 +33,8 @@ public:
 		}
 		else if(lattice == "Triangular")
 		{
+			// if(thermal)
+			// 	return new ThermalTriangular(args);
 			return new Triangular(args);
 		}
 		else if(lattice == "Square")
