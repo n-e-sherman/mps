@@ -92,7 +92,7 @@ Args* default_global()
         /* ThermalChain */
         /* Triangular */
         args->add("YPeriodic",true);
-        args->add("Geometry","YC");
+        args->add("Geometry","XC");
 
     /* sites */
     args->add("SiteSet","SpinHalf");
