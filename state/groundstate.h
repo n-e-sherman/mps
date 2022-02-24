@@ -63,6 +63,21 @@ private:
 	        for(auto i : range1(N)) _state.set(i,"Dn");
 	        state = MPS(_state);	
     	}
+    	else
+    	if (init == "Random")
+    	{
+			auto _sites = sites->getSites();
+	        state = MPS(_sites);	
+	    	for(auto i : range1(N))
+	    	{
+	    		double rndNum = (double) 2*M_PI*random()/RAND_MAX;
+		         auto si = _sites(i);
+		         auto wf = ITensor(si);
+		         wf.set(si(1), cos(rndNum));
+		         wf.set(si(2), sin(rndNum));
+		         state.setA(i,wf);
+	    	}
+    	}
     	else state = MPS(_state);
     	/* Include other initial states with an else if.*/
 	}

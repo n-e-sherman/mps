@@ -98,7 +98,6 @@ Args* default_global()
     args->add("SiteSet","SpinHalf");
     args->add("ConserveQNs",true);
     args->add("ConserveSz",true);
-    args->add("ConserveQNs",true);
 
     /* model */
     args->add("Model","Heisenberg");

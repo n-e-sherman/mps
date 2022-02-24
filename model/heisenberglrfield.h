@@ -56,6 +56,7 @@ protected:
                 ampo +=    0.25*J4*r.sign,"S-",r.s1,"S+",r.s2,"S-",r.s3,"S+",r.s4;
             }
         }
+
         if(!skip)
         {
             for(auto s : lattice->getSites())

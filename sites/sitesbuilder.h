@@ -19,6 +19,7 @@ public:
 		auto base = "sites";
 		key = key + "." + base;
 		auto args = build_args(args_in, base, key);
+
 		
 		auto cache = Cache::getInstance();
 		auto sites = (Sites*)cache->load(Sites::getHash(args));
@@ -28,6 +29,7 @@ public:
 		cout << "building sites: " << sType << " -- key: " << key << endl;
 		if (sType == "SpinHalf")
 		{
+			auto _sites_sitesbuilder = SpinHalf(N,*args);
 			sites = new Sites(args,SpinHalf(N,*args));			
 		}
 		else
