@@ -21,7 +21,8 @@ public:
 		auto temp = psi(c) * lOp; temp.noPrime();
 		psi.set(c,temp);
 		auto lOp_E = innerC(_res,psi).real(); // May want to generalize.
-		auto _s = sites->getSites()(c);
+		cout << "lOp_E = " << lOp_E << endl;
+ 		auto _s = sites->getSites()(c);
 	    auto sP = prime(_s);
 	    auto Up = _s(1); auto UpP = sP(1); auto Dn = _s(2); auto DnP = sP(2);
 	    auto lOp_c = ITensor(dag(_s),sP); lOp_c.set(Up,UpP,lOp_E); lOp_c.set(Dn,DnP,lOp_E);

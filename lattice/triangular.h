@@ -33,10 +33,10 @@ public:
 		/* lattice data */
 		get_lattice(Nx,Ny);
 		get_adjmat(N);
-		get_triangles();
-		get_seconds();
-		get_thirds();
-		get_fourths();
+		// get_triangles();
+		get_seconds(Nx,Ny);
+		// get_thirds();
+		// get_fourths();
 
 
 		/* bonds */
@@ -76,9 +76,18 @@ public:
     		if (b.n == 1)
     			vec_bonds.push_back(vector<int>{b.s1,b.s2});   
     	}
+    	vector<vector<Real>> vec_sites;
+    	for(auto &s : sites)
+    	{
+    		if (s.t == physical)
+    			vec_sites.push_back(vector<Real>{s.rx,s.ry});   
+    	}
+
+
     	repo->save("triangles","temp",labels_tri,triangles,true);
     	repo->save("fourths_plus","temp",labels_fourth,fourths_plus,true);
     	repo->save("fourths_sub","temp",labels_fourth,fourths_sub,true);
+    	repo->save("sites","temp",labels,vec_sites,true);
     	repo->save("bonds","temp",labels,vec_bonds,true);
     	repo->save("seconds","temp",labels,seconds,true);
     	repo->save("thirds","temp",labels,thirds,true);
@@ -144,43 +153,63 @@ protected:
 	        	rx += shift;	        
 	        positions.push_back({rx,ry,0.0});
             //up
-            if(y == Ny)
-            {
-            	auto n2 = n+1-Ny;
-                if((n2 <= N) and PBC)
-                    lat.emplace_back(n,n2);
-            }
-            else
-            {
-            	auto n2 = n+1;
-                if(n2 <= N)
-                    lat.emplace_back(n,n2);
-            }
+	        int n2 = n+1;
+	        if (n2 <= N)
+	        	lat.emplace_back(n,n2);
+	        n2 = n+Ny;
+	        if (n2 <= N)
+	        	lat.emplace_back(n,n2);
+	        if (((n%2) == 1) & (y != 0))
+	        	continue;
+	       	n2 = n+Ny-1;
+	       	if (n2 <= N)
+	        	lat.emplace_back(n,n2);
+	        if (((n%2) == 0) & ((n%Ny) != 0))
+	        {
+	        	n2 = n+Ny+1;
+	        	if (n2 <= N)
+		        	lat.emplace_back(n,n2);
+	        }
+
+
+
+            // if(y == Ny)
+            // {
+            // 	auto n2 = n+1-Ny;
+            //     if((n2 <= N) and PBC)
+            //         lat.emplace_back(n,n2);
+            // }
+            // else
+            // {
+            // 	auto n2 = n+1;
+            //     if(n2 <= N)
+            //         lat.emplace_back(n,n2);
+            // }
                 
-            //right
-            auto n2 = n+Ny;
-            if(n2 <= N)
-                lat.emplace_back(n,n2);
-            //diagonal
-            if((n%2) == 0) 
-            {
-            	//up and right
-            	if(y == Ny)
-            	{
-            		n2 = n+1;
-                    if((n2 <= N) and PBC)
-                        lat.emplace_back(n,n2);
-            	}  
-                else
-                {
-                	n2 = n+1+Ny;
-                    if(n2 <= N)
-                        lat.emplace_back(n,n2);
-                }
-                n2 = n+Ny-1;
-                if(n2 <= N)
-                    lat.emplace_back(n,n2);
-            }
+            // //right
+            // auto n2 = n+Ny;
+            // if(n2 <= N)
+            //     lat.emplace_back(n,n2);
+            // //diagonal
+            // if((n%2) == 0) 
+            // {
+            // 	//up and right
+            // 	if(y == Ny)
+            // 	{
+            // 		n2 = n+1;
+            //         if((n2 <= N) and PBC)
+            //             lat.emplace_back(n,n2);
+            // 	}  
+            //     else
+            //     {
+            //     	n2 = n+1+Ny;
+            //         if(n2 <= N)
+            //             lat.emplace_back(n,n2);
+            //     }
+            //     n2 = n+Ny-1;
+            //     if(n2 <= N)
+            //         lat.emplace_back(n,n2);
+            // }
         }
 	}
 
@@ -222,39 +251,125 @@ protected:
 	    }
     }
     
-    void get_seconds() // adjmat used
+    void get_seconds(int Nx, int Ny) // adjmat used
     {
-	    for(auto _tri : triangles)
-	    {
-	        set<int> tri; for(auto x : _tri) tri.insert(x);
-	        for(auto _tri2 : triangles)
+    	int N = Nx*Ny;
+    	seconds = vector<vector<int>>();
+    	for(int n = 1; n <= N; ++n)
+    	{
+    		int x = (n-1)/Ny; 
+	        int y = (n-1)%Ny;
+	        if(y == 1)
 	        {
-	            set<int> tri2; for(auto x : _tri2) tri2.insert(x);
-	            set<int> tri_intersect;
-	            set_intersection(tri.begin(), tri.end(), tri2.begin(), tri2.end(), std::inserter(tri_intersect, tri_intersect.begin()));
-	            if(tri_intersect.size() == 2) // 2nd neighbor found
-	            {
-	                set<int> tri_union;
-	                set_union(tri.begin(), tri.end(), tri2.begin(), tri2.end(), std::inserter(tri_union, tri_union.begin()));
-	                set<int> _second;
-	                set_difference(tri_union.begin(), tri_union.end(), tri_intersect.begin(), tri_intersect.end(), std::inserter(_second, _second.begin()));
-	                vector<int> second (_second.begin(),_second.end());
-	                adjmat[second[0]][second[1]] = 2;
-	            }
-	        }
-	    }
+	        	int n2 = n+2;
+	        	if(n2 <= N)
+	        		seconds.push_back(vector<int>{n,n2});
+	        	n2 = n+2*Ny+1;
+	        	if(n2 <= N)
+	        		seconds.push_back(vector<int>{n,n2});
+	        	n2 = n+2*Ny-1;
+	        	if(n2 <= N)
+	        		seconds.push_back(vector<int>{n,n2});
+	        	n2 = n+Ny-2;
+	        	if(n2 <= N)
+	        		seconds.push_back(vector<int>{n,n2});
 
-	    seconds = vector<vector<int>>();
-	    for(int i : range(adjmat.size()))
-	    {
-	    	for(int j : range(i+1,adjmat[i].size()))
-	    	{
-	    		if (adjmat[i][j] == 2)
-	    		{
-	    			seconds.push_back(vector<int>{i,j});
-	    		}
-	    	}
-	    }
+	        }
+	        else
+	        if(y == 0)
+	        {
+	        	int n2 = n+2;
+	        	if(n2 <= N)
+	        		seconds.push_back(vector<int>{n,n2});
+	        	n2 = n+Ny+1;
+	        	if(n2 <= N)
+	        		seconds.push_back(vector<int>{n,n2});
+	        	n2 = n+2*Ny-1;
+	        	if(n2 <= N)
+	        		seconds.push_back(vector<int>{n,n2});
+	        	n2 = n+Ny-2;
+	        	if(n2 <= N)
+	        		seconds.push_back(vector<int>{n,n2});
+	        }
+	        else
+	        if(y == (Ny-1))
+	        {
+	        	int n2 = n+Ny+1;
+	        	if(n2 <= N)
+	        		seconds.push_back(vector<int>{n,n2});
+	        	n2 = n+2*Ny-1;
+	        	if(n2 <= N)
+	        		seconds.push_back(vector<int>{n,n2});
+	        }
+	        else
+	        if(y == (Ny-2))
+	        {
+	        	int n2 = n+Ny+1;
+	        	if(n2 <= N)
+	        		seconds.push_back(vector<int>{n,n2});
+	        	n2 = n+Ny-1;
+	        	if(n2 <= N)
+	        		seconds.push_back(vector<int>{n,n2});
+	        }
+	        else
+	        {
+	        	if((n%2) == 0)
+	        	{
+	        		int n2 = n+2;
+		        	if(n2 <= N)
+		        		seconds.push_back(vector<int>{n,n2});
+		        	n2 = n+2*Ny+1;
+		        	if(n2 <= N)
+		        		seconds.push_back(vector<int>{n,n2});
+		        	n2 = n+2*Ny-1;
+		        	if(n2 <= N)
+		        		seconds.push_back(vector<int>{n,n2});
+	        	}
+	        	if((n%2) == 1)
+	        	{
+	        		int n2 = n+2;
+		        	if(n2 <= N)
+		        		seconds.push_back(vector<int>{n,n2});
+		        	n2 = n+Ny+1;
+		        	if(n2 <= N)
+		        		seconds.push_back(vector<int>{n,n2});
+		        	n2 = n+Ny-1;
+		        	if(n2 <= N)
+		        		seconds.push_back(vector<int>{n,n2});
+	        	}
+	        }
+    	}
+	    // for(auto _tri : triangles)
+	    // {
+	    //     set<int> tri; for(auto x : _tri) tri.insert(x);
+	    //     for(auto _tri2 : triangles)
+	    //     {
+	    //         set<int> tri2; for(auto x : _tri2) tri2.insert(x);
+	    //         set<int> tri_intersect;
+	    //         set_intersection(tri.begin(), tri.end(), tri2.begin(), tri2.end(), std::inserter(tri_intersect, tri_intersect.begin()));
+	    //         if(tri_intersect.size() == 2) // 2nd neighbor found
+	    //         {
+	    //             set<int> tri_union;
+	    //             set_union(tri.begin(), tri.end(), tri2.begin(), tri2.end(), std::inserter(tri_union, tri_union.begin()));
+	    //             set<int> _second;
+	    //             set_difference(tri_union.begin(), tri_union.end(), tri_intersect.begin(), tri_intersect.end(), std::inserter(_second, _second.begin()));
+	    //             vector<int> second (_second.begin(),_second.end());
+	    //             adjmat[second[0]][second[1]] = 2;
+	    //         }
+	    //     }
+	    // }
+
+	    // seconds = vector<vector<int>>();
+	    // for(int i : range(adjmat.size()))
+	    // {
+	    // 	for(int j : range(i+1,adjmat[i].size()))
+	    // 	{
+	    // 		if (adjmat[i][j] == 2)
+	    // 		{
+	    // 			seconds.push_back(vector<int>{i,j});
+	    // 		}
+	    // 	}
+	    // }
     }
     
     void get_thirds() // adjmat used
