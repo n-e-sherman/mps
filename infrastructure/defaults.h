@@ -104,7 +104,9 @@ Args* default_global()
         /* Heisenberg */
         /* HeisenbergField */
         args->add("B",1.0);
+
         /* HeisenbergLR */
+        args->add("J1",1.0);
         args->add("J2",0.0);
         args->add("J3",0.0);
         args->add("J4",0.0);
