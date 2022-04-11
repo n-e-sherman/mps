@@ -9,6 +9,7 @@ using namespace std;
 class HeisenbergLR : public Model
 {
 protected:
+    Real J1;
 	Real J2;
 	Real J3;
     Real J4;
@@ -20,11 +21,11 @@ protected:
         {
         	if(b.t == Lattice::physical)
         	{
-        		if(b.n == 1) // 1st neighbor
+        		if((b.n == 1) & (J1 != 0.0)) // 2nd neighbor
         		{
-        			ampo += 0.5,"S+",b.s1,"S-",b.s2;
-	                ampo += 0.5,"S-",b.s1,"S+",b.s2;
-	                ampo +=     "Sz",b.s1,"Sz",b.s2;
+        			ampo += 0.5*J1,"S+",b.s1,"S-",b.s2;
+	                ampo += 0.5*J1,"S-",b.s1,"S+",b.s2;
+	                ampo +=     J1,"Sz",b.s1,"Sz",b.s2;
         		}
         		if((b.n == 2) & (J2 != 0.0)) // 2nd neighbor
         		{
@@ -70,12 +71,12 @@ protected:
         {
         	if(b.t == Lattice::physical)
         	{
-        		if(b.n == 1) // 1st neighbor
-        		{
-        			ampo += 0.5,"S+",b.s1,"S-",b.s2;
-	                ampo += 0.5,"S-",b.s1,"S+",b.s2;
-	                ampo +=     "Sz",b.s1,"Sz",b.s2;
-        		}
+        		if((b.n == 1) & (J1 != 0.0)) // 2nd neighbor
+                {
+                    ampo += 0.5*J1,"S+",b.s1,"S-",b.s2;
+                    ampo += 0.5*J1,"S-",b.s1,"S+",b.s2;
+                    ampo +=     J1,"Sz",b.s1,"Sz",b.s2;
+                }
         		if((b.n == 2) & (J2 != 0.0)) // 2nd neighbor
         		{
         			ampo += 0.5*J2,"S+",b.s1,"S-",b.s2;
@@ -91,12 +92,12 @@ protected:
         	}
         	if(b.t == Lattice::environment)
         	{
-        		if(b.n == 1) // 1st neighbor
-        		{
-        			ampo += -0.5,"S+",b.s1,"S-",b.s2;
-	                ampo += -0.5,"S-",b.s1,"S+",b.s2;
-	                ampo += -1.0,"Sz",b.s1,"Sz",b.s2;
-        		}
+        		if((b.n == 1) & (J1 != 0.0)) // 2nd neighbor
+                {
+                    ampo += -0.5*J1,"S+",b.s1,"S-",b.s2;
+                    ampo += -0.5*J1,"S-",b.s1,"S+",b.s2;
+                    ampo += -1.0*J1,"Sz",b.s1,"Sz",b.s2;
+                }
         		if((b.n == 2) & (J2 != 0.0)) // 2nd neighbor
         		{
         			ampo += -0.5*J2,"S+",b.s1,"S-",b.s2;
@@ -165,9 +166,11 @@ protected:
 
 	virtual void setParams()
     {
+        J1 = args->getReal("J1");
         J2 = args->getReal("J2");
         J3 = args->getReal("J3");
         J4 = args->getReal("J4");
+        params["J1"] = J1;
         params["J2"] = J2;
         params["J3"] = J3;
         params["J4"] = J4;
