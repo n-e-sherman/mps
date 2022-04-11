@@ -64,6 +64,24 @@ private:
 	        state = MPS(_state);	
     	}
     	else
+    	if (init == "Striped")
+    	{
+	        for(auto i : range1(int(N/2)))
+	        {
+	        	if(i%2 == 1)
+	        	{
+	        		_state.set(2*i-1,"Up");
+	        		_state.set(2*i,"Up");
+	        	} 
+	            else
+	            {
+                	_state.set(2*i-1,"Dn");
+	        		_state.set(2*i,"Dn");
+	            }
+	        } 
+	        state = MPS(_state);	
+    	}
+    	else
     	if (init == "Random")
     	{
 			auto _sites = sites->getSites();
