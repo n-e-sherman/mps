@@ -259,85 +259,108 @@ protected:
     	{
     		int x = (n-1)/Ny; 
 	        int y = (n-1)%Ny;
-	        if(y == 1)
+	        auto r2os = vector<vector<int>>{vector<int>{x, y+2},
+	        							   vector<int>{x+1, y+1}};
+	        auto r2es = vector<vector<int>>{vector<int>{x, y+2},
+	        							   vector<int>{x+2, y+1}};
+	        if(Ny > 2)
 	        {
-	        	int n2 = n+2;
-	        	if(n2 <= N)
-	        		seconds.push_back(vector<int>{n,n2});
-	        	n2 = n+2*Ny+1;
-	        	if(n2 <= N)
-	        		seconds.push_back(vector<int>{n,n2});
-	        	n2 = n+2*Ny-1;
-	        	if(n2 <= N)
-	        		seconds.push_back(vector<int>{n,n2});
-	        	n2 = n+Ny-2;
-	        	if(n2 <= N)
-	        		seconds.push_back(vector<int>{n,n2});
+	        	r2os.push_back(vector<int>{x+1, y-1});
+	        	r2es.push_back(vector<int>{x+2, y-1});
+	        }
+	        auto r2s = vector<vector<int>>();
+	        if (n%2 == 0) r2s = r2es;
+	        else r2s = r2os;
+	        if(Ny > 4) r2s.push_back(vector<int>{x, y-2});
+	        for(auto r2 : r2s)
+	        {
+	        	auto x2 = r2[0];
+	        	auto y2 = r2[1];
+	        	if (x2 >= Nx) continue;
+	        	if (y2 < 0) y2 += Ny;
+	        	if (y2 >= Ny) y2 -= Ny;
+	        	auto n2 = x2*Ny + y2 + 1;
+	        	if (n2 > n) seconds.push_back(vector<int>{n, n2});
+	        }
+	        // if(y == 1)
+	        // {
+	        // 	int n2 = n+2;
+	        // 	if(n2 <= N)
+	        // 		seconds.push_back(vector<int>{n,n2});
+	        // 	n2 = n+2*Ny+1;
+	        // 	if(n2 <= N)
+	        // 		seconds.push_back(vector<int>{n,n2});
+	        // 	n2 = n+2*Ny-1;
+	        // 	if(n2 <= N)
+	        // 		seconds.push_back(vector<int>{n,n2});
+	        // 	n2 = n+Ny-2;
+	        // 	if(n2 <= N)
+	        // 		seconds.push_back(vector<int>{n,n2});
 
-	        }
-	        else
-	        if(y == 0)
-	        {
-	        	int n2 = n+2;
-	        	if(n2 <= N)
-	        		seconds.push_back(vector<int>{n,n2});
-	        	n2 = n+Ny+1;
-	        	if(n2 <= N)
-	        		seconds.push_back(vector<int>{n,n2});
-	        	n2 = n+2*Ny-1;
-	        	if(n2 <= N)
-	        		seconds.push_back(vector<int>{n,n2});
-	        	n2 = n+Ny-2;
-	        	if(n2 <= N)
-	        		seconds.push_back(vector<int>{n,n2});
-	        }
-	        else
-	        if(y == (Ny-1))
-	        {
-	        	int n2 = n+Ny+1;
-	        	if(n2 <= N)
-	        		seconds.push_back(vector<int>{n,n2});
-	        	n2 = n+2*Ny-1;
-	        	if(n2 <= N)
-	        		seconds.push_back(vector<int>{n,n2});
-	        }
-	        else
-	        if(y == (Ny-2))
-	        {
-	        	int n2 = n+Ny+1;
-	        	if(n2 <= N)
-	        		seconds.push_back(vector<int>{n,n2});
-	        	n2 = n+Ny-1;
-	        	if(n2 <= N)
-	        		seconds.push_back(vector<int>{n,n2});
-	        }
-	        else
-	        {
-	        	if((n%2) == 0)
-	        	{
-	        		int n2 = n+2;
-		        	if(n2 <= N)
-		        		seconds.push_back(vector<int>{n,n2});
-		        	n2 = n+2*Ny+1;
-		        	if(n2 <= N)
-		        		seconds.push_back(vector<int>{n,n2});
-		        	n2 = n+2*Ny-1;
-		        	if(n2 <= N)
-		        		seconds.push_back(vector<int>{n,n2});
-	        	}
-	        	if((n%2) == 1)
-	        	{
-	        		int n2 = n+2;
-		        	if(n2 <= N)
-		        		seconds.push_back(vector<int>{n,n2});
-		        	n2 = n+Ny+1;
-		        	if(n2 <= N)
-		        		seconds.push_back(vector<int>{n,n2});
-		        	n2 = n+Ny-1;
-		        	if(n2 <= N)
-		        		seconds.push_back(vector<int>{n,n2});
-	        	}
-	        }
+	        // }
+	        // else
+	        // if(y == 0)
+	        // {
+	        // 	int n2 = n+2;
+	        // 	if(n2 <= N)
+	        // 		seconds.push_back(vector<int>{n,n2});
+	        // 	n2 = n+Ny+1;
+	        // 	if(n2 <= N)
+	        // 		seconds.push_back(vector<int>{n,n2});
+	        // 	n2 = n+2*Ny-1;
+	        // 	if(n2 <= N)
+	        // 		seconds.push_back(vector<int>{n,n2});
+	        // 	n2 = n+Ny-2;
+	        // 	if(n2 <= N)
+	        // 		seconds.push_back(vector<int>{n,n2});
+	        // }
+	        // else
+	        // if(y == (Ny-1))
+	        // {
+	        // 	int n2 = n+Ny+1;
+	        // 	if(n2 <= N)
+	        // 		seconds.push_back(vector<int>{n,n2});
+	        // 	n2 = n+2*Ny-1;
+	        // 	if(n2 <= N)
+	        // 		seconds.push_back(vector<int>{n,n2});
+	        // }
+	        // else
+	        // if(y == (Ny-2))
+	        // {
+	        // 	int n2 = n+Ny+1;
+	        // 	if(n2 <= N)
+	        // 		seconds.push_back(vector<int>{n,n2});
+	        // 	n2 = n+Ny-1;
+	        // 	if(n2 <= N)
+	        // 		seconds.push_back(vector<int>{n,n2});
+	        // }
+	        // else
+	        // {
+	        // 	if((n%2) == 0)
+	        // 	{
+	        // 		int n2 = n+2;
+		       //  	if(n2 <= N)
+		       //  		seconds.push_back(vector<int>{n,n2});
+		       //  	n2 = n+2*Ny+1;
+		       //  	if(n2 <= N)
+		       //  		seconds.push_back(vector<int>{n,n2});
+		       //  	n2 = n+2*Ny-1;
+		       //  	if(n2 <= N)
+		       //  		seconds.push_back(vector<int>{n,n2});
+	        // 	}
+	        // 	if((n%2) == 1)
+	        // 	{
+	        // 		int n2 = n+2;
+		       //  	if(n2 <= N)
+		       //  		seconds.push_back(vector<int>{n,n2});
+		       //  	n2 = n+Ny+1;
+		       //  	if(n2 <= N)
+		       //  		seconds.push_back(vector<int>{n,n2});
+		       //  	n2 = n+Ny-1;
+		       //  	if(n2 <= N)
+		       //  		seconds.push_back(vector<int>{n,n2});
+	        // 	}
+	        // }
     	}
 	    // for(auto _tri : triangles)
 	    // {
