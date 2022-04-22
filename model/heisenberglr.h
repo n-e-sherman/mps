@@ -21,7 +21,7 @@ protected:
         {
         	if(b.t == Lattice::physical)
         	{
-        		if((b.n == 1) & (J1 != 0.0)) // 2nd neighbor
+        		if((b.n == 1) & (J1 != 0.0)) // 1st neighbor
         		{
         			ampo += 0.5*J1,"S+",b.s1,"S-",b.s2;
 	                ampo += 0.5*J1,"S-",b.s1,"S+",b.s2;
