@@ -35,7 +35,7 @@ KZM_HEADERS= kzm/kzm.h kzm/kzmbuilder.h kzm/kzmservice.h
 # 5. For any additional .cc (source) files making up your project,
 #    add their full filenames here.
 CCFILES=$(APP).cc
-# CCCOMCRAY = CC -std=c++17 -fPIC
+CCCOMCRAY = CC -std=c++17 -fPIC
 #################################################################
 #################################################################
 #################################################################
