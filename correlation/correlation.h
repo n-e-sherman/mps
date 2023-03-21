@@ -74,14 +74,13 @@ public:
 
 	virtual void load(ifstream & f)
     {
-    	bra_evolver->read(f);
-    	ket_evolver->read(f);
-    	measurement->read(f);
     	read(f,bra);
     	read(f,ket);
     	read(f,time);
     	read(f,times);
     	read(f,res);
+    	read(f,Mz);
+    	read(f,Mx);
     	_calculate_magnetization();
     	thermal = args->getBool("thermal"); tau = args->getReal("time-tau");
 		_setup_evolvers();
@@ -89,9 +88,6 @@ public:
 
 	virtual void save(ofstream & f)
 	{ 
-		bra_evolver->write(f);
-		ket_evolver->write(f);
-		measurement->write(f);
 		write(f,bra);
 		write(f,ket);
 		write(f,time);
@@ -164,7 +160,8 @@ private:
 		labels.push_back("M");
 		labels.push_back("Mz");
 		labels.push_back("Mx");
-		for(auto& x : ket_evolver->getParams()){ labels.push_back(x.first); }
+		cout << "printing params" << endl;
+		for(auto& x : ket_evolver->getParams()){ labels.push_back(x.first); cout << x.first << "," << x.second << endl;}
 
 		labels.push_back("Evolver");
 		labels.push_back("Geometry");

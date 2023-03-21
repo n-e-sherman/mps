@@ -75,12 +75,9 @@ public:
 			res = "_" + to_string(args->getReal("J1")) + "-" 
 					  + to_string(args->getReal("J2")) + "-" 
 					  + to_string(args->getReal("Delta")) + "-" 
-					  + to_string(args->getReal("hz")) + "-";
-			if (args->getReal("hx") != 0.0) 
-			{
-				res = res + to_string(args->getReal("hx")) + "-";
-			}
-			res = res + to_string(args->getReal("Nx")) + "-" 
+					  + to_string(args->getReal("hz")) + "-"
+					  + to_string(args->getReal("hx")) + "-"
+					  + to_string(args->getReal("Nx")) + "-" 
 					  + to_string(args->getReal("Ny")) + "_"
 					  + args->getString("Geometry");
 		}
