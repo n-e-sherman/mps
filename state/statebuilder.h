@@ -6,6 +6,7 @@
 #include "infrastructure/util.h"
 #include "state/state.h"
 #include "state/groundstate.h"
+#include "state/groundstatetune.h"
 #include "state/thermalstate.h"
 #include "model/modelbuilder.h"
 #include "lattice/latticebuilder.h"
@@ -48,6 +49,12 @@ public:
 		}
 		else
 		{
+			auto tune = args->getBool("tune");
+			if(tune)
+			{
+				cout << "GroundStateTune" << " " << key << endl;
+				return new GroundStateTune(args, modelBuilder->build(args, key)); 	
+			}
 			cout << "GroundState" << " " << key << endl;
 			return new GroundState(args, modelBuilder->build(args, key)); 
 		}

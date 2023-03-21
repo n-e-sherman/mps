@@ -15,11 +15,11 @@ APP = main
 #    will auto-detect if these headers have changed and recompile your app.
 ADD_HEADERS= addons/itensor-basisextension.h addons/itensor-tdvp.h addons/itensor-itdvp.h addons/itensor-itdvp-util.h
 INF_HEADERS= infrastructure/cache.h infrastructure/factory.h infrastructure/util.h infrastructure/defaults.h
-LAT_HEADERS= lattice/chain.h lattice/lattice.h lattice/latticebuilder.h lattice/thermalchain.h lattice/triangular.h lattice/thermaltriangular.h lattice/square.h 
-MOD_HEADERS= model/heisenberg.h model/model.h model/modelbuilder.h model/xx.h model/xxz.h model/dimer.h model/heisenbergfield.h model/heisenberglr.h model/heisenberglrfield.h
+LAT_HEADERS= lattice/chain.h lattice/lattice.h lattice/latticebuilder.h lattice/thermalchain.h lattice/triangular.h lattice/thermaltriangular.h lattice/square.h lattice/ladder.h lattice/thermalladder.h
+MOD_HEADERS= model/heisenberg.h model/model.h model/modelbuilder.h model/xx.h model/xxz.h model/xxzj1j2.h model/dimer.h model/heisenbergfield.h model/heisenberglr.h model/heisenberglrfield.h model/heisenbergladder.h model/heisenberganisotropic.h
 REP_HEADERS= repository/repository.h repository/repositorybuilder.h
 SRV_HEADERS= service/service.h
-STT_HEADERS= state/groundstate.h state/state.h state/statebuilder.h state/thermalstate.h
+STT_HEADERS= state/groundstate.h state/groundstatetune.h state/state.h state/statebuilder.h state/thermalstate.h
 SIT_HEADERS= sites/sites.h sites/sitesbuilder.h
 CHB_HEADERS= chebyshev/chebyshev.h chebyshev/chebyshevbuilder.h chebyshev/chebyshevservice.h
 COR_HEADERS= correlation/correlation.h correlation/correlationbuilder.h correlation/correlationservice.h

@@ -18,6 +18,8 @@ protected:
 
 public:
 
+	
+
 	Measurement(Args* a) : args(a) {}
 	virtual vector<StringReal> measure(State& ket){ return measure(ket,ket); }
 	virtual vector<StringReal> measure(State& bra, State& ket)
@@ -30,6 +32,15 @@ public:
 	virtual vector<string> addLabels() = 0;
 	virtual vector<StringReal> addResults(vector<StringReal> &_in) = 0;
 	virtual void update(){}
+	template<class T>
+	void updateArgs(string key, T val)
+	{
+		args->add(key, val);
+	}
+	Args* getArgs()
+	{
+		return args;
+	}
 	virtual void read(istream& is) {}
     virtual void write(ostream& os) const {}
 

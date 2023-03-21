@@ -176,6 +176,13 @@ protected:
         params["J4"] = J4;
     }
 
+    virtual void updateJ1(Real x)
+    {
+        J1 = x;
+        params["J1"] = J1;
+        
+    }
+
 public:
     
 	HeisenbergLR(Args* a, Lattice* l, Sites* s) : Model(a,l,s) { setParams(); }

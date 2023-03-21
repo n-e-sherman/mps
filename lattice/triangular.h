@@ -170,46 +170,6 @@ protected:
 	        	if (n2 <= N)
 		        	lat.emplace_back(n,n2);
 	        }
-
-
-
-            // if(y == Ny)
-            // {
-            // 	auto n2 = n+1-Ny;
-            //     if((n2 <= N) and PBC)
-            //         lat.emplace_back(n,n2);
-            // }
-            // else
-            // {
-            // 	auto n2 = n+1;
-            //     if(n2 <= N)
-            //         lat.emplace_back(n,n2);
-            // }
-                
-            // //right
-            // auto n2 = n+Ny;
-            // if(n2 <= N)
-            //     lat.emplace_back(n,n2);
-            // //diagonal
-            // if((n%2) == 0) 
-            // {
-            // 	//up and right
-            // 	if(y == Ny)
-            // 	{
-            // 		n2 = n+1;
-            //         if((n2 <= N) and PBC)
-            //             lat.emplace_back(n,n2);
-            // 	}  
-            //     else
-            //     {
-            //     	n2 = n+1+Ny;
-            //         if(n2 <= N)
-            //             lat.emplace_back(n,n2);
-            //     }
-            //     n2 = n+Ny-1;
-            //     if(n2 <= N)
-            //         lat.emplace_back(n,n2);
-            // }
         }
 	}
 

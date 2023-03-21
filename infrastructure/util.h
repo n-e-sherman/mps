@@ -147,6 +147,7 @@ string hash_string(vector<string> hashes, Args* args)
 string _hash_real(string name, Args* args)
 {
     auto h = args->getReal(name); // will be NAN if a string.
+    if(name == "M"){if (args->getString("initial") != "M") return"";}
     if((name == "beta")) { if(args->getBool("thermal")) return "_" + to_string(h); else {return "";} }
     if((name == "qx") || (name == "qy") || (name == "qz")) {if(args->getBool("momentum")) return "_" + to_string(h); else{return "";} }
     return "_" + to_string(h);

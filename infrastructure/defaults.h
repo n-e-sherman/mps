@@ -114,9 +114,21 @@ Args* default_global()
         /* XXZ */
         args->add("Jxy",1.0);
         args->add("Delta",1.0);
+    
         /* Dimer */
         args->add("Je",1.0);
         args->add("Jo",1.0);
+
+        /* Anisotropic Heisenberg */
+        args->add("J1x",1.0);
+        args->add("J1y",1.0);
+        args->add("J1z",1.0);
+        args->add("J2x",1.0);
+        args->add("J2y",1.0);
+        args->add("J2z",1.0);
+        args->add("hx",0.0);
+        args->add("hy",0.0);
+        args->add("hz",0.0);
 
     /* operator */
     // args->add("Operator","Position"); // <--- Useless b/c of "momentum" and/or "thermal" parameter
@@ -134,6 +146,7 @@ Args* default_global()
 
     args->add("Evolver","TDVP");
     args->add("realTime",true);
+    args->add("disentangle",true);
     args->add("time-tau",0.1); // Should be in the evolver, not in the parent.
     args->add("beta-tau",0.1);
         /* TDVP */
@@ -165,12 +178,15 @@ Args* default_global()
         args->add("beta",0);
         /* Ground State */
         args->add("initial","AF");
+        args->add("M", 0);
         args->add("nSweeps",5);
         args->add("sweeps_maxdim","80,100,150,150,200");
         args->add("sweeps_mindim","20,20,10,10,10");
         args->add("sweeps_cutoff","1E-6,1E-8,1E-10,1E-12,1E-12");
         args->add("sweeps_niter","4,3,2,2,2");
         args->add("sweeps_noise","1E-7,1E-8,1E-10,0,0");
+        args->add("tune",false);
+        args->add("J1s", "1.0,0.75,0.25,0.1,0");
 
     /* measurement */
     args->add("Measurement","RealSpace");

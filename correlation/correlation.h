@@ -19,6 +19,8 @@ protected:
 
 	bool thermal;
 	Real tau;
+	Real Mz = -1E-16;
+	Real Mx = -1E-16;
 
 	State ket;
 	Real time;
@@ -34,6 +36,7 @@ public:
 		time = 0; times.push_back(time);
 		ket = op->multiply(bra);
 		res.push_back(measurement->measure(bra,ket));
+		_calculate_magnetization();
 		_setup_evolvers();
 	}
 
@@ -50,7 +53,7 @@ public:
 	static string getHash(Args* args)
 	{
 		vector<string> strings{"SiteSet","Lattice","Model","Evolver"};
-		vector<string> reals{"N","MaxDim","beta","beta-tau","time-tau"};
+		vector<string> reals{"N","MaxDim","beta","beta-tau","time-tau","M"};
 		if(args->getBool("momentum"))
 		{
 			reals.push_back("qx");
@@ -61,6 +64,11 @@ public:
 		if(!(args->getBool("realTime"))) res += "i";
 		if(args->getBool("CenterSite")) res += "-CenterSite";
 		if(args->getBool("Connected")) res += "-Connected";
+		if(args->getBool("tune")) res += "-tune";
+		if(args->getBool("disentangle")) res += "-disentangle";
+		if(!args->getBool("ConserveQNs")) res += "_noQNs";
+		if(!args->getBool("ConserveSz")) res += "_noSz";
+		if(args->getString("initial") == "Random") res += "_Random";
 		return res;
 	}
 
@@ -74,6 +82,7 @@ public:
     	read(f,time);
     	read(f,times);
     	read(f,res);
+    	_calculate_magnetization();
     	thermal = args->getBool("thermal"); tau = args->getReal("time-tau");
 		_setup_evolvers();
     }
@@ -88,22 +97,56 @@ public:
 		write(f,time);
 		write(f,times);
 		write(f,res);
+		write(f,Mz);
+		write(f,Mx);
 	}
 
 private:
 
 	virtual void _setup_evolvers()
 	{
+		auto op = "H";
+		if ((args->getBool("thermal")) & (args->getBool("disentangle")))op = "L";
+		cout << "Operator used for evolver = " << op << endl;
 		if(args->getBool("realTime"))
 		{
-			bra_evolver->setup(BondGate::tReal, tau);
-			ket_evolver->setup(BondGate::tReal, tau);
+			bra_evolver->setup(BondGate::tReal, tau, op);
+			ket_evolver->setup(BondGate::tReal, tau, op);
 		}
 		else
 		{
-			bra_evolver->setup(BondGate::tImag, -tau);
-			ket_evolver->setup(BondGate::tImag, tau);	
+			bra_evolver->setup(BondGate::tImag, -tau, op);
+			ket_evolver->setup(BondGate::tImag, tau, op);	
 		}
+	}
+
+	virtual void _calculate_magnetization()
+	{
+		cout << "correlation._calculate_magnetization: calculating" << endl;
+		if (
+			(args->getString("SiteSet") != "SpinHalf") || 
+			(Mz != -1E-16) || 
+			(Mx != -1E-16)
+			) { cout << "skip computing Mz and Mx" << endl; return;}
+
+		Args* measurement_args = measurement->getArgs();
+		auto s_op = measurement_args->getString("localOperator");
+		auto N = args->getInt("N");
+		measurement->updateArgs("localOperator", "Sz");
+		auto Szs = measurement->measure(bra, bra);
+		measurement->updateArgs("localOperator", s_op);
+		Mz = 0;
+		for(auto& Sz : Szs){ Mz += Sz.real(); }
+
+		if (args->getBool("ConserveSz")) return;
+		measurement->updateArgs("localOperator", "Sx");
+		auto Sxs = measurement->measure(bra, bra);
+		measurement->updateArgs("localOperator", s_op);
+		Mx = 0;
+		for(auto& Sx : Sxs){ Mx += Sx.real(); }
+
+
+
 	}
 
 	virtual vector<string> _labels()
@@ -118,11 +161,19 @@ private:
 		labels.push_back("thermal");
 		if(args->getBool("thermal")) { labels.push_back("beta"); labels.push_back("time-tau"); }
 		else { labels.push_back("E0"); }
+		labels.push_back("M");
+		labels.push_back("Mz");
+		labels.push_back("Mx");
 		for(auto& x : ket_evolver->getParams()){ labels.push_back(x.first); }
+
 		labels.push_back("Evolver");
 		labels.push_back("Geometry");
 		labels.push_back("CenterSite");
 		labels.push_back("Connected");
+		labels.push_back("tune");
+		labels.push_back("disentangle");
+		labels.push_back("ConserveQNs");
+		labels.push_back("ConserveSz");
 		return labels;
 	}
 
@@ -141,11 +192,18 @@ private:
 			temp.push_back(args->getBool("thermal"));
 			if(args->getBool("thermal")) { temp.push_back(args->getReal("beta")); temp.push_back(args->getReal("time-tau")); }
 			else { temp.push_back(bra.getE0()); }
+			temp.push_back(args->getReal("M"));
+			temp.push_back(Mz);
+			temp.push_back(Mx);
 			for(auto& x : ket_evolver->getParams()){ temp.push_back(x.second); }
 			temp.push_back(args->getString("Evolver"));
 			temp.push_back(args->getString("Geometry"));
 			temp.push_back(args->getBool("CenterSite"));
 			temp.push_back(args->getBool("Connected"));
+			temp.push_back(args->getBool("tune"));
+			temp.push_back(args->getBool("disentangle"));
+			temp.push_back(args->getBool("ConserveQNs"));
+			temp.push_back(args->getBool("ConserveSz"));
 			results.push_back(temp);
 		}
 		return results;

@@ -179,7 +179,9 @@ private:
 
 	double exact_energy(double g)
 	{
-		return -1.0*(2.0/M_PI)*(1.0+g)*comp_ellint_2(sqrt((4.0*g)/((1.0 + g)*(1.0 + g))));
+		// return -1.0*(2.0/M_PI)*(1.0+g)*comp_ellint_2(sqrt((4.0*g)/((1.0 + g)*(1.0 + g))));
+		/* Commenting out for now. */
+		return 0;
 	}
 
 	void init_MPS(SiteSet& sites, ITensor& A, Index& il, Index& ir, Index& is, int m)   

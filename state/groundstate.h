@@ -52,6 +52,29 @@ private:
 	        state = MPS(_state);
     	}
     	else
+    	if (init == "M")
+    	{
+    		auto M = args->getReal("M");
+    		int count = 0;
+	        for(auto i : range1(N))
+            {
+	            if(i%2 == 1) _state.set(i,"Up");
+	            else
+	            {
+	            	if(count < M)
+	            	{
+	            		_state.set(i,"Up");
+	            		count += 1;	
+	            	}
+	            	else
+	            	{
+	            		_state.set(i,"Dn");
+	            	}
+	            }        
+            }
+	        state = MPS(_state);
+    	}
+    	else
     	if (init == "UF")
     	{
 	        for(auto i : range1(N)) _state.set(i,"Up");

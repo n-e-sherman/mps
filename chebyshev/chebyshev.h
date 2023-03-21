@@ -53,7 +53,12 @@ public:
 	{	
 		vector<string> strings{"SiteSet","Lattice","Model"};
 		vector<string> reals{"N","MaxDim","beta","beta-tau","W","Wp"};
-		return "Chebyshev" + hash_real(reals, args) + hash_string(strings, args);
+		auto res = "Chebyshev" + hash_real(reals, args) + hash_string(strings, args);
+		if(!(args->getBool("realTime"))) res += "i";
+		if(args->getBool("CenterSite")) res += "-CenterSite";
+		if(args->getBool("Connected")) res += "-Connected";
+		if(args->getBool("tune")) res += "-tune";
+		return res;
 	}
 
 	virtual void load(ifstream & f)
@@ -112,6 +117,10 @@ private:
 		labels.push_back("W");
 		labels.push_back("Wp");
 		for(auto& x : model->getParams()){ labels.push_back(x.first); }
+		labels.push_back("Geometry");
+		labels.push_back("CenterSite");
+		labels.push_back("Connected");
+		labels.push_back("tune");
 		return labels;
 	}
 
@@ -131,6 +140,10 @@ private:
 			temp.push_back(args->getReal("W"));
 			temp.push_back(args->getReal("Wp"));
 			for(auto& x : model->getParams()){ temp.push_back(x.second); }
+			temp.push_back(args->getString("Geometry"));
+			temp.push_back(args->getBool("CenterSite"));
+			temp.push_back(args->getBool("Connected"));
+			temp.push_back(args->getBool("tune"));
 			results.push_back(temp);
 		}
 		return results;

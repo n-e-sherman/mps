@@ -5,6 +5,8 @@
 #include "infrastructure/util.h"
 #include "lattice/thermalchain.h"
 #include "lattice/chain.h"
+#include "lattice/ladder.h"
+#include "lattice/thermalladder.h"
 #include "lattice/triangular.h"
 #include "lattice/thermaltriangular.h"
 #include "lattice/square.h"
@@ -30,6 +32,12 @@ public:
 			if(thermal)
 				return new ThermalChain(args);
 			return new Chain(args);
+		}
+		else if(lattice == "Ladder")
+		{
+			if(thermal)
+				return new ThermalLadder(args);
+			return new Ladder(args);
 		}
 		else if(lattice == "Triangular")
 		{

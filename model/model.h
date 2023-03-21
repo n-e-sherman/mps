@@ -49,6 +49,8 @@ public:
 	virtual void calcExpH(Cplx tau){ O = toExpH(calcAmpoH(), tau, *args); }
 	virtual void calcExpL(Cplx tau){ O = toExpH(calcAmpoL(), tau, *args); }
 
+	virtual void updateJ1(Real x) {}
+
 	vector<gate> getGatesH() { return calcGatesH(); }
 	vector<gate> getGatesL() { return calcGatesL(); }
 	map<string, Real> getParams() {return params; }
@@ -64,15 +66,67 @@ public:
 		string res = "";
 		auto sModel = args->getString("Model");
 		if(sModel == "XXZ")
+		{
 			res = "_" + to_string(args->getReal("Jxy")) + to_string(args->getReal("Delta"));
+		}
+		if(sModel == "XXZJ1J2")
+		{
+
+			res = "_" + to_string(args->getReal("J1")) + "-" 
+					  + to_string(args->getReal("J2")) + "-" 
+					  + to_string(args->getReal("Delta")) + "-" 
+					  + to_string(args->getReal("hz")) + "-";
+			if (args->getReal("hx") != 0.0) 
+			{
+				res = res + to_string(args->getReal("hx")) + "-";
+			}
+			res = res + to_string(args->getReal("Nx")) + "-" 
+					  + to_string(args->getReal("Ny")) + "_"
+					  + args->getString("Geometry");
+		}
 		if(sModel == "Dimer")
-			res = "_" + to_string(args->getReal("Je")) + to_string(args->getReal("Jo"));
+		{
+			res = "_" + to_string(args->getReal("Je")) + 
+						to_string(args->getReal("Jo"));
+		}
 		if(sModel == "HeisenbergField")
+		{
 			res = "_" + to_string(args->getReal("B"));
+		}
 		if(sModel == "HeisenbergLR")
-			res = "_" + to_string(args->getReal("J1")) +"_"+ to_string(args->getReal("J2")) + to_string(args->getReal("J3"))+"_"+ to_string(args->getInt("Nx"))+"_"+to_string(args->getInt("Ny"))+"_"+args->getString("Geometry");
+		{
+			res = "_" + to_string(args->getReal("J1")) +"_"
+					  + to_string(args->getReal("J2")) 
+					  + to_string(args->getReal("J3")) +"_"
+					  + to_string(args->getInt("Nx"))+"_"
+					  +to_string(args->getInt("Ny"))+"_"
+					  +args->getString("Geometry");
+		}
 		if(sModel == "HeisenbergLRField")
-			res = "_" + to_string(args->getReal("J1")) +"_"+ to_string(args->getReal("J2")) +"_"+ to_string(args->getReal("J3"))+"_"+ to_string(args->getReal("B")) +"_"+ to_string(args->getInt("Nx"))+"_"+to_string(args->getInt("Ny"))+"_"+args->getString("Geometry");
+		{
+			res = "_" + to_string(args->getReal("J1")) +"_"
+					  + to_string(args->getReal("J2")) +"_"
+					  + to_string(args->getReal("J3"))+"_"
+					  + to_string(args->getReal("B")) +"_"
+					  + to_string(args->getInt("Nx"))+"_"
+					  +to_string(args->getInt("Ny"))+"_"
+					  +args->getString("Geometry");
+		}
+		if(sModel == "HeisenbergAnisotropic")
+		{
+			res = "_" + to_string(args->getReal("J1x")) +"_"
+					  + to_string(args->getReal("J1y")) +"_"
+					  + to_string(args->getReal("J1z")) +"_"
+					  + to_string(args->getReal("J2x")) +"_"
+					  + to_string(args->getReal("J2y")) +"_"
+					  + to_string(args->getReal("J2z")) +"_"
+					  + to_string(args->getReal("hx")) +"_"
+					  + to_string(args->getReal("hy")) +"_"
+					  + to_string(args->getReal("hz")) +"_"
+					  + to_string(args->getInt("Nx"))+"_"
+					  + to_string(args->getInt("Ny"))+"_"
+					  + args->getString("Geometry");
+		}
 		return res;
 	}
 

@@ -31,9 +31,11 @@ public:
 		auto args = build_args(args_in, key);
 
 		repo = repoBuilder->build(args, key);
-		correlation = correlationBuilder->build(args, key);
 		auto save = args->getBool("save");
 
+		correlation = correlationBuilder->build(args, key);
+		repo->save(Correlation::getHash(args),correlation,save);
+		
 		auto time_max = args->getReal("time");
 		string type = (args->getBool("momentum") ? "p" : "x");
 		if(!(args->getBool("realTime"))) type = "i" + type;
