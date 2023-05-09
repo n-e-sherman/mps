@@ -3,6 +3,7 @@
 
 #include "service/service.h"
 #include "evolver/evolver.h"
+#include "infrastructure/cache.h"
 
 using namespace itensor;
 using namespace std;
@@ -69,6 +70,17 @@ public:
 		if(!args->getBool("ConserveQNs")) res += "_noQNs";
 		if(!args->getBool("ConserveSz")) res += "_noSz";
 		if(args->getString("initial") == "Random") res += "_Random";
+
+		auto cache = Cache::getInstance();
+		auto measurement_args = (Args*)cache->load("measurement");
+		string measurement_op = "NULL";
+		if(measurement_args) measurement_op = measurement_args->getString("localOperator", "NULL");
+		auto operator_args = (Args*)cache->load("operator");
+		string initial_op = "NULL";
+		if(operator_args) initial_op = operator_args->getString("localOperator", "NULL");
+		if((measurement_op != "Sz") & (measurement_op != "NULL")) res += "_M_" + measurement_op;
+		if((initial_op != "Sz") & (initial_op != "NULL")) res += "_I_" + initial_op;
+
 		return res;
 	}
 
@@ -174,6 +186,8 @@ private:
 		labels.push_back("disentangle");
 		labels.push_back("ConserveQNs");
 		labels.push_back("ConserveSz");
+		labels.push_back("A");
+		labels.push_back("B");
 		return labels;
 	}
 
@@ -204,6 +218,8 @@ private:
 			temp.push_back(args->getBool("disentangle"));
 			temp.push_back(args->getBool("ConserveQNs"));
 			temp.push_back(args->getBool("ConserveSz"));
+			temp.push_back(measurement->getArgs()->getString("localOperator"));
+			temp.push_back(op->getArgs()->getString("localOperator"));
 			results.push_back(temp);
 		}
 		return results;

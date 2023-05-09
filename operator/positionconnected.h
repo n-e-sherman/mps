@@ -26,9 +26,11 @@ public:
 	    auto sP = prime(_s);
 	    auto Up = _s(1); auto UpP = sP(1); auto Dn = _s(2); auto DnP = sP(2);
 	    auto lOp_c = ITensor(dag(_s),sP); lOp_c.set(Up,UpP,lOp_E); lOp_c.set(Dn,DnP,lOp_E);
-	    lOp_T = lOp-lOp_c;
+	    lOp_T = lOp;
+	    if (abs(lOp_E) > 1E-14) lOp_T = lOp-lOp_c;
 		temp = _res(c) * lOp_T; temp.noPrime();
 		_res.set(c,temp);
+
 		return State(_res);
 	}
 

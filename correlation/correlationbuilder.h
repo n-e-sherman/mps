@@ -37,7 +37,7 @@ public:
 
 		cout << "building correlation -- key: " << key << endl;
 		repo = repoBuilder->build(args, key);
-		auto load = args->getBool("load"); 
+		auto load = args->getBool("load");
 
 		auto correlation = repo->load(Correlation::getHash(args), new Correlation(args, evolverBuilder->build(bra_args, key), evolverBuilder->build(args, key), measurementBuilder->build(args, key)));
 		if((correlation != nullptr) && load) return correlation;

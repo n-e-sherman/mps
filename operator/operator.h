@@ -29,6 +29,11 @@ public:
 		return State(noPrime(applyMPO(O,s_in.getState(),*args)));
 	}
 
+	Args* getArgs()
+	{
+		return args;
+	}
+
 	void read(istream& is)
     {
     	sites->read(is);
