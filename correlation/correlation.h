@@ -194,6 +194,15 @@ private:
 	virtual vector<vector<StringReal>> _results()
 	{
 		auto results = vector<vector<StringReal>>();
+
+		auto cache = Cache::getInstance();
+		auto measurement_args = (Args*)cache->load("measurement");
+		string measurement_op = "NULL";
+		if(measurement_args) measurement_op = measurement_args->getString("localOperator", "NULL");
+		auto operator_args = (Args*)cache->load("operator");
+		string initial_op = "NULL";
+		if(operator_args) initial_op = operator_args->getString("localOperator", "NULL");
+
 		for(auto i : range(res.size()))
 		{
 			auto temp = measurement->addResults(res[i]);
@@ -218,8 +227,10 @@ private:
 			temp.push_back(args->getBool("disentangle"));
 			temp.push_back(args->getBool("ConserveQNs"));
 			temp.push_back(args->getBool("ConserveSz"));
-			temp.push_back(measurement->getArgs()->getString("localOperator"));
-			temp.push_back(op->getArgs()->getString("localOperator"));
+
+			temp.push_back(measurement_op);
+			temp.push_back(initial_op);
+
 			results.push_back(temp);
 		}
 		return results;
